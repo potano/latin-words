@@ -5,7 +5,7 @@
 <BODY>
 <P>
 
-<H1>WORDS - Version 1.97 for Windows 95/98/NT
+<H1>WORDS - Version 1.97 for Windows 95/98/NT/ME/2000
 <BR>LATIN-to-ENGLISH DICTIONARY PROGRAM</H1>
 
 
@@ -14,11 +14,54 @@
 Latin-to-English dictionary program
 for the PC running Windows 95/98/NT. </H3>
 
+<P>
+There is a quirk to running on Windows ME.  Windows ME has changed the
+path to the MSDOS prompt to
+<BR><FONT COLOR="FF0000"><B>Start>Programs>Accessories>MSDOS</B>
+<FONT COLOR="000000">
+<BR>Go there to run WORDS and apparently everything works as before.
+<BR>For Windows 2000 the path to the prompt is
+<BR><FONT COLOR="FF0000"><B>Start>Programs>Accessories>Command Prompt </B>
+<FONT COLOR="000000">
+<BR>Remember to go to (change subdirectory to) the subdirectory in which
+you have mounted the WORDS files.
 
 <HR>
-<P>29 August 2001 - New version 1.97 of the Windows WORDS
+<P>30 August 2001 - New version 1.97 of the Windows WORDS
 has been mounted as the regular distribution.
 
+<P>The only significant change is in
+the presentation of the output.  There is now a lot of (default) TRIMming.
+This is to make the program more friendly to student users.  Uncommon/untimely
+parses are suppressed when there is a much more common/likely solution.
+Vocatives and locatives are often suppressed.  Where such TRIMming
+has occured, an asterix (*) follows the output.  The user can cut
+out the TRIM by setting a # parameter, and this has been made easier
+by placing that parameter first in the # menu.
+
+<P>In addition, there may be warnings on individual parses or
+dictionary forms that are uncommon or of non-classical age.
+This is not to say that the result is not the correct one,
+but that the user may consider that information in light of what
+he expects from the text being translated.  This is a preliminary
+facility, as not all of the dictionary is properly coded yet,
+but most is.
+
+<P>The # parameter DO_STEMS_FOR_UNKNOWNS now puts out a page of
+dictionary entries around the unknown words.  This seems to be much more
+useful, in principle, than the previous attempt to construct a
+sperious stem/inflection combination.  Try it.
+
+
+<P>The dictionary now contains more than 30000 entries.
+While certainly not complete,
+WORDS is achieving a very high hit rate for some classical texts.
+Caesar is apparently complete (except, as always, proper names).
+The Vulgate Bible is without UNKNOWN (which is not to say that every
+parse is as St. Jerome would have it).  The orderly update is continuing
+slowly.  The user is requested to
+forward important words that are missing and should be in,
+and any that are parsed but seem to have the wrong meaning.
 
 <P>
 <HR>

@@ -5,103 +5,88 @@
 <BODY>
 <P>
 
-<H1>WORDS - Version 1.95 - DOS
+<H1>WORDS - Version 1.97 - DOS
 <BR>LATIN-to-ENGLISH DICTIONARY PROGRAM</H1>
 
 
 <P>
 <H3>This page provides a downloadable Latin-to-English dictionary program
 for a DOS PC.  For regular users, the files to download are:
-<BR><BR><A HREF="word195d.exe"><B>WORD195D.EXE</B></A>
-<BR><A HREF="more195d.exe"><B>MORE195D.EXE</B></A>
+<BR><BR><A HREF="dk1dos.exe"><B>DK2DOS.EXE</B></A>
+<BR><A HREF="dk2dos.exe"><B>DK2DOS.EXE</B></A>
 <BR><BR>Full instructions below.</H3>
 
 
 <HR>
 <H3><I>Recent Additions</I></H3><P>
 
-<H4>19 October 1999 - Version 1.95</H4>
+<H4>15 September 2001- Version 1.97</H4>
 
-<P>The DOS WORDS code has been reduced by modifying the
-parameter input and the help.  The technical capability is unaffected.
-It does carry two extra help files, rather than having the help coded in.
+<P>The DOS WORDS code has been reduced slightly from the Windows version
+in order that it might operate within the 640KB DOS limitation
+without extensions.  There is, as before, modification of the
+parameter input and the help.  This has no affect on operation or capability.
+It does carry an extra help file, rather than having the help coded in.
 
-<P>A further reduced version has been generated.
-It takes the same dictionary files.  This version has
-also been reduced by eliminating the DO_COMPOUNDS, DO_EXAMPLES
-and DO_STEMS_FOR_UNKNOWNS, so it will run in regular DOS situations
-if the normal version has too many STORAGE_ERRORs.  This version is
-recommended for most users and is now the default version of WORDS.
-
-<P>The version with the DO_COMPOUNDS and DO_EXAMPLES capabilities,
-but with the HELP on files, has been renamed WORDSMAX.  This may
-give STORAGE_ERROR problems when operating in systems without
-enough DOS (first 640KB) free memory.
-
-
-<P>MEANINGS, giving only the dictionary form and meaning, is also
-minimized.
-
-<P>There is a WORDSDOC.TXT ASCII text file of the documentation
-in WORDSDOC.HTM, since it is expected that those running on DOS
-systems might not have an intenet browser installed, but can have
-the program copied off the net on a friend's machine.
-
-<P>For this situation, the system for DOS has been broken into two files
-so that they may fit on floppy disks,  The full system having grown
-too large for a single floppy.
+<P>It is, however, a reduction in facilities by eliminating the DO_COMPOUNDS,
+DO_EXAMPLES, DO_STEMS_FOR_UNKNOWNS, and some TRICKS so it will run in
+regular DOS situations.
+The full version will generate too many STORAGE_ERRORs.
+However it contains the full dictionary and word construction.
+The change from the previous (also reduced) version is that
+TRICKS have been eliminated.  This is not as much of a problem as it once
+might have been.  The dictionary is getting to be quite extensive and
+should take care of all but the most demanding user.
+There is some possibility that offloading to preprocessing might allow
+recovery of some deleted facilities in a future version.
+This reduction allows the program to run in DOS systems having about
+600KB of more FREE MEMORY.  Check your system by running CHKDSK.
+Memory may be occupied by still resident programs (initiated at startup,
+probably in AUTOEXEC.ABT) you are not using at the time.
+Eliminate any that you can, if sufficient memory is not free.
 
 
-<P>As a safety precaution, the previous version is continued on the site.
-<BR><A HREF="word194d.exe"><B>WORD194D.EXE</B></A>,
-<BR><A HREF="mean194d.exe"><B>MEAN194D.EXE</B></A>
+<P>If free memory in insufficient to run without excessive STORAGE_ERROR,
+a MINWORDS version, further crippled by eliminating dictionary forms and
+the output cleanup that was the major algorithmic change in 1.97.
+The full dictionary is still active.
 
+<P>There are two files to be downloaded that the viewer can download
+as binary files if his browser allows.
+The program and the data are in two self-extracting files.
+<BR><A HREF="dk1dos.exe"><B>DK1DOS.EXE</B></A>
+<BR><A HREF="dk2dos.exe"><B>DK2DOS.EXE</B></A>
+
+<P>The purpose of having two files is
+is that individually they are less than the capacity of a 3 1/2" floppy,
+so that you can copy them and pass them on to a friend who might not
+have net capability.
 
 <P>
-<HR>
-<H3>The WORDS Program</H3>
-<P>
-There is a <A HREF="word195d.exe"><B>WORD195D.EXE</B></A>,
-a self-extracting DOS EXE file
-that the viewer can download as a binary file if his browser allows.
-
-It runs is line-oriented, without fancy screens or graphics.
-The DOS version will also run in Windows 95, but the Windows version
-has the advantage that it terminates gracefully
-when run in the DOS partition of Windows 95, while the DOS version
-exits with complaints.
-
-
+These .EXE files, executed on your machine will produce about 12 MB
+of program and data files (and then may be discarded).
 <P>
 It is usually good practice to make a subdirectory (to keep things together)
-and copy the WORD195D.EXE into it, then run it in that subdirectory.
-The .EXE file, executed on your machine will produce about 6 MB
-of program and data files (and then may be discarded).
+and copy the .EXE into it, then run them in that subdirectory.
 
-<P>The files created are sufficient to run the system:
-<PRE>WORDS.EXE    --  The recommended (minimized) program
+<P>The files created are:
+<PRE>WORDS.EXE
+MEANINGS.EXE
+MINWORDS.EXE
+
+WORDSDOS.TXT
+WORDSDOC.TXT
+
 INFLECTS.SEC
-ADDONS.
-UNIQUES.
+ADDONS.LAT
+UNIQUES.LAT
 DICTFILE.GEN
 INDXFILE.GEN
 STEMFILE.GEN
-WORDHMOD.HLP
-WORDHMDV.HLP
-WORDSDOS.TXT
-</PRE>
-<P>Another selfextracting file
-<BR><BR><A HREF="more195d.exe"><B>MORE195D.EXE</B></A> for DOS contains:
-<PRE>WORDSMAX.EXE       --  The full program, not minimized
-MEANINGS.EXE    --  Delivering only meanings, hardcoded
-WORDSDOC.TXT    --  An ASCII DOS text file with the documentation
-TEST500.        --  A test file of 500 lines of Latin text
 </PRE>
 
-<P>The main program created is WORDS.EXE (recommended - also WORDSMAX
-and MEANINGS as explained above).  Run that
-to do Latin-to-English word translations.  With <I>amo</I> as input,
-the output looks like this:
+The main program created is WORDS.EXE.  Run thats
+to do Latin-to-English word translations.  The output looks like this:
 
 <PRE><TT>=>amo
 am.o             V      1 1 PRES ACTIVE  IND 1 S X
@@ -109,20 +94,31 @@ amo, amare, amavi, amatus
 love, like; fall in love with; be fond of; have a tendency to
 </TT></PRE>
 
-<P>The file WORDSDOC.TXT provides some documentation, and there is
-an HTML version which is also accessable on the WORDS net site as
-<A HREF="wordsdoc.htm"><B>WORDSDOC.HTM</B></A>.
+<P>There is a WORDSDOC.TXT ASCII text file of the net HTML documentation
+in <A HREF="wordsdoc.htm"><B>WORDSDOC.HTM</B></A>,
+since it is expected that those running on DOS
+systems might not have an intenet browser installed, but can have
+the program copied off the net on a friend's machine.
 This is stand-alone, it is not callable from the WORDS program.
+
+<P>MEANINGS.EXE, giving only the dictionary form and meaning, is also
+minimized.
+
+
+<P>As a safety precaution, the previous version is continued on the site.
+<BR><A HREF="disk1dos.exe"><B>DISK1DOS.EXE</B></A>,
+<BR><A HREF="disk2dos.exe"><B>DISK2DOS.EXE</B></A>
+
+
 
 <P>WORDS for DOS executes on a IBM-compatible PC, 386 or better, running DOS.
 WORDS is disk oriented, so a fast disk, a RAMDISK, or caching helps.
 It requires as much memory as possible, or it will raise (somewhat
-recoverable) STORAGE_ERROR.  WORDSMIN is recommended to reduce this problem.
+recoverable) STORAGE_ERROR.
 
-<P>The present version is 1.95 and replaces a previous version 1.94
-from March 1999.  There are some internal differences from
-the previous version, but the user difference is mostly in a
-improved dictionary.
+<P>The present version is 1.97 and replaces a previous version.
+The main user difference is mostly in an improved dictionary and
+somewhat cleaner TRIMmed output.
 
 
 <H4>MEANINGS ONLY</H4>

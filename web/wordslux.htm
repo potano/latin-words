@@ -1,11 +1,11 @@
 <HTML>
 <HEAD>
-<TITLE>WORDS for LINUX (i86)</TITLE>
+<TITLE>WORDS - Version 1.97 for Linux (i386)</TITLE>
 </HEAD>
 <BODY>
 <P>
 
-<H1>WORDS - Version 1.95a for Linux (i86)
+<H1>WORDS - Version 1.97 for Linux (i386)
 <BR>LATIN-to-ENGLISH DICTIONARY PROGRAM</H1>
 
 
@@ -17,7 +17,7 @@ for the PC running Linux. </H3>
 with the adjustments cited below.
 Note while initially the library changes in FreeBSD 3.4 gave trouble,
 the program now runs without problem under FreeBDC-3.4-STABLE
-and FreeBSD 4.0 and 4.1 .
+and FreeBSD 4.0 and 4.1.
 
 
 <HR>
@@ -27,20 +27,24 @@ and FreeBSD 4.0 and 4.1 .
 <H3>Downloading the WORDS Program</H3>
 <P>
 There is a file at the Thomas Aquinas FTP site
-<A HREF="ftp://petrus.thomasaquinas.edu/pub/linux/words-1.95a-linux.tar.gz">
-<B>words-1.95a-linux.tar.gz</B></A> (1.6MB),
+<A HREF="ftp://petrus.thomasaquinas.edu/pub/linux/words/words-1.97-linux.tar.gz">
+<B>words-1.97
+-linux.tar.gz</B></A> (1.6MB),
 that the viewer can download as a binary file if his browser allows.
 
-<P>A short README file <A HREF="readme.lux"><B>README.LUX</B></A> comes
+<P>A short README file <A HREF=
+"ftp://petrus.thomasaquinas.edu/pub/linux/words/README">
+<B>README
+</B></A> comes
 with the download with more detailed
 installation/execution instructions.
 You are encouraged to read this here on-line before downloading.
 
 
-<P>This version was produced by Brian Dragoo
-<A HREF="mailto:bdragoo@thomasaquinas.edu"> <B>(E-mail)</B></A>
+<P>This version was produced by
+<A HREF="mailto:bdragoo@thomasaquinas.edu"> <B>Brian Dragoo</B></A>
 of Thomas Aquinas College in California.
-It was compiled on RedHat Linux to run as a console program (keyboard entry).
+It was compiled on RedHat Linux (i386) to run as a console program (keyboard entry).
 It runs like a DOS program, line-oriented, without fancy GUI.
 
 
@@ -54,26 +58,28 @@ Given an input of amo, the output looks like this:
 
 <PRE><B><TT>=>amat
 am.at            V      1 1 PRES ACTIVE  IND 3 S X
-amo, amare, amavi, amatus
+amo, amare, amavi, amatus    V
 love, like; fall in love with; be fond of; have a tendency to
 </TT></B></PRE>
 
 <P>The file WORDSDOC.TXT provides some documentation, and there is included
 an HTML version, which is also accessable directly on the present site as
-<A HREF="wordsdoc.htm"><B>WORDSDOC.HTM</B></A>.
+<A HREF="http://users.erols.com/whitaker/wordsdoc.htm"><B>WORDSDOC.HTM</B></A>.
 This is stand-alone, it is not callable from the WORDS program.
 
-<P>WORDS for Linux runs on a IBM-compatible PC, running RedHat Linux
-(and presumably other versions).
+<P>WORDS for Linux runs any Linux distribution.
 
 
 
 <P>There is also a small shell script that takes care of a
 slight problem in executing the program.  <B><I>words</I></B> must be run
-from the directory with the supporting files.  So the shell script, which
-resides in /usr/bin, and is itself executable, simply changes directories to the words directory,
+from the directory with the supporting files.
+So the shell script simply changes directories to the words directory,
 executes <B><I>words</I></B>, then changes back to the previous directory
 after <B><I>words</I></B> has exited.
+See the <b><a
+href="ftp://petrus.thomasaquinas.edu/pub/linux/words/README">README</a></b>
+for further details.
 
 <HR>
 <H3>Running under FreeBSD</H3>
@@ -85,7 +91,7 @@ This will work with FreeBSD-3.2 and FreeBSD-3.4-STABLE.
 install
 <P>2) Edit /etc/rc.conf line: linux_enable=YES
 
-Matt Heckaman reports that it runs great on FreeBSD 4.0 and 4.1 with
+<BR>Matt Heckaman reports that it runs great on FreeBSD 4.0 and 4.1 with
 linux_base-6.1 port installed (/usr/ports/emulators/linux_base).
 
 

@@ -5,7 +5,7 @@
 <BODY>
 <P>
 
-<H1>WORDS - Version 1.95a
+<H1>WORDS - Version 1.97
 <BR>LATIN-to-ENGLISH DICTIONARY PROGRAM
 <BR>DEVELOPERS/REHOSTERS PAGE</H1>
 
@@ -15,12 +15,43 @@ Latin-to-English dictionary program
 for the PC, and the dictionary material sufficient to re-host.
 <BR>Instructions below.</H3>
 
+<P>30 August 2001 - Version 1.97 - The only significant change is in
+the presentation of the output.  There is now a lot of (default) TRIMming.
+This is to make the program more friendly to student users.  Uncommon/untimely
+parses are suppressed when there is a much more common/likely solution.
+Vocatives and locatives are often suppressed.  Where such TRIMming
+has occured, an asterix (*) follows the output.  The user can cut
+out the TRIM by setting a # parameter, and this has been made easier
+by placing that parameter first in the # menu.  The dictionary now
+contains more than 30000 entries.
+
+<P>The file list_list has been renames list_sweep, and put_example_line
+has been removed from list_package to stand alone.  .LAT has been
+added as an extension to those data files previously without extension.
+
+<P>15 October 2000 - Version 1.96 still - Some small changes as a result
+of user feedback.  A few errors that crept into the latest version
+causing words previously handled to raise exception were fixed.  There
+is no change in the dictionary.  The changes are corrections and do not
+amount to a new version, even a subversion.  The new code may be recognized
+by successful handling of the word "<B>quempiam</B>".  (Thanks DiLaura)
+
+<P>10 September 2000 - Version 1.96 - a small change to the user.
+<BR>Somewhat larger dictionary - additions in medieval and ecclesiastical -
+I hope for additional in the near future.
+One reading the Vulgate will not be disappointed.
+
+<BR>There is little algorithmic change, but considerable altering and
+renaming or date structures.  This is completely invisible to the user,
+and essentially invisible to developers,
+but it makes it important that there be a new version number.
+
 <HR>
 <P>25 April 2000 Version 1.95a released.
 <BR>The dictionary is somewhat larger than 1.95
 <BR>It has somewhat improved output for complex meanings
 
-<P>The 1.95 characteristics are continues
+<P>The 1.95 characteristics are continued and:
 <BR>It can discriminate on the basis of AGE or FREQ, rejecting unlikely
 results if there are more common ones.  Controlling parameters are introduced.
 Check the defaults for youe particular application.
@@ -78,9 +109,9 @@ tricks_package.ads
 word_package.adb
 tricks_package.adb
 list_package.ads
-list_list.adb
+list_sweep.adb
 dictionary_form.adb
-list_package-put_example_line.adb
+put_example_line.adb
 list_package.adb
 parse.adb
 words.adb
@@ -97,17 +128,19 @@ and DOS ASCII data files for them to act upon to produce WORDS data files
 <PRE>
 DICTLINE.GEN
 STEMDICT.GEN
-INFLECTS.
+INFLECTS.LAT
 </PRE>
 <P>
 the other WORDS DOS ASCII supporting files
 <PRE>
-ADDONS.
-UNIQUES.
+ADDONS.LAT
+UNIQUES.LAT
 </PRE>
 <P>
-<B>(Please note that the final period in these filenemes is important
-Some systems will drop a final period when copying.)</B>
+<B>(Please note that the data files now with extension .LAT used to have
+just a final period in these filenemes.
+Some systems had trouble dropping the final period when copying,
+so the names were changes.)</B>
 
 
 <HR>
@@ -135,7 +168,7 @@ Executing the latter three against the input respectively of
 <PRE>
 DICTLINE.GEN
 STEMLIST.GEN
-INFLECTS.
+INFLECTS.LAT
 </PRE>
 <P>
 (when they ask for DICTIONARY say G) produces
@@ -146,16 +179,12 @@ INDXFILE.GEN
 INFLECTS.SEC
 </PRE>
 <P>
-Along with ADDONS. and UNIQUES., this is the set of data for WORDS.
+Along with ADDONS.LAT and UNIQUES.LAT, this is the set of data for WORDS.
 
 <P>
 The only problem that has appeared on porting so far is that one must
-be careful of file names.  WORDS uses several files that it calls by name,
-among these are ADDONS. and UNIQUES.  These names are set in
-LATIN_FILE_NAMES and can be changed, but they are at any one time fixed.
-There have been difficulties in the transfer to another system in losing
-the period.  These have been problems in transfer, not in either source
-or target system, and have been easily rectified by inspection.
+be careful of file names.  Problems sometimes turn up but
+have been easily rectified by inspection.
 All of my systems are case-independent on file names.  If one
 is running in a case-dependent system (UNIX), this is a point to check.
 Note that the data files are capitalized, source files are not.
