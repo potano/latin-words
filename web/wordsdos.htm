@@ -1,0 +1,142 @@
+<HTML>
+<HEAD>
+<TITLE>WORDS (LATIN) for DOS</TITLE>
+</HEAD>
+<BODY>
+<P>
+
+<H1>WORDS - Version 1.94 - DOS
+<BR>LATIN-to-ENGLISH DICTIONARY PROGRAM</H1>
+
+
+<P>
+<H3>This page provides a downloadable Latin-to-English dictionary program
+for a DOS PC.
+<BR>Instructions below.</H3>
+
+
+<HR>
+<H3><I>Recent Additions</I></H3><P>
+
+<H4>14 March 1999 - Version 1.94</H4>
+
+<P>The DOS version is getting too large and may be subject to STORAGE_ERROR
+in some user configurations
+(especially when running with an '@' input file) if there is
+much less than 600,000 bytes of memory free.  Try to clear as much available
+ROM as possible if you have problems of this nature.
+
+<P>The DOS code has been reduced by 30KB, from other versions, by modifying the
+parameter input and the help.  The technical capability is unaffected.
+A further reduction is size could be accomplished by removing capabilities
+like compound verbs, examples, and information on possible stems on
+unknowns.
+
+<P>As an experiment a version, WORDSMIN, has been included
+that was compiled for i86 REAL MODE.   It takes the same dictionary files.
+This should run on old 8086, 8088, 80186 and 80286 machines.
+This version has also been reduced by eliminating the DO_COMPOUNDS
+and DO_STEMS_FOR_UNKNOWNS, so it will run in regular DOS situations
+if the normal version has too many STORAGE_ERRORs.
+
+<P>As a safety precaution, the previous version is continued on the site.
+<BR><A HREF="word193d.exe"><B>WORD193D.EXE</B></A>,
+<BR><A HREF="mean193d.exe"><B>MEAN193D.EXE</B></A>
+
+
+<P>
+<HR>
+<H3>The WORDS Program</H3>
+<P>
+There is a <A HREF="word194d.exe"><B>WORD194D.EXE</B></A>,
+a self-extracting DOS EXE file
+that the viewer can download as a binary file if his browser allows.
+
+It runs is line-oriented, without fancy screens or graphics.
+The DOS version will also run in Windows 95, but the Windows version
+has the advantage that it terminates gracefully
+when run in the DOS partition of Windows 95, while the DOS version
+exits with complaints.
+
+
+<P>
+It is usually good practice to make a subdirectory (to keep things together)
+and copy the WORD194D.EXE into it, then run it in that subdirectory.
+The .EXE file, executed on your machine will produce about 5 MB
+of program and data files (and then may be discarded).
+
+<P>The files created are:
+<PRE>WORDS.EXE
+INFLECTS.SEC
+ADDONS.
+UNIQUES.
+DICTFILE.GEN
+INDXFILE.GEN
+STEMFILE.GEN
+WORD.HLP
+WORDSDOC.HTM
+WORDSDOC.TXT
+WORDSDOS.HTM
+WORDSMIN.EXE
+</PRE>
+
+<P>The main program created is WORDS.EXE.  Run that
+to do Latin-to-English word translations.  With <I>amo</I> as input,
+the output looks like this:
+
+<PRE><TT>=>amo
+am.o             V      1 1 PRES ACTIVE  IND 1 S X
+amo, amare, amavi, amatus
+love, like; fall in love with; be fond of; have a tendency to
+</TT></PRE>
+
+<P>The file WORDSDOC.TXT provides some documentation, and there is included
+an HTML version which is also accessable on this site as
+<A HREF="wordsdoc.htm"><B>WORDSDOC.HTM</B></A>.
+This is stand-alone, it is not callable from the WORDS program.
+
+<P>WORDS for DOS executes on a IBM-compatible PC, 386 or better, running DOS.
+WORDS is disk oriented, so a fast disk, a RAMDISK, or caching helps.
+It requires as much memory as possible, or it will raise (somewhat
+recoverable) STORAGE_ERROR.
+
+<P>The present version is 1.94 and replaces a previous version 1.93
+from August 1998.  There are some internal differences from
+the previous version, but the user difference is mostly in a somewhat
+improved dictionary and forms.
+
+
+<H4>MEANINGS ONLY</H4>
+
+<P>There are academic situations in which it would be inappropriate
+for the student to have access to the parsed forms information, but
+for which the professor might allow simple meanings.  For this
+situation a modification has been made producing a program called
+MEANINGS, with self-extractor:
+<BR><BR><A HREF="mean194d.exe"><B>MEAN194D.EXE</B></A> for DOS
+<BR><BR>This is a version that is crippled to output <B>ONLY MEANINGS</B>, no
+parsing of the word.  It is hard-coded so
+there is no way to output the case/tense, as opposed to the option in WORDS
+that allows the temporary suppression of this information.
+It does allow the display of the dictionary form, which seems to be
+appropriate and allowed for the intended use.  If anyone requires a version
+that supresses the dictionary form, let me know.
+
+<BR>
+<BR>
+
+<HR>
+<BR>
+
+Feedback is invited.  If there is a problem in installing or operating,
+in the results or their display, or if your favorite word is omitted
+from the dictionary, let me know.
+
+<P>
+Contact
+<A HREF="mailto:whitaker@erols.com"> <B>whitaker@erols.com</B></A>,
+<BR>or William Whitaker, PO Box 3036, McLean VA 22103 USA.
+<BR>
+<P>
+</BODY>
+</HTML>

@@ -1,0 +1,75 @@
+<HTML>
+<HEAD>
+<TITLE>WORDS for LINUX (i86)</TITLE>
+</HEAD>
+<BODY>
+<P>
+
+<H1>WORDS - Version 1.94 for Linux (i86)
+<BR>LATIN-to-ENGLISH DICTIONARY PROGRAM</H1>
+
+
+<P>
+<H3>This page provides instructions for downloading the WORDS
+Latin-to-English dictionary program
+for the PC running Linux. </H3>
+
+
+<HR>
+
+
+<P>
+<H3>Downloading the WORDS Program</H3>
+<P>
+There is a file at the Thomas Aquinas FTP site
+<A HREF="ftp://petrus.thomasaquinas.edu/pub/linux/words-1.94-linux.tar.gz">
+<B>words-1.94-linux.tar.gz</B></A> (1.3MB),
+that the viewer can download as a binary file if his browser allows.
+
+
+<P>This version was produced by Brian Dragoo
+<A HREF="mailto:bdragoo@thomasaquinas.edu"> <B>(E-mail)</B></A>
+of Thomas Aquinas College in California.
+It was compiled on RedHat Linux to run as a console program (keyboard entry).
+It runs like a DOS program, line-oriented, without fancy GUI.
+
+
+
+<P>
+The .tar.gz file, uncompressed on your machine, will produce about 6MB
+of program and data files (and then may be discarded).
+The main program created is <I>words</I>.  Run that
+to do Latin-to-English word translations.
+Given an input of amo, the output looks like this:
+
+<PRE><TT>=>amo
+am.o             V      1 1 PRES ACTIVE  IND 1 S X
+amo, amare, amavi, amatus
+love, like; fall in love with; be fond of; have a tendency to
+</TT></PRE>
+
+<P>The file WORDSDOC.TXT provides some documentation, and there is included
+an HTML version, which is also accessable directly on the present site as
+<A HREF="wordsdoc.htm"><B>WORDSDOC.HTM</B></A>.
+This is stand-alone, it is not callable from the WORDS program.
+
+<P>WORDS for Linux runs on a IBM-compatible PC, running RedHat Linux
+(and presumably other versions).
+
+
+
+<P>A README file comes with the download with more detailed
+installation/execution instructions once you get the download.
+
+<P>There is also a small shell script that takes care of a
+slight problem in executing the program.  <B><I>words</I></B> must be run
+from the directory with the supporting files.  So the shell script, which
+resides in /usr/bin, and is itself executable, simply changes directories to the words directory,
+executes <B><I>words</I></B>, then changes back to the previous directory
+after <B><I>words</I></B> has exited.
+
+
+
+<BR>
+</BODY>
+</HTML>
