@@ -1,11 +1,8 @@
-Placeholder for version 1.96 of wordsall.zip
-Only the first 1048323 bytes are available; the reported size is 1308056 bytes.
-These are the files which could be recovered:
+Placeholder for version 1.97.1 (1.97) of wordsall.zip
+File date: 2002-01-02, size 1443967
 
    Date      Time           Size  Name
 ------------------- ------------  ------------------------
-2000-08-18 01:23:44        31845  ADDONS.LAT
-2000-08-04 02:08:40         9267  UNIQUES.LAT
 1999-05-04 22:49:52          848  strings_package.ads
 1999-05-04 22:49:58         3943  strings_package.adb
 2000-06-11 12:24:14         2866  latin_file_names.ads
@@ -13,44 +10,49 @@ These are the files which could be recovered:
 1999-04-16 01:22:46          418  config.ads
 1999-04-25 03:01:10          300  preface.ads
 1999-02-24 18:01:38          212  put_stat.adb
-1999-08-29 19:34:20         1980  word_parameters.ads
-2000-03-02 22:27:48         2604  developer_parameters.ads
+2001-08-21 21:16:46         2089  word_parameters.ads
+2001-07-05 21:08:22         2926  developer_parameters.ads
 1999-04-25 03:00:26         1048  preface.adb
-2000-04-23 16:36:48        20923  word_parameters.adb
-2000-08-06 21:44:06        66895  inflections_package.adb
-2000-08-06 21:38:36        25122  inflections_package.ads
-2000-08-06 23:30:50        35697  parse.adb
-2000-09-11 23:45:28        15956  dictionary_package.ads
-2000-08-06 21:54:28        41160  dictionary_package.adb
-2000-08-02 22:04:58         5646  addons_package.ads
-2000-08-03 00:17:56        23347  addons_package.adb
+2001-09-10 00:42:24        21041  word_parameters.adb
+2002-01-02 00:33:42        68560  inflections_package.adb
+2002-01-01 23:57:06        25627  inflections_package.ads
+2001-09-12 23:11:06        40071  parse.adb
+2001-10-18 14:36:22        16000  dictionary_package.ads
+2002-01-01 23:57:28        41319  dictionary_package.adb
+2001-06-09 14:41:16         5642  addons_package.ads
+2001-06-09 14:47:02        23712  addons_package.adb
 2000-08-04 01:38:24          681  uniques_package.ads
 2000-06-17 21:21:00         2831  word_support_package.ads
 1999-02-24 18:01:48         1104  latin_debug.ads
 2000-06-17 21:20:56         9093  word_support_package.adb
 1999-02-24 18:01:48         4441  latin_debug.adb
-1999-10-08 21:54:40         2032  word_package.ads
-2000-08-03 21:27:00         3854  line_stuff.ads
-2000-08-06 22:13:54        32562  line_stuff.adb
-2000-05-10 22:17:06        35162  developer_parameters.adb
-1999-10-08 22:15:56         1807  words.adb
-2000-04-22 00:41:48          744  tricks_package.ads
-2000-08-11 22:28:50        99242  word_package.adb
-2000-08-30 00:12:46        40917  tricks_package.adb
-1999-10-08 21:49:06          439  list_package.ads
-2000-08-06 21:57:28        20277  dictionary_form.adb
-2000-08-06 22:17:30        27669  list_package.adb
-2000-08-06 22:20:54        16966  makedict.adb
+2001-07-04 02:30:58         2512  word_package.ads
+2001-06-09 14:55:28         3854  line_stuff.ads
+2002-01-01 23:57:48        32786  line_stuff.adb
+2001-06-25 17:35:46        37064  developer_parameters.adb
+2001-07-01 13:58:26         2340  words.adb
+2000-11-04 15:54:34          730  tricks_package.ads
+2001-08-18 00:37:30       101631  word_package.adb
+2001-10-25 17:56:26        77466  tricks_package.adb
+2001-07-15 12:54:38          588  list_package.ads
+2001-10-18 15:29:38        22421  dictionary_form.adb
+2001-07-30 03:40:46        18119  wakedict.adb
+2001-10-06 22:30:32        56011  list_package.adb
+2001-07-30 03:56:10        18118  makedict.adb
 2000-07-24 18:30:52         9590  makestem.adb
-2000-08-06 22:23:16         9351  makeinfl.adb
-2000-08-06 22:04:52        10418  put_example_line.adb
-2000-08-11 00:44:12        19740  list_list.adb
-2000-09-04 22:49:58      4446080  DICTLINE.GEN
-2000-08-06 23:31:26       115722  INFLECTS.LAT
-2000-09-05 00:23:46      2176128  STEMLIST.GEN (incomplete)
+2001-05-02 02:07:34        10311  makeinfl.adb
+2001-12-15 01:21:48        11449  put_example_line.adb
+2001-05-02 02:07:58        10310  wakeinfl.adb
+1999-10-22 15:42:30         2076  MEANINGS.ADB
+2000-12-04 22:19:24         5883  UNKNOWNS.ADB
+2001-08-26 23:36:54        28991  list_sweep.adb
+2001-10-18 11:38:18        33475  ADDONS.LAT
+2001-11-19 11:03:44       120812  INFLECTS.LAT
+2001-08-31 19:35:42        11396  UNIQUES.LAT
+2001-12-26 17:53:56      4828544  DICTLINE.GEN
+2002-01-02 01:15:12      2805654  STEMLIST.GEN
 ------------------- ------------  ------------------------
-2000-09-11 23:45:28      7377700  44 files
+2002-01-02 01:15:12      8527676  48 files
 
-This files are available at the commit tagged v1.96.0
-Due to the incomplete download, this version will not build.
+This files are available at the commit tagged v1.97.1
 
