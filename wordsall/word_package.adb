@@ -1,5 +1,5 @@
    with TEXT_IO;
-with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
+   with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
    with STRINGS_PACKAGE; use STRINGS_PACKAGE;
    with UNIQUES_PACKAGE; use UNIQUES_PACKAGE;
    with ADDONS_PACKAGE; use ADDONS_PACKAGE;
@@ -7,7 +7,6 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
    with PREFACE;
    with DEVELOPER_PARAMETERS; use DEVELOPER_PARAMETERS;
    with LINE_STUFF; use LINE_STUFF;
-   with TRICKS_PACKAGE; use TRICKS_PACKAGE;
    package body WORD_PACKAGE is
 
       INFLECTIONS_SECTIONS_FILE : LEL_SECTION_IO.FILE_TYPE;
@@ -864,7 +863,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                              ((PDL_P = N) or (PDL_P = ADJ) or (PDL_P = V)) and then
                              ((SUFFIX.ENTR.ROOT_KEY = 1) or (SUFFIX.ENTR.ROOT_KEY = 2))))  then
                   --PUT_LINE("HIT HIT HIT HIT HIT HIT HIT HIT HIT     SUFFIX SUFFIX    in REDUCE");
-                     case SUFFIX.ENTR.TARGET.PART is      --  Transform PDL_PART to TARGET
+                     case SUFFIX.ENTR.TARGET.POFS is      --  Transform PDL_PART to TARGET
                         when N =>
                            PDL_PART := (N, SUFFIX.ENTR.TARGET.N);
                         when PRON =>
@@ -1022,7 +1021,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                            ((SL(I).IR.QUAL.ADJ.CO   <= PDL_PART.ADJ.CO  ) or
                                ((SL(I).IR.QUAL.ADJ.CO = X)  or (PDL_PART.ADJ.CO = X)))    then
                         --  Note the reversal on comparisom
-                        --PUT(" HIT  ADJ   ");
+ --PUT(" HIT  ADJ   ");
                         --  Need to transfer the gender of the dictionary item
                         --  Need to transfer the CO of the ADJ dictionary item
                            if PDL_PART.ADJ.CO in POS..SUPER  then
@@ -1071,7 +1070,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                                                              SL(I).IR.QUAL.NUM.CS,
                                                              SL(I).IR.QUAL.NUM.NUMBER,
                                                              SL(I).IR.QUAL.NUM.GENDER,
-                                                             PDL_PART.NUM.SORT )  ),
+                                                             NUM_SORT)  ),
                                               KEY => SL(I).IR.KEY,
                                               ENDING => SL(I).IR.ENDING,
                                               AGE => SL(I).IR.AGE,
@@ -1224,19 +1223,26 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
          --  The prefixes should be ordered with the longest/most likely first
             SSA : STEM_ARRAY;
             L : INTEGER :=  0;
-            XPDL : PRUNED_DICTIONARY_LIST;
-
+            --use TEXT_IO;
+            --use INFLECTIONS_PACKAGE.INTEGER_IO;
+            
          begin
          --PUT_LINE("Entering APPLY_PREFIX");
             SXX := (others => NULL_PARSE_RECORD);    --  !!!!!!!!!!!!!!!!!!!!!!!
-         --PUT(NUMBER_OF_PREFIXES); PUT(INTEGER(SA'LENGTH)); PUT(SA'LAST); NEW_LINE;
+            
+           if WORDS_MDEV(USE_PREFIXES)  then
+              
+
+         
+--PUT(NUMBER_OF_PREFIXES); PUT(INTEGER(SA'LENGTH)); PUT(SA'LAST); NEW_LINE;
             for I in 1..NUMBER_OF_PREFIXES  loop       --  Loop through PREFIXES
                L :=  0;
                for J in SA'RANGE  loop                  --  Loop through stem array
+--PUT("J = "); PUT(J); PUT("   SA(J) = "); PUT(SA(J)); NEW_LINE;
                   if (SA(J)(1) = PREFIXES(I).FIX(1))  then  --  Cuts down a little -- do better
                   if SUBTRACT_PREFIX(SA(J), PREFIXES(I)) /=
                   HEAD(SA(J), MAX_STEM_SIZE)  then
-                  --PUT_LINE("Hit on prefix  " & PREFIXES(I).FIX);
+--PUT_LINE("Hit on prefix  " & PREFIXES(I).FIX);
                   --PUT("I = "); PUT(I); PUT("  "); PUT(PREFIXES(I).FIX); PUT("  "); 
                   --PUT("J = "); PUT(J); PUT("  "); PUT(SA(J)); NEW_LINE;
                      L := L + 1;            --  We have a hit, make new stem array item
@@ -1271,6 +1277,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                   end if;
                end if;
              end loop;      --  Loop on I for PREFIXES
+           end if;  --  On USE_PREFIXES
          end APPLY_PREFIX;
 
 
@@ -1280,6 +1287,9 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
             SSA : STEM_ARRAY;
             L : INTEGER :=  0;
             SUFFIX_HIT : INTEGER := 0;
+--            use TEXT_IO;
+--            use INFLECTIONS_PACKAGE.INTEGER_IO;
+            
          begin
          --PUT_LINE("Entering APPLY_SUFFIX");
          --PUT(NUMBER_OF_SUFFIXES); PUT(INTEGER(SA'LENGTH)); PUT(SA'LAST); NEW_LINE;
@@ -1304,7 +1314,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                   SEARCH_DICTIONARIES(SSA(1..L),
                                       NULL_PREFIX_ITEM, SUFFIXES(I));     --  So run new dictionary search
                --  For suffixes we allow as many as match 
-
+               
                   if  PDL_INDEX /= 0     then                  --  Dict search was successful
                   --PUT_LINE("IN APPLY_SUFFIX -  PDL_INDEX not 0     after suffix  " & SUFFIXES(I).FIX);
 
@@ -1387,7 +1397,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                for Z in 0..MIN(MAX_STEM_SIZE, LEN(INPUT_WORD))  loop
                   if SA(Z) /= NOT_A_STEM  then
                   --PUT(Z); PUT(J); PUT("  "); PUT_LINE(SA(Z));
-                     SSA(J) := SA(Z);
+                     SSA(J) := SA(Z);                                               
                      SSA_MAX := J;
                      J := J + 1;
                   end if;
@@ -1398,15 +1408,17 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
 
 
 
---TEXT_IO.PUT_LINE("PRUNE_STEMS   checking NOT DO_ONLY_FIXES");
+--TEXT_IO.PUT_LINE("PRUNE_STEMS   checking (not)    DO_ONLY_FIXES   = " & BOOLEAN'IMAGE(WORDS_MDEV(DO_ONLY_FIXES)));
             if not WORDS_MDEV(DO_ONLY_FIXES)  then   --  Just bypass main dictionary search
 --TEXT_IO.PUT_LINE("Calling SEARCH_DICTIONARIES from PRUNE_STEMS   ---  General case");
 
                SEARCH_DICTIONARIES(SSA(1..SSA_MAX), NULL_PREFIX_ITEM, NULL_SUFFIX_ITEM);
 --TEXT_IO.PUT_LINE("Finished SEARCH_DICTIONARIES from PRUNE_STEMS   ---  General case");
             end if;
-
-         -----------------------------------------------------------------
+--TEXT_IO.PUT_LINE("PRUNE_STEMS   passing over because of NOT DO_ONLY_FIXES");
+           
+ 
+--              ---------------------------------------------------------------
 --TEXT_IO.PUT_LINE("PRUNE_STEMS   below  NOT DO_ONLY_FIXES  PA_LAST = " 
 --& INTEGER'IMAGE(PA_LAST));
 
@@ -1415,45 +1427,47 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                   or WORDS_MDEV(DO_FIXES_ANYWAY))  and then 
                 WORDS_MODE(DO_FIXES)  then
                 
-            --  So try prefixes and suffixes, Generate a new SAA array, search again
---TEXT_IO.PUT_LINE(" PDL_INDEX = 0     after straight search   ------  So APPLY_SUFFIX");
+              ----So try prefixes and suffixes, Generate a new SAA array, search again
+--TEXT_IO.PUT_LINE(" PDL_INDEX = 0     after straight search   ------  So APPLY_SUFFIX  PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+
                if SXX(1) = NULL_PARSE_RECORD  then        --  We could not find a match with suffix
                   APPLY_PREFIX(SSA(1..SSA_MAX), NULL_SUFFIX_ITEM, SX, SXX, PA, PA_LAST);
                end if;
-            ----------------
+            --------------
                if SXX(1) = NULL_PARSE_RECORD  then        --  We could not find a match with suffix
                   APPLY_SUFFIX(SSA(1..SSA_MAX), SX, SXX, PA, PA_LAST);
                   if SXX(1) = NULL_PARSE_RECORD  then        --  We could not find a match with suffix
-                  --  So try prefixes, Generate a new SAA array, search again
---TEXT_IO.PUT_LINE(" PDL_INDEX = 0     after suffix search  -----  So APPLY_PREFIX by itself");
-                  --  Need to use the new SSA, modified to include suffixes
+                    ----So try prefixes, Generate a new SAA array, search again
+--TEXT_IO.PUT_LINE(" PDL_INDEX = 0     after suffix search  -----  So APPLY_PREFIX by itself  PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+                    ----Need to use the new SSA, modified to include suffixes
                      APPLY_PREFIX(SSA(1..SSA_MAX), NULL_SUFFIX_ITEM, SX, SXX, PA, PA_LAST);
-                  --PUT_LINE("PREFIXES applied");
-                  ----------------
+--TEXT_IO.PUT_LINE("PREFIXES applied  PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+                  --------------
                   end if;       --  Suffix failed
                end if;       --  Suffix failed
             else
---TEXT_IO.PUT_LINE(" PDL_INDEX not 0     after straight search   ------  So REDUCE_STEMS");
+--TEXT_IO.PUT_LINE(" PDL_INDEX not 0     after straight search   ------  So REDUCE_STEMS  PA_LAST = " & INTEGER'IMAGE(PA_LAST));
                REDUCE_STEM_LIST(SX, SXX, NULL_PREFIX_ITEM, NULL_SUFFIX_ITEM);
                if PA_LAST = 0  and then  SXX(1) = NULL_PARSE_RECORD  then
---TEXT_IO.PUT_LINE("Although  PDL_INDEX not 0     after straight search , SXX fails");
-               ----------------
+--TEXT_IO.PUT_LINE("Although  PDL_INDEX not 0     after straight search , SXX fails  PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+               --------------
                   if WORDS_MODE(DO_FIXES)  then
                      APPLY_SUFFIX(SSA(1..SSA_MAX), SX, SXX, PA, PA_LAST);
-                  --PUT_LINE("SUFFIXES applied");
+--TEXT_IO.PUT_LINE("SUFFIXES applied  PA_LAST = " & INTEGER'IMAGE(PA_LAST));
                      if SXX(1) = NULL_PARSE_RECORD  then        --  We could not find a match with suffix
-                     --  So try prefixes, Generate a new SAA array, search again
-                     --PUT_LINE(" PDL_INDEX = 0     after suffix search  -----  So APPLY_PREFIX by itself");
-                     --  Need to use the new SSA, modified to include suffixes
+                       ----So try prefixes, Generate a new SAA array, search again
+--TEXT_IO.PUT_LINE(" PDL_INDEX = 0     after suffix search  -----  So APPLY_PREFIX by itself  PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+                       ----Need to use the new SSA, modified to include suffixes
                         APPLY_PREFIX(SSA(1..SSA_MAX), NULL_SUFFIX_ITEM,
                                      SX, SXX, PA, PA_LAST);
-                     --PUT_LINE("PREFIXES applied");
-                     ----------------
+--TEXT_IO.PUT_LINE("PREFIXES applied  PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+                     --------------
                      end if;   --  Suffix failed
                   end if;     --  If DO_FIXES then do
                end if;       --  First search passed but SXX null
             end if;         --  First search failed
 
+--TEXT_IO.PUT_LINE("End of PRUNE_STEMS   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
 
 
          end PRUNE_STEMS;
@@ -1656,7 +1670,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
          --  No blank endings in these pronouns
             LEL_SECTION_IO.READ(INFLECTIONS_SECTIONS_FILE, LEL, 4);
 
-         --  M used here wher I is used in REDUCE, maybe make consistent
+         --  M used here while I is used in REDUCE, maybe make consistent
             M := 0;
          ON_INFLECTS:
             for Z in reverse 1..MIN(4, LENGTH_OF_WORD)  loop     --  optimized for qu-pronouns
@@ -1740,12 +1754,15 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
          procedure TRY_TACKONS(INPUT_WORD : STRING) is
             TACKON_HIT : BOOLEAN := FALSE;
             TACKON_ON  : BOOLEAN := FALSE;
+            TACKON_LENGTH : constant INTEGER := 0; 
             J : INTEGER := 0;
+            DE : DICTIONARY_ENTRY := NULL_DICTIONARY_ENTRY;
+            MEAN : MEANING_TYPE := NULL_MEANING_TYPE;
             ENTERING_PA_LAST : INTEGER := PA_LAST;
-            START_OF_LOOP : INTEGER := 4;              --  Hard number  !!!!!!!!!!!!!!!
+            START_OF_LOOP : INTEGER := 5;              --  Hard number  !!!!!!!!!!!!!!!
             END_OF_LOOP : INTEGER := NUMBER_OF_TACKONS;
          begin
-         --TEXT_IO.PUT_LINE("TRYing TACKONS   *******************************************  ");  
+--TEXT_IO.PUT_LINE("TRYing TACKONS   *******************************************  ");  
 
          LOOP_OVER_TACKONS:
             for I in START_OF_LOOP..END_OF_LOOP  loop
@@ -1757,7 +1774,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                   LESS : constant STRING :=
                      SUBTRACT_TACKON(INPUT_WORD, TACKONS(I));
                begin
-               --PUT_LINE("LESS = " & LESS);
+--TEXT_IO.PUT_LINE("LESS = " & LESS);
                   if LESS  /= INPUT_WORD  then       --  LESS is less
 
                   --==========================================================
@@ -1773,18 +1790,19 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                      WORD(LESS, PA, PA_LAST);
 
 
-                  --TEXT_IO.PUT("In TRY_TACKONS  Left WORD    ");
-                  --TEXT_IO.PUT("PA_LAST = "); TEXT_IO.PUT(INTEGER'IMAGE(PA_LAST)); TEXT_IO.PUT("  "); 
-                  --TEXT_IO.PUT(TACKONS(I).TACK);
-                  --TEXT_IO.NEW_LINE;
+--                  TEXT_IO.PUT("In TRY_TACKONS  Left WORD    ");
+--                  TEXT_IO.PUT("PA_LAST = "); TEXT_IO.PUT(INTEGER'IMAGE(PA_LAST)); TEXT_IO.PUT("  "); 
+--                  TEXT_IO.PUT(TACKONS(I).TACK);
+--                  TEXT_IO.NEW_LINE;
 
                   -----------------------------------------
 
 
                      if PA_LAST > ENTERING_PA_LAST  then      --  we have a possible word
-                     --PUT("TACKONS(I).ENTR.BASE.PART = ");  PUT(TACKONS(I).ENTR.BASE.PART); NEW_LINE;
+ --TEXT_IO.PUT("I = " & INTEGER'IMAGE(I) & "  " & TACKONS(I).TACK & "  TACKONS(I).ENTR.BASE.PART = ");  
+ --PART_OF_SPEECH_TYPE_IO.PUT(TACKONS(I).ENTR.BASE.PART); TEXT_IO.NEW_LINE;
 
-                        if TACKONS(I).ENTR.BASE.PART = X  then          --  on PART (= X?)
+                        if TACKONS(I).ENTR.BASE.POFS = X  then          --  on PART (= X?)
                         --PUT("TACKON X found "); PUT( TACKONS(I).TACK); NEW_LINE;
                         --PUT("PA_LAST = "); PUT(PA_LAST); PUT("  "); 
                         --PUT("TACKON MNPC  "); PUT( TACKONS(I).MNPC); NEW_LINE;
@@ -1792,28 +1810,39 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                         --PUT("TACKON_HIT  = "); PUT(TACKON_HIT); NEW_LINE;  
                            TACKON_ON  := FALSE;
 
-                        else                                            --  on PART (= X?)
+                        else                                            
 
                            J := PA_LAST;
 
                            while J >= ENTERING_PA_LAST+1  loop        --  Sweep backwards over PA
                            --  Sweeping up inapplicable fixes, 
-                           --  although we only have TACKONs for X or PRON - so far
+                           --  although we only have TACKONs for X or PRON or ADJ - so far
                            --  and there are no fixes for PRON - so far
-                           --PUT("PA(J).IR.QUAL.POFS = ");  PUT(PA(J).IR.QUAL.POFS); NEW_LINE;
+--TEXT_IO.PUT("J = " & INTEGER'IMAGE(J) & "  PA(J).IR.QUAL = ");  
+--QUALITY_RECORD_IO.PUT(PA(J).IR.QUAL); 
+--TEXT_IO.NEW_LINE;
 
                               if ((PA(J).IR.QUAL.POFS = PREFIX) and then (TACKON_ON))  then
                                  null;          --  check PART
                                  TACKON_ON  := FALSE;
-                              elsif ((PA(J).IR.QUAL.POFS = SUFFIX) and then (TACKON_ON))  then --  check PART
+                              elsif ((PA(J).IR.QUAL.POFS = SUFFIX) and then (TACKON_ON))  then 
+                                --  check PART
+                               
                                  null;
                                  TACKON_ON  := FALSE;
 
 
-                              elsif PA(J).IR.QUAL.POFS = TACKONS(I).ENTR.BASE.PART  then
-                                                                 --  check PART
-                                 case TACKONS(I).ENTR.BASE.PART is
-                                 --when N       =>
+                              elsif PA(J).IR.QUAL.POFS = TACKONS(I).ENTR.BASE.POFS  then
+                                DICT_IO.SET_INDEX(DICT_FILE(PA(J).D_K), PA(J).MNPC);
+                                DICT_IO.READ(DICT_FILE(PA(J).D_K), DE);
+                                MEAN := DE.MEAN;
+ 
+--TEXT_IO.PUT("J = " & INTEGER'IMAGE(J) & "  PA(J).IR.QUAL = ");  
+--QUALITY_RECORD_IO.PUT(PA(J).IR.QUAL); 
+--TEXT_IO.NEW_LINE;
+                             --  check PART                              
+                                case TACKONS(I).ENTR.BASE.POFS is
+                                  --when N       =>
                                     when PRON    =>              --  Only one we have other than X
                                     --PUT("TACK/PA DECL "); PUT(PA(J).IR.QUAL.PRON.DECL); PUT("  -  "); 
                                     --PUT(TACKONS(I).ENTR.BASE.PRON.DECL); NEW_LINE;
@@ -1830,8 +1859,20 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                                        else
                                           PA(J..PA_LAST-1) := PA(J+1..PA_LAST);
                                           PA_LAST := PA_LAST - 1;
-                                       end if;
-                                 --when ADJ     =>
+                                          
+                                       end if;     
+                                       
+                                     when ADJ     =>           
+                                        --  Forego all checks, even on DECL of ADJ
+                                        --  -cumque is the only one I have now
+                                      --  if  .......
+                                          TACKON_HIT := TRUE;
+                                          TACKON_ON  := TRUE;
+                                      --  else
+                                      --    PA(J..PA_LAST-1) := PA(J+1..PA_LAST);
+                                      --    PA_LAST := PA_LAST - 1;
+                                      --  end if;     
+                                      
                                  --when ADV     =>
                                  --when V       =>
                                     when others  =>
@@ -1856,7 +1897,12 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                         if TACKON_HIT  then
                         --PUT("Where it counts TACKON_HIT  = "); PUT(TACKON_HIT); NEW_LINE;  
                         --  Put on TACKON
-                           PA_LAST := PA_LAST + 1;
+                      
+                     
+                     
+                    
+                     
+                          PA_LAST := PA_LAST + 1;
                            PA(ENTERING_PA_LAST+2..PA_LAST) :=
                               PA(ENTERING_PA_LAST+1..PA_LAST-1);
                            PA(ENTERING_PA_LAST+1) := (TACKONS(I).TACK,
@@ -1894,8 +1940,9 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
          end if;
 
 
-         RUN_UNIQUES(INPUT_WORD, UNIQUE_FOUND, PA, PA_LAST);
+         RUN_UNIQUES(INPUT_WORD, UNIQUE_FOUND, PA, PA_LAST);     
 
+         
       --if INPUT_WORD(INPUT_WORD'FIRST) in 'a'..'z'  then
       --      CONSTRUCT_STEMS(INPUT_WORD, 
       --      SEARCH_DICTIONARIES();
@@ -1905,20 +1952,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
       --if INPUT_WORD(INPUT_WORD'FIRST) in 'a'..'z'  then
 --TEXT_IO.PUT_LINE("After UNIQUES  INPUT = " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
 
-      --==========================================================
-         RUN_INFLECTIONS(INPUT_WORD, SS);
-         PRUNE_STEMS(INPUT_WORD, SS, SSS);
---TEXT_IO.PUT_LINE("After PRUNE  INPUT = " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
-         if SSS(1) /= NULL_PARSE_RECORD   then
-            ORDER_STEMS(SSS);
-            ARRAY_STEMS(SSS, PA, PA_LAST);
-            SSS(1) := NULL_PARSE_RECORD;
-         end if;
---TEXT_IO.PUT_LINE("After ARRAY  INPUT = " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
-      --==========================================================
-
-
-
+         
          QU:
          declare
             PA_QSTART : INTEGER := PA_LAST;
@@ -1948,59 +1982,58 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                         PA(PA_LAST).D_K  := ADDONS;
                         PA(PA_LAST).MNPC := TICKONS(I).MNPC;
                      end if;
+                     
 
 
                      if Q_WORD'LENGTH >= 3   and then   --  qui is shortest QU_PRON
                         ((Q_WORD(Q_WORD'FIRST..Q_WORD'FIRST+1) = "qu")  or
                          (Q_WORD(Q_WORD'FIRST..Q_WORD'FIRST+1) = "cu"))  then
                        if Q_WORD(Q_WORD'FIRST..Q_WORD'FIRST+1) = "qu"  then
-                          QKEY := 1;
-                          PROCESS_QU_PRONOUNS(Q_WORD, QKEY);
-                        elsif Q_WORD(Q_WORD'FIRST..Q_WORD'FIRST+1) = "cu"  then
-                          QKEY := 2;
-                          PROCESS_QU_PRONOUNS(Q_WORD, QKEY);
-                        end if;
-                        if PA_LAST <= PA_QSTART   and then
-                          QKEY > 0                    then    --  If did not find a PACKON
-                          if Q_WORD(Q_WORD'FIRST..Q_WORD'FIRST+1) = "qu"  then
-                          PROCESS_PACKONS(Q_WORD, QKEY);
-                           elsif Q_WORD(Q_WORD'FIRST..Q_WORD'FIRST+1) = "cu"  then
-                          PROCESS_PACKONS(Q_WORD, QKEY);
-                          end if;
+                         QKEY := 1;
+                         PROCESS_QU_PRONOUNS(Q_WORD, QKEY);
+                       elsif Q_WORD(Q_WORD'FIRST..Q_WORD'FIRST+1) = "cu"  then
+                         QKEY := 2;
+                         PROCESS_QU_PRONOUNS(Q_WORD, QKEY);
+                       end if;
+                       if PA_LAST <= PA_QSTART + 1  and then
+                         QKEY > 0                    then    --  If did not find a PACKON
+                         if Q_WORD(Q_WORD'FIRST..Q_WORD'FIRST+1) = "qu"  then
+                           PROCESS_PACKONS(Q_WORD, QKEY);
+                         elsif Q_WORD(Q_WORD'FIRST..Q_WORD'FIRST+1) = "cu"  then
+                           PROCESS_PACKONS(Q_WORD, QKEY);
+                         end if;
+                       else
+                         exit;
+                       end if;
+                       if PA_LAST > PA_QSTART + 1  then
+                         exit; 
+                       end if;
 
-                        else
-                           exit;
-                        end if;
-                        if PA_LAST > PA_QSTART   then
-                           exit; end if;
 
-
-
---                           
-
+                     elsif INPUT_WORD'LENGTH >= 6  then   --  aliqui as aliQU_PRON
+                       if INPUT_WORD(INPUT_WORD'FIRST..INPUT_WORD'FIRST+4) = "aliqu"  then
+                         PROCESS_QU_PRONOUNS(INPUT_WORD, 1);
+                       elsif INPUT_WORD(INPUT_WORD'FIRST..INPUT_WORD'FIRST+4) = "alicu"  then
+                         PROCESS_QU_PRONOUNS(INPUT_WORD, 2);
+  
+                       end if;
+                     
                      end if;
+                        
+                      
 
-                     if PA_LAST = PA_START + 1  then    --  Nothing found
+                  if PA_LAST = PA_START + 1  then    --  Nothing found
                         PA_LAST := PA_START;             --  Reset PA_LAST
                      else
                         exit;
                      end if;
+                     
 
                   end if;
                end;
             end loop;
 
-                     if INPUT_WORD'LENGTH >= 6  then   --  aliqui as aliQU_PRON
-                       if INPUT_WORD(INPUT_WORD'FIRST..INPUT_WORD'FIRST+4) = "aliqu"  then
-                         PROCESS_QU_PRONOUNS(INPUT_WORD, 1);
-                       elsif INPUT_WORD(INPUT_WORD'FIRST..INPUT_WORD'FIRST+4) = "alicu"  then
-                         PROCESS_QU_PRONOUNS(INPUT_WORD, 2);
-                       end if;
-                     end if;
-
-
-
-              WORDS_MODE := SAVED_MODE_ARRAY;
+            WORDS_MODE := SAVED_MODE_ARRAY;
 
 
 
@@ -2008,6 +2041,19 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                when others =>
                   WORDS_MODE := SAVED_MODE_ARRAY;
          end QU;
+
+      --==========================================================
+         RUN_INFLECTIONS(INPUT_WORD, SS);
+         PRUNE_STEMS(INPUT_WORD, SS, SSS);
+--TEXT_IO.PUT_LINE("After PRUNE  INPUT = " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+         if SSS(1) /= NULL_PARSE_RECORD   then
+            ORDER_STEMS(SSS);
+            ARRAY_STEMS(SSS, PA, PA_LAST);
+            SSS(1) := NULL_PARSE_RECORD;
+         end if;
+--TEXT_IO.PUT_LINE("After ARRAY  INPUT = " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+      --==========================================================
+
 
 
 

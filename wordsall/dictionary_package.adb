@@ -8,6 +8,8 @@ package body DICTIONARY_PACKAGE is
   MNPC_IO_DEFAULT_WIDTH : constant NATURAL := 6;
   NUMERAL_VALUE_TYPE_IO_DEFAULT_WIDTH : constant NATURAL := 5;
   KIND_ENTRY_IO_DEFAULT_WIDTH : constant NATURAL := VERB_KIND_TYPE_IO.DEFAULT_WIDTH;
+  --PART_WIDTH : NATURAL;
+  
   
   function NUMBER_OF_STEMS(P : PART_OF_SPEECH_TYPE) return INTEGER is
   begin
@@ -847,7 +849,7 @@ package body PART_ENTRY_IO is
       when others =>
         null;
     end case;
-    PUT(F, STRING'((INTEGER(COL(F))..PART_ENTRY_IO.DEFAULT_WIDTH+C-1 => ' ')));
+    --PUT(F, STRING'((INTEGER(COL(F))..PART_ENTRY_IO.DEFAULT_WIDTH+C-1 => ' ')));
    return;
   end PUT;
 
@@ -885,7 +887,7 @@ package body PART_ENTRY_IO is
       when others =>
         null;
     end case;
-    PUT(STRING'((INTEGER(COL)..PART_ENTRY_IO.DEFAULT_WIDTH+C-1 => ' ')));
+    --PUT(STRING'((INTEGER(COL)..PART_ENTRY_IO.DEFAULT_WIDTH+C-1 => ' ')));
     return;
   end PUT;
 
@@ -989,7 +991,7 @@ package body PART_ENTRY_IO is
       when others =>
         null;
     end case;
-    S(M+1..S'LAST) := (others => ' ');
+    --S(M+1..S'LAST) := (others => ' ');
   end PUT;
 
 
@@ -1142,7 +1144,7 @@ package body KIND_ENTRY_IO is
       when PACK =>
         PUT(F, P.PACK_KIND);
       when NUM =>
-        PUT(F, P.NUM_VALUE);
+        PUT(F, P.NUM_VALUE, NUMERAL_VALUE_TYPE_IO_DEFAULT_WIDTH);
       when V =>
         PUT(F, P.V_KIND);
       when VPAR =>
@@ -1167,7 +1169,7 @@ package body KIND_ENTRY_IO is
       when PACK =>
         PUT(P.PACK_KIND);
       when NUM =>
-        PUT(P.NUM_VALUE);
+        PUT(P.NUM_VALUE, NUMERAL_VALUE_TYPE_IO_DEFAULT_WIDTH);
       when V =>
         PUT(P.V_KIND);
       when VPAR =>
@@ -1407,7 +1409,8 @@ package body DICTIONARY_ENTRY_IO is
   use KIND_ENTRY_IO;
 
   SPACER : CHARACTER := ' ';
-
+  PART_COL : NATURAL := 0;
+  
   DE : DICTIONARY_ENTRY;
 
   procedure GET(F : in FILE_TYPE; D : out DICTIONARY_ENTRY) is
@@ -1421,6 +1424,8 @@ package body DICTIONARY_ENTRY_IO is
     GET(F, D.PART.POFS, D.KIND);
     GET(F, SPACER);
     GET(F, D.TRAN);
+    GET(F, SPACER);
+    GET(F, D.MEAN);
    end GET;
 
   procedure GET(D : out DICTIONARY_ENTRY) is
@@ -1434,6 +1439,8 @@ package body DICTIONARY_ENTRY_IO is
     GET(D.PART.POFS, D.KIND);
     GET(SPACER);
     GET(D.TRAN);
+    GET(SPACER);
+    GET(D.MEAN);
    end GET;
 
   procedure PUT(F : in FILE_TYPE; D : in DICTIONARY_ENTRY) is
@@ -1442,11 +1449,14 @@ package body DICTIONARY_ENTRY_IO is
       PUT(F, D.STEMS(I));
       PUT(F, ' ');
     end loop;
+    PART_COL := NATURAL(COL(F));
     PUT(F, D.PART);
     PUT(F, ' ');
     PUT(F, D.PART.POFS, D.KIND);
-    PUT(F, ' ');
+    SET_COL(F, COUNT(PART_COL + PART_ENTRY_IO.DEFAULT_WIDTH + 1));
     PUT(F, D.TRAN);
+    PUT(F, ' ');
+    PUT(F, D.MEAN);
    end PUT;
 
   procedure PUT(D : in DICTIONARY_ENTRY) is
@@ -1455,11 +1465,14 @@ package body DICTIONARY_ENTRY_IO is
       PUT(D.STEMS(I));
       PUT(' ');
     end loop;
+    PART_COL := NATURAL(COL);
     PUT(D.PART);
     PUT(' ');
     PUT(D.PART.POFS, D.KIND);
-    PUT(' ');
+    SET_COL(COUNT(PART_COL + PART_ENTRY_IO.DEFAULT_WIDTH + 1));
     PUT(D.TRAN);
+    PUT(' ');
+    PUT(D.MEAN);
    end PUT;
 
   procedure GET(S : in STRING; D : out DICTIONARY_ENTRY; LAST : out INTEGER) is
@@ -1479,6 +1492,9 @@ package body DICTIONARY_ENTRY_IO is
     L := L + 1;
     M := L + TRANSLATION_RECORD_IO.DEFAULT_WIDTH;
     GET(S(L+1..S'LAST), D.TRAN, L);
+    L := L + 1;
+    M := L + MAX_MEANING_SIZE;
+    D.MEAN := HEAD(S(L+1..S'LAST), MAX_MEANING_SIZE);
     LAST := M;
   end GET;
 
@@ -1492,16 +1508,20 @@ package body DICTIONARY_ENTRY_IO is
       L := M + 1;
       S(L) :=  ' ';
     end loop;
+    PART_COL := L + 1;
     M := L + PART_ENTRY_IO.DEFAULT_WIDTH;
     PUT(S(L+1..M), D.PART);
     L := M + 1;
     S(L) :=  ' ';
     M := L + KIND_ENTRY_IO_DEFAULT_WIDTH;
     PUT(S(L+1..M), D.PART.POFS, D.KIND);
+    L := PART_COL + PART_ENTRY_IO.DEFAULT_WIDTH + 1;
+    M := L + TRANSLATION_RECORD_IO.DEFAULT_WIDTH;
+    PUT(S(L+1..M), D.TRAN);
     L := M + 1;
     S(L) :=  ' ';
-    M := M + TRANSLATION_RECORD_IO.DEFAULT_WIDTH;
-    PUT(S(L+1..M), D.TRAN);
+    M := M + MAX_MEANING_SIZE;
+    S(L+1..M) := D.MEAN;
     S(M+1..S'LAST) := (others => ' ');
   end PUT;
 
@@ -1537,14 +1557,7 @@ begin     --  initialization of body of DICTIONARY_PACKAGE
 
   SOURCE_TYPE_IO.DEFAULT_WIDTH := SOURCE_TYPE'WIDTH;
 
---  AAMNPC_RECORD_IO.DEFAULT_WIDTH :=
---                                     AGE_TYPE_IO.DEFAULT_WIDTH + 1 +
---                                     AREA_TYPE_IO.DEFAULT_WIDTH + 1 +
---                                     GEO_TYPE_IO.DEFAULT_WIDTH + 1 +
---                                     FREQUENCY_TYPE_IO.DEFAULT_WIDTH + 1 +
---                                     SOURCE_TYPE_IO.DEFAULT_WIDTH + 1 +
---                                     6;
---
+
 
   PARSE_RECORD_IO.DEFAULT_WIDTH :=
                                    MAX_STEM_SIZE + 1 +
@@ -1569,18 +1582,24 @@ begin     --  initialization of body of DICTIONARY_PACKAGE
   VERB_ENTRY_IO.DEFAULT_WIDTH :=
                    DECN_RECORD_IO.DEFAULT_WIDTH + 1 +
                    VERB_KIND_TYPE_IO.DEFAULT_WIDTH;
-  PREPOSITION_ENTRY_IO.DEFAULT_WIDTH := CASE_TYPE_IO.DEFAULT_WIDTH;
+
+  PREPOSITION_ENTRY_IO.DEFAULT_WIDTH := 0;
   CONJUNCTION_ENTRY_IO.DEFAULT_WIDTH := 0;
   INTERJECTION_ENTRY_IO.DEFAULT_WIDTH := 0;
   NUMERAL_ENTRY_IO.DEFAULT_WIDTH :=
                  DECN_RECORD_IO.DEFAULT_WIDTH + 1 +
                  NUMERAL_SORT_TYPE_IO.DEFAULT_WIDTH;
 
-  PART_ENTRY_IO.DEFAULT_WIDTH := PART_OF_SPEECH_TYPE_IO.DEFAULT_WIDTH + 1 +
-                              NUMERAL_ENTRY_IO.DEFAULT_WIDTH; --  Largest
 
+  PART_ENTRY_IO.DEFAULT_WIDTH := PART_OF_SPEECH_TYPE_IO.DEFAULT_WIDTH + 1 +  
+                NUMERAL_ENTRY_IO.DEFAULT_WIDTH + 1 +         
+                NUMERAL_VALUE_TYPE_IO_DEFAULT_WIDTH;
 
+  
 
+    --  Should make up a MAX of PART_ENTRY + KIND_ENTRY (same POFS) WIDTHS
+
+                                           
   TRANSLATION_RECORD_IO.DEFAULT_WIDTH :=
                                          AGE_TYPE_IO.DEFAULT_WIDTH + 1 +
                                          AREA_TYPE_IO.DEFAULT_WIDTH + 1 +

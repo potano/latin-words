@@ -11,7 +11,8 @@ package DICTIONARY_PACKAGE is
   NULL_STEMS_TYPE : constant STEMS_TYPE := (others => NULL_STEM_TYPE);
 
 
-  type DICTIONARY_KIND is (ADDONS,       --  For FIXES
+  type DICTIONARY_KIND is (X,            --  null
+                           ADDONS,       --  For FIXES
                            XXX,          --  TRICKS
                            YYY,          --  Syncope
                            NNN,          --  Unknown Name
@@ -21,16 +22,16 @@ package DICTIONARY_PACKAGE is
 
   package DICTIONARY_KIND_IO is new TEXT_IO.ENUMERATION_IO(DICTIONARY_KIND);
   
-  EXT : array (DICTIONARY_KIND) of STRING(1..3) := ("ADD", "XXX", "YYY", 
+  EXT : array (DICTIONARY_KIND) of STRING(1..3) := ("X  ", "ADD", "XXX", "YYY", 
                                                     "NNN", "RRR", "PPP",
                                                     "GEN", "SPE", "LOC", 
                                                     "UNI");
                      
-  DEFAULT_DICTIONARY_KIND : DICTIONARY_KIND := XXX;
+  DEFAULT_DICTIONARY_KIND : DICTIONARY_KIND := X;
   
-  DICTIONARY_AVAILABLE : array (DICTIONARY_KIND) of BOOLEAN := (
-                                FALSE, FALSE, FALSE, FALSE, FALSE,  --  don't SEARCH
-                                FALSE, FALSE, FALSE, FALSE, FALSE);  
+  DICTIONARY_AVAILABLE : array (DICTIONARY_KIND) of BOOLEAN := (FALSE,
+                                FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,  --  don't SEARCH
+                                FALSE, FALSE, FALSE, FALSE);  
     --  Start out as FALSE and set to TRUE when the DICT is loaded
   
   type AREA_TYPE is (
@@ -389,11 +390,11 @@ type PART_ENTRY(POFS : PART_OF_SPEECH_TYPE := X) is
 
  type DICTIONARY_ENTRY is 
     record
-      STEMS : STEMS_TYPE   := NULL_STEMS_TYPE;
-      PART  : PART_ENTRY   := NULL_PART_ENTRY;
-      KIND  : KIND_ENTRY  := NULL_KIND_ENTRY;  
+      STEMS : STEMS_TYPE         := NULL_STEMS_TYPE;
+      PART  : PART_ENTRY         := NULL_PART_ENTRY;
+      KIND  : KIND_ENTRY         := NULL_KIND_ENTRY;  
       TRAN  : TRANSLATION_RECORD := NULL_TRANSLATION_RECORD;
-      MEAN  : MEANING_TYPE := NULL_MEANING_TYPE;
+      MEAN  : MEANING_TYPE       := NULL_MEANING_TYPE;
     end record;
 
  package DICTIONARY_ENTRY_IO is

@@ -12,6 +12,7 @@ with WORD_PACKAGE; use WORD_PACKAGE;
 with LIST_PACKAGE; use LIST_PACKAGE;
 with TRICKS_PACKAGE; use TRICKS_PACKAGE;
 with CONFIG; use CONFIG;
+with PUT_STAT;
 pragma Elaborate(WORD_PARAMETERS);
 procedure PARSE(COMMAND_LINE : STRING := "") is
   use INFLECTIONS_PACKAGE.INTEGER_IO;
@@ -21,13 +22,12 @@ procedure PARSE(COMMAND_LINE : STRING := "") is
   STORAGE_ERROR_COUNT : INTEGER := 0;
 
   J, K, L : INTEGER := 0;
-  LINE, W : STRING(1..2500) := (others => ' ');
+  LINE : STRING(1..2500) := (others => ' ');
   --INPUT : TEXT_IO.FILE_TYPE;
 
-  LINE_NUMBER, WORD_NUMBER : INTEGER := 0;
-
-  PA : PARSE_ARRAY(1..60 ) := (others => NULL_PARSE_RECORD);
-  SYNCOPE_MAX : constant := 10;
+  
+  PA : PARSE_ARRAY(1..100) := (others => NULL_PARSE_RECORD);
+  SYNCOPE_MAX : constant := 20;
   TRICKS_MAX : constant := 40;
   SYPA : PARSE_ARRAY(1..SYNCOPE_MAX) := (others => NULL_PARSE_RECORD);
   TRPA : PARSE_ARRAY(1..TRICKS_MAX) := (others => NULL_PARSE_RECORD);
@@ -35,13 +35,13 @@ procedure PARSE(COMMAND_LINE : STRING := "") is
 
 
   procedure PARSE_LINE(INPUT_LINE : STRING) is
-    L : INTEGER := INPUT_LINE'LAST;
+    L : INTEGER := TRIM(INPUT_LINE)'LAST;
     --LINE : STRING(1..2500) := (others => ' ');
-    PPA_LAST : INTEGER := PA_LAST;
+    W : STRING(1..L) := (others => ' ');      
   begin
-    LINE(1..L) := INPUT_LINE;
     WORD_NUMBER := 0;
-
+    LINE(1..L) := TRIM(INPUT_LINE);
+ 
 
   --  Someday I ought to be interested in punctuation and numbers, but not now
   ELIMINATE_NOT_LETTERS:
@@ -66,10 +66,7 @@ procedure PARSE(COMMAND_LINE : STRING := "") is
     while J <= L  loop
 
 
-      if WORDS_MDEV(HAVE_DEBUG_FILE)  and then  WORDS_MDEV(WRITE_DEBUG_FILE)  then
-        TEXT_IO.RESET(DBG);
-      end if;
-
+      
       --  Skip over leading and intervening blanks, looking for comments
       --  Punctuation, numbers, and special characters were cleared above
       for I in K+1..L  loop
@@ -81,17 +78,6 @@ procedure PARSE(COMMAND_LINE : STRING := "") is
         end if;
         J := I + 1;
       end loop;
-
-
-
-----  Skip over leading and intervening blanks
---      --  Punctuation, numbers, and special characters were cleared above
---      for I in K+1..L  loop
---        exit when LINE(J) in 'A'..'Z';
---        exit when LINE(J) in 'a'..'z';
---        J := I + 1;
---      end loop;
-      --  If there are trailing blanks, J > L
 
       exit when J > L;             --  Kludge
 
@@ -115,11 +101,12 @@ procedure PARSE(COMMAND_LINE : STRING := "") is
           FOLLOWED_BY_PERIOD := TRUE;
           exit;
         end if;
-         exit when (LINE(I) = ' ' or LINE(I) = ',' or LINE(I) = '-'
-                or LINE(I) = ';' or LINE(I) = ':'
-                or LINE(I) = '(' or LINE(I) = '[' or LINE(I) = '{' or LINE(I) = '<'
-                or LINE(I) = ')' or LINE(I) = ']' or LINE(I) = '}' or LINE(I) = '>');
-
+--         exit when (LINE(I) = ' ' or LINE(I) = ',' or LINE(I) = '-'
+--                or LINE(I) = ';' or LINE(I) = ':'
+--                or LINE(I) = '(' or LINE(I) = '[' or LINE(I) = '{' or LINE(I) = '<'
+--                or LINE(I) = ')' or LINE(I) = ']' or LINE(I) = '}' or LINE(I) = '>'
+--                or (CHARACTER'POS(LINE(I)) < 32)  or (CHARACTER'POS(LINE(I)) > 127) );
+          exit when ((LINE(I) not in 'A'..'Z') and (LINE(I) not in 'a'..'z'));
         W(I) := LINE(I);
         K := I;
 
@@ -127,7 +114,6 @@ procedure PARSE(COMMAND_LINE : STRING := "") is
 
 
 
---       if W(J) = UPPER_CASE(W(J))  then
           if W(J) in 'A'..'Z'  and then
              K - J >= 1  and then
              W(J+1) in 'a'..'z'  then
@@ -147,44 +133,216 @@ procedure PARSE(COMMAND_LINE : STRING := "") is
           W(I+1) := 'U';
         end if;
       end loop;
-
+      
 
 declare
 INPUT_WORD : constant STRING := W(J..K);
 ENTERING_PA_LAST : INTEGER := 0;
+ENTERING_TRPA_LAST    : INTEGER := 0;
+HAVE_DONE_ENCLITIC : BOOLEAN := FALSE;
+  
 
+procedure PASS(INPUT_WORD : STRING);
+
+      
+procedure ENCLITIC is
+  SAVE_DO_FIXES  : BOOLEAN := WORDS_MODE(DO_FIXES);
+  SAVE_DO_ONLY_FIXES  : BOOLEAN := WORDS_MDEV(DO_ONLY_FIXES);
+  ENCLITIC_LIMIT : INTEGER := 4;
+begin
+--TEXT_IO.PUT_LINE("Entering ENCLITIC  HAVE DONE = " & BOOLEAN'IMAGE(HAVE_DONE_ENCLITIC));
+    if HAVE_DONE_ENCLITIC  then    return;   end if;
+     
+    ENTERING_PA_LAST := PA_LAST;
+    if PA_LAST > 0 then ENCLITIC_LIMIT := 1; end if;
+    LOOP_OVER_ENCLITIC_TACKONS:
+    for I in 1..ENCLITIC_LIMIT  loop   --  If have parse, only do que of que, ne, ve, (est) 
+
+      REMOVE_A_TACKON:
+      declare
+        LESS : constant STRING :=
+               SUBTRACT_TACKON(INPUT_WORD, TACKONS(I));
+      begin
+--TEXT_IO.PUT_LINE("In ENCLITIC     LESS/TACKON  = " & LESS & "/" & TACKONS(I).TACK); 
+       if LESS  /= INPUT_WORD  then       --  LESS is less
+          --WORDS_MODE(DO_FIXES) := FALSE;
+          WORD_PACKAGE.WORD(LESS, PA, PA_LAST);
+--TEXT_IO.PUT_LINE("In ENCLITICS after WORD NO_FIXES  LESS = " & LESS & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+          TRY_SLURY(LESS, PA, PA_LAST, LINE_NUMBER, WORD_NUMBER);
+--TEXT_IO.PUT_LINE("In ENCLITICS after SLURY  LESS = " & LESS & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+          SYPA_LAST := 0;
+          SYNCOPE(LESS, SYPA, SYPA_LAST);  --  Want SYNCOPE second to make cleaner LIST
+--TEXT_IO.PUT_LINE("In ENCLITIC after SYNCOPE  LESS = " & LESS & "   SYPA_LAST = " & INTEGER'IMAGE(SYPA_LAST));
+          PA_LAST := PA_LAST + SYPA_LAST;   --  Make syncope another array to avoid PA_LAST = 0 problems
+          PA(1..PA_LAST) := PA(1..PA_LAST-SYPA_LAST) & SYPA(1..SYPA_LAST);  --  Add SYPA to PA
+          SYPA(1..SYNCOPE_MAX) := (1..SYNCOPE_MAX => NULL_PARSE_RECORD);   --  Clean up so it does not repeat
+          SYPA_LAST := 0;
+          --  Restore FIXES
+          --WORDS_MODE(DO_FIXES) := SAVE_DO_FIXES;
+          
+          WORDS_MDEV(DO_ONLY_FIXES) := TRUE;
+          WORD(INPUT_WORD, PA, PA_LAST);
+--TEXT_IO.PUT_LINE("In ENCLITICS after ONLY_FIXES  LESS = " & LESS & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+          WORDS_MDEV(DO_ONLY_FIXES) := SAVE_DO_ONLY_FIXES;
+          
+     
+          if PA_LAST > ENTERING_PA_LAST  then      --  have a possible word
+              PA_LAST := PA_LAST + 1;
+              PA(ENTERING_PA_LAST+2..PA_LAST) :=
+                       PA(ENTERING_PA_LAST+1..PA_LAST-1);
+              PA(ENTERING_PA_LAST+1) := (TACKONS(I).TACK,
+                      ((TACKON, NULL_TACKON_RECORD), 0, NULL_ENDING_RECORD, X, X),
+                        ADDONS, TACKONS(I).MNPC);
+                        
+            HAVE_DONE_ENCLITIC := TRUE;
+          end if;
+          exit LOOP_OVER_ENCLITIC_TACKONS;
+        end if;
+      end REMOVE_A_TACKON;
+    end loop LOOP_OVER_ENCLITIC_TACKONS;
+  end ENCLITIC;    
+  
+    
+  procedure TRICKS_ENCLITIC is
+  begin
+--TEXT_IO.PUT_LINE("Entering TRICKS_ENCLITIC");
+    ENTERING_TRPA_LAST := TRPA_LAST;
+    LOOP_OVER_ENCLITIC_TACKONS:
+    for I in 1..4  loop   --  que, ne, ve, (est) 
+
+      REMOVE_A_TACKON:
+      declare
+        LESS : constant STRING :=
+               SUBTRACT_TACKON(INPUT_WORD, TACKONS(I));
+      begin
+--TEXT_IO.PUT_LINE("In TRICKS_ENCLITIC     LESS/TACKON  = " & LESS & "/" & TACKONS(I).TACK); 
+       if LESS  /= INPUT_WORD  then       --  LESS is less
+          --PASS(LESS);
+          TRY_TRICKS(LESS, TRPA, TRPA_LAST, LINE_NUMBER, WORD_NUMBER);
+ --TEXT_IO.PUT_LINE("In TRICKS_ENCLITICS after TRY_TRICKS  LESS = " & LESS & "   TRPA_LAST = " & INTEGER'IMAGE(TRPA_LAST));
+         if TRPA_LAST > ENTERING_TRPA_LAST  then      --  have a possible word
+              TRPA_LAST := TRPA_LAST + 1;
+              TRPA(ENTERING_TRPA_LAST+2..trPA_LAST) :=
+                       TRPA(ENTERING_TRPA_LAST+1..TRPA_LAST-1);
+              TRPA(ENTERING_TRPA_LAST+1) := (TACKONS(I).TACK,
+                      ((TACKON, NULL_TACKON_RECORD), 0, NULL_ENDING_RECORD, X, X),
+                        ADDONS, TACKONS(I).MNPC);
+          end if;
+          exit LOOP_OVER_ENCLITIC_TACKONS;
+        end if;
+      end REMOVE_A_TACKON;
+    end loop LOOP_OVER_ENCLITIC_TACKONS;
+  end TRICKS_ENCLITIC;
 
 procedure PASS(INPUT_WORD : STRING) is
+--  This is the core logic of the program, everything else is details
+  SAVE_DO_FIXES  : BOOLEAN := WORDS_MODE(DO_FIXES);
+  SAVE_DO_ONLY_FIXES  : BOOLEAN := WORDS_MDEV(DO_ONLY_FIXES);
+  SAVE_DO_TRICKS : BOOLEAN := WORDS_MODE(DO_TRICKS);
 begin
-
-
-      WORD(INPUT_WORD, PA, PA_LAST);
-
-
-      SYNCOPE(INPUT_WORD, SYPA, SYPA_LAST);  --  Want SYNCOPE second to make cleaner LIST
-
-      PA_LAST := PA_LAST + SYPA_LAST;   --  Make syncope another array to avoid PA-LAST = 0 problems
-      PA(1..PA_LAST) := PA(1..PA_LAST-SYPA_LAST) & SYPA(1..SYPA_LAST);  --  Add SYPA to PA
-      SYPA(1..SYNCOPE_MAX) := (1..SYNCOPE_MAX => NULL_PARSE_RECORD);   --  Clean up so it does not repeat
-      SYPA_LAST := 0;
-
-      ROMAN_NUMERALS(INPUT_WORD, PA, PA_LAST);      --  Roman numerals does not have the problem
-
-      if (NAME(CURRENT_INPUT) /= NAME(STANDARD_INPUT))  and then
-        not (WORDS_MDEV(MINIMIZE_OUTPUT) or WORDS_MODE(DO_UNKNOWNS_ONLY))  then
-        NEW_LINE;    --?????????????????
-      end if;
-      
-      
+--TEXT_IO.PUT_LINE("Entering PASS with >" & INPUT_WORD);
+  --  Do straight WORDS without FIXES/TRICKS, is the word in the dictionary
+  WORDS_MODE(DO_FIXES) := FALSE;
+  WORD(INPUT_WORD, PA, PA_LAST);
+  TRY_SLURY(INPUT_WORD, PA, PA_LAST, LINE_NUMBER, WORD_NUMBER);
+--TEXT_IO.PUT_LINE("1  PASS_BLOCK for  " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+          
+  --  Pure SYNCOPE
+     SYPA_LAST := 0;
+     SYNCOPE(INPUT_WORD, SYPA, SYPA_LAST);  
+     PA_LAST := PA_LAST + SYPA_LAST;   --  Make syncope another array to avoid PA-LAST = 0 problems
+     PA(1..PA_LAST) := PA(1..PA_LAST-SYPA_LAST) & SYPA(1..SYPA_LAST);  --  Add SYPA to PA
+     SYPA(1..SYNCOPE_MAX) := (1..SYNCOPE_MAX => NULL_PARSE_RECORD);   --  Clean up so it does not repeat
+     SYPA_LAST := 0;
+--TEXT_IO.PUT_LINE("2  PASS_BLOCK for  " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
      
---if (PA_LAST = 0) or DO_TRICKS_ANYWAY  then    --  WORD failed, try to modify the word
-      if (PA_LAST = 0)   then    --  WORD failed, try to modify the word
---PUT_LINE("WORDS fail me");
+     --  There may be a vaild simple parse, if so it is most probable
+     --  But I have to allow for the possibility that -que is answer, not colloque V 
+        ENCLITIC;
+        
+     --  Restore FIXES
+     WORDS_MODE(DO_FIXES) := SAVE_DO_FIXES;
+--TEXT_IO.PUT_LINE("3  PASS_BLOCK for  " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+    
+     --  Now with only fixes
+     if PA_LAST = 0  and then
+       WORDS_MODE(DO_FIXES)  then
+       WORDS_MDEV(DO_ONLY_FIXES) := TRUE;
+ --TEXT_IO.PUT_LINE("3a PASS_BLOCK for  " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+      WORD(INPUT_WORD, PA, PA_LAST);
+ --TEXT_IO.PUT_LINE("3b PASS_BLOCK for  " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+      SYPA_LAST := 0;
+       SYNCOPE(INPUT_WORD, SYPA, SYPA_LAST);  
+ --TEXT_IO.PUT_LINE("3c PASS_BLOCK for  " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+      PA_LAST := PA_LAST + SYPA_LAST;   --  Make syncope another array to avoid PA-LAST = 0 problems
+       PA(1..PA_LAST) := PA(1..PA_LAST-SYPA_LAST) & SYPA(1..SYPA_LAST);  --  Add SYPA to PA
+       SYPA(1..SYNCOPE_MAX) := (1..SYNCOPE_MAX => NULL_PARSE_RECORD);   --  Clean up so it does not repeat
+       SYPA_LAST := 0;
+--TEXT_IO.PUT_LINE("4  PASS_BLOCK for  " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+       ENCLITIC;
+   
+--TEXT_IO.PUT_LINE("5  PASS_BLOCK for  " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+       WORDS_MDEV(DO_ONLY_FIXES) := SAVE_DO_ONLY_FIXES;
+     end if;
+--TEXT_IO.PUT_LINE("6  PASS_BLOCK for  " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+  ROMAN_NUMERALS(INPUT_WORD, PA, PA_LAST);  
+     
+     --  If Pure WORDS and ENCLITICS found something OK, otherwise proceed
+--    if PA_LAST = 0  or        --  If no go, try syncope, fixes
+--      (not WORDS_MODE(TRIM_OUTPUT)) or     
+--       WORDS_MDEV(DO_FIXES_ANYWAY) then     
+--   
+--     
+--     --  If SYNCOPE does it, then OK, otherwise proceed
+--     --  Do not try FIXES (aud+i+i) on audii since SYNCOPE worked
+--     --  Now try FIXES
+--     if PA_LAST = 0  or (not WORDS_MODE(TRIM_OUTPUT)) or     
+--       WORDS_MDEV(DO_FIXES_ANYWAY)  then     
+--      --TRY_SLURY(INPUT_WORD, PA, PA_LAST, LINE_NUMBER, WORD_NUMBER);
+--       if PA_LAST = 0  then 
+--       WORD(INPUT_WORD, PA, PA_LAST);
+--         SYPA_LAST := 0;
+--         --  SYNCOPE after TRICK
+--         SYNCOPE(INPUT_WORD, SYPA, SYPA_LAST);  --  Want SYNCOPE second to make cleaner LIST
+--       end if;
+--     end if;
+--     PA_LAST := PA_LAST + SYPA_LAST;   --  Make syncope another array to avoid PA_LAST = 0 problems
+--     PA(1..PA_LAST) := PA(1..PA_LAST-SYPA_LAST) & SYPA(1..SYPA_LAST);  --  Add SYPA to PA
+--     SYPA(1..SYNCOPE_MAX) := (1..SYNCOPE_MAX => NULL_PARSE_RECORD);   --  Clean up so it does not repeat
+--     SYPA_LAST := 0;
+--
+--  
+-- end if;   --  on A_LAST = 0
+      
+end PASS;
+
+begin   --  PARSE
+  XXX_MEANING := NULL_MEANING_TYPE;
+
+  PASS_BLOCK:
+  begin
+    PA_LAST := 0;
+    WORD_NUMBER := WORD_NUMBER + 1;
+
+    PASS(INPUT_WORD);
+
+  end PASS_BLOCK;
+  
+--TEXT_IO.PUT_LINE("After PASS_BLOCK for  " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+
+     --if (PA_LAST = 0) or DO_TRICKS_ANYWAY  then    --  WORD failed, try to modify the word
+      if (PA_LAST = 0)  and then         
+           not (WORDS_MODE(IGNORE_UNKNOWN_NAMES)  and CAPITALIZED)  then
+      --  WORD failed, try to modify the word
+--TEXT_IO.PUT_LINE("WORDS fail me");
         if WORDS_MODE(DO_TRICKS)  then
---PUT_LINE("DO_TRICKS      PA_LAST    TRPA_LAST  " & INTEGER'IMAGE(PA_LAST) & "   " & INTEGER'IMAGE(TRPA_LAST));
+--TEXT_IO.PUT_LINE("DO_TRICKS      PA_LAST    TRPA_LAST  " & INTEGER'IMAGE(PA_LAST) & "   " & INTEGER'IMAGE(TRPA_LAST));
           WORDS_MODE(DO_TRICKS) := FALSE;  --  Turn it off so wont be circular
           TRY_TRICKS(INPUT_WORD, TRPA, TRPA_LAST, LINE_NUMBER, WORD_NUMBER);
---PUT_LINE("DONE_TRICKS    PA_LAST    TRPA_LAST  " & INTEGER'IMAGE(PA_LAST) & "   " & INTEGER'IMAGE(TRPA_LAST));
+--TEXT_IO.PUT_LINE("DONE_TRICKS    PA_LAST    TRPA_LAST  " & INTEGER'IMAGE(PA_LAST) & "   " & INTEGER'IMAGE(TRPA_LAST));
+          if TRPA_LAST = 0  then
+            TRICKS_ENCLITIC;
+          end if;
           WORDS_MODE(DO_TRICKS) := TRUE;   --  Turn it back on
         end if;
         
@@ -194,74 +352,10 @@ begin
       TRPA_LAST := 0;
 
       end if;
---PUT_LINE("All TRICKS fail me");
-
-end PASS;
-
-begin
-
-PASS_BLOCK:begin
-  PA_LAST := 0;
-  WORD_NUMBER := WORD_NUMBER + 1;
-
-PASS(INPUT_WORD);
-
-
-    ENTERING_PA_LAST := PA_LAST;
-    LOOP_OVER_TACKONS:
-    for I in 1..3  loop
-
-      REMOVE_A_TACKON:
-      declare
-        LESS : constant STRING :=
-               SUBTRACT_TACKON(INPUT_WORD, TACKONS(I));
-      begin
-       if LESS  /= INPUT_WORD  then       --  LESS is less
-          PASS(LESS);
-          if PA_LAST > ENTERING_PA_LAST  then      --  have a possible word
-              PA_LAST := PA_LAST + 1;
-              PA(ENTERING_PA_LAST+2..PA_LAST) :=
-                       PA(ENTERING_PA_LAST+1..PA_LAST-1);
-              PA(ENTERING_PA_LAST+1) := (TACKONS(I).TACK,
-                      ((TACKON, NULL_TACKON_RECORD), 0, NULL_ENDING_RECORD, X, X),
-                        ADDONS, TACKONS(I).MNPC);
-end if;
-          exit LOOP_OVER_TACKONS;
-        end if;
-      end REMOVE_A_TACKON;
-    end loop LOOP_OVER_TACKONS;
-
-end PASS_BLOCK;
-
-      if PA_LAST = 0  then    --  WORD failed, try to modify the word
-        if WORDS_MODE(IGNORE_UNKNOWN_NAMES)  and CAPITALIZED  then
---TEXT_IO.PUT_LINE("IGNORE NAMES and CAPITALIZED");
-           --  Leading Capital could mean that we have a proper name
---          XXX_MEANING := NULL_MEANING_TYPE;
---          if W(J) in 'A'..'Z'  and then
---             K - J >= 1  and then 
---             W(J+1) in 'a'..'z'  then
-             NNN_MEANING := HEAD(
-"Assume this is capitalized proper name/abbr, under MODE IGNORE_UNKNOWN_NAME ",
-                                  MAX_MEANING_SIZE);
-         PA(1) := (HEAD(INPUT_WORD, MAX_STEM_SIZE),
-                     ((N, ((0, 0), X, X, X)), 0, NULL_ENDING_RECORD, X, X),
-                      NNN, NULL_MNPC);
-            PA_LAST := 1;
---TEXT_IO.PUT_LINE("PA_LAST SET TO 1");
-        elsif  WORDS_MODE(IGNORE_UNKNOWN_CAPS)  and ALL_CAPS  then
---TEXT_IO.PUT_LINE("IGNORE CAPS and ALL CAPS");
-           NNN_MEANING := HEAD(
-"Assume this is capitalized proper name/abbr, under MODE IGNORE_UNKNOWN_CAPS ",
-                                  MAX_MEANING_SIZE);
-            PA(1) := (HEAD(INPUT_WORD, MAX_STEM_SIZE),
-                     ((N, ((0, 0), X, X, X)), 0, NULL_ENDING_RECORD, X, X),
-                      NNN, NULL_MNPC);
-            PA_LAST := 1;
---TEXT_IO.PUT_LINE("PA_LAST SET TO 1");
-          --end if;
-        end if;
-      end if;
+      
+      
+ --TEXT_IO.PUT_LINE("After TRICKS " & INTEGER'IMAGE(PA_LAST));     
+  
 
 --======================================================================
 
@@ -287,10 +381,10 @@ declare
                               0,
                               X);
 
-  ESSE_INFO : VERB_RECORD := ((5, 1),
-                              (PRES, ACTIVE, INF),
-                               0,
-                               X);
+--  ESSE_INFO : VERB_RECORD := ((5, 1),
+--                              (PRES, ACTIVE, INF),
+--                               0,
+--                               X);
 
   PPL_INFO : VPAR_RECORD := ((0, 0),
                               X,
@@ -552,7 +646,7 @@ elsif IS_ESSE(NEXT_WORD) or IS_FUISSE(NEXT_WORD)  then     --  On NEXT_WORD
                         PA(J).IR.QUAL.VPAR.GENDER,--  all have same PPL_INFO
                         PA(J).IR.QUAL.VPAR.TENSE_VOICE_MOOD);
             if IS_ESSE(NEXT_WORD)  then
-              COMPOUND_TVM := (PRES, ACTIVE, INF);
+              COMPOUND_TVM := (FUT, ACTIVE, INF);
       PPP_MEANING := HEAD(
      "FUT ACTIVE PPL + esse => PRES Periphastic/FUT ACTIVE INF - be about/going to",
                 MAX_MEANING_SIZE);
@@ -684,77 +778,29 @@ end if;       --  On WORDS_MODE(DO_COMPOUNDS)
 
 
 --========================================================================
+ end if;
 
 --TEXT_IO.PUT_LINE("Before LISTing STEMS (PA_LAST > 0 to start) PA_LAST = " & 
 --INTEGER'IMAGE(PA_LAST));
-
-        if  not WORDS_MODE(DO_UNKNOWNS_ONLY)      then
-          PPA_LAST := PA_LAST;
+ 
           if  WORDS_MODE(WRITE_OUTPUT_TO_FILE)      then
-            LIST_STEMS(OUTPUT, INPUT_WORD, PA, PPA_LAST);
+            LIST_STEMS(OUTPUT, INPUT_WORD, INPUT_LINE, PA, PA_LAST);
           else
-            LIST_STEMS(CURRENT_OUTPUT, INPUT_WORD, PA, PPA_LAST);
+            LIST_STEMS(CURRENT_OUTPUT, INPUT_WORD, INPUT_LINE, PA, PA_LAST);
           end if;
-          PA_LAST := PPA_LAST;  --  May have killed PA in LIST
-        end if;
-      end if;
 
 --TEXT_IO.PUT_LINE("After LISTing STEMS (PA_LAST > 0 to start) PA_LAST = " & 
 --INTEGER'IMAGE(PA_LAST));
-
-      if PA_LAST = 0   then
-
-        if  WORDS_MODE(WRITE_OUTPUT_TO_FILE)      then
-          if WORDS_MDEV(DO_PEARSE_CODES) then
-            TEXT_IO.PUT(OUTPUT, "04 ");
-          end if;
-          TEXT_IO.PUT(OUTPUT, INPUT_LINE(J..K)); TEXT_IO.SET_COL(OUTPUT, 30);
-          INFLECTIONS_PACKAGE.INTEGER_IO.PUT(OUTPUT, LINE_NUMBER, 5);
-          INFLECTIONS_PACKAGE.INTEGER_IO.PUT(OUTPUT, WORD_NUMBER, 3);
-          TEXT_IO.PUT_LINE(OUTPUT, "    ========   UNKNOWN    ");
-          TEXT_IO.NEW_LINE(OUTPUT);
-        else              --  Just screen output
-          if WORDS_MDEV(DO_PEARSE_CODES) then
-            TEXT_IO.PUT("04 ");
-          end if;
-          TEXT_IO.PUT(INPUT_LINE(J..K));
-          TEXT_IO.SET_COL(30);
-          TEXT_IO.PUT_LINE("    ========   UNKNOWN    ");
-          TEXT_IO.NEW_LINE;
-        end if;
-
-        if WORDS_MODE(WRITE_UNKNOWNS_TO_FILE)  then
-          if WORDS_MDEV(INCLUDE_UNKNOWN_CONTEXT) or
-             WORDS_MDEV(DO_ONLY_INITIAL_WORD)  then
-            TEXT_IO.PUT_LINE(UNKNOWNS, INPUT_LINE);
-          end if;
-          if WORDS_MDEV(DO_PEARSE_CODES) then
-            TEXT_IO.PUT(UNKNOWNS, "04 ");
-          end if;
-          TEXT_IO.PUT(UNKNOWNS, INPUT_LINE(J..K));
-          TEXT_IO.SET_COL(UNKNOWNS, 30);
-          INFLECTIONS_PACKAGE.INTEGER_IO.PUT(UNKNOWNS, LINE_NUMBER, 5);
-          INFLECTIONS_PACKAGE.INTEGER_IO.PUT(UNKNOWNS, WORD_NUMBER, 3);
-          TEXT_IO.PUT_LINE(UNKNOWNS, "    ========   UNKNOWN    ");
-        end if;
-      end if;
-
-      if PA_LAST = 0   then
-        if WORDS_MODE(DO_STEMS_FOR_UNKNOWN)  and
-          (NAME(CURRENT_INPUT) = NAME(STANDARD_INPUT))  then  --  Maybe not necessary
-          LIST_POSSIBLES(CURRENT_OUTPUT, INPUT_WORD);         --  Need to do the OUTPUT thing
-        end if;
-      end if;
-
-      if PA_LAST = 0   then
-        if WORDS_MDEV(UPDATE_LOCAL_DICTIONARY)  and  -- Don't if reading from file
-          (NAME(CURRENT_INPUT) = NAME(STANDARD_INPUT))  then
-          UPDATE_LOCAL_DICTIONARY_FILE;
-          WORD(INPUT_WORD, PA, PA_LAST);       --  Circular if you dont update!!!!!
-        end if;
-      end if;
-
+          
+          
       PA_LAST := 0;
+
+exception
+  when others  =>
+    PUT_STAT("Exception    at "
+           & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)    
+           & "   " & HEAD(INPUT_WORD, 28) & "   "  & INPUT_LINE);
+    raise;
 
 end;
 ----------------------------------------------------------------------
@@ -812,7 +858,7 @@ begin              --  PARSE
   else
 
   PREFACE.PUT_LINE(
-"Copyright (c) 1993-2000 - Free for your use - Version 1.96");
+"Copyright (c) 1993-2001 - Free for your use - Version 1.97");
   PREFACE.PUT_LINE(
 "Updates every few months at http://www.erols.com/whitaker/words.htm");
   PREFACE.PUT_LINE(
@@ -827,7 +873,7 @@ begin              --  PARSE
   PREFACE.PUT_LINE("    Or input " & HELP_CHARACTER &
            " to get help wherever available on individual parameters");
   PREFACE.PUT_LINE(
-"An empty line (just a RETURN or ENTER) from the keyboard exits the program");
+"An empty line (just a RETURN/ENTER) from the keyboard exits the program");
 
   
   loop
@@ -839,7 +885,7 @@ begin              --  PARSE
       end if;
 
       GET_LINE(LINE, L);
-      if (L = 0) then
+      if (L = 0) or else (TRIM(LINE(1..L)) = "")  then
         if (NAME(CURRENT_INPUT) = NAME(STANDARD_INPUT))  then
           exit;
         else

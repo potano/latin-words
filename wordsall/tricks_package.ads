@@ -8,9 +8,9 @@ package TRICKS_PACKAGE is
                        PA : in out PARSE_ARRAY; PA_LAST : in out INTEGER;   
                        LINE_NUMBER : INTEGER; WORD_NUMBER : INTEGER);
 
---  procedure TRY_MEDIEVAL_TRICKS(W : STRING;
---                     PA : in out PARSE_ARRAY; PA_LAST : in out INTEGER;
---                     LINE_NUMBER : INTEGER; WORD_NUMBER : INTEGER);   
+  procedure TRY_SLURY(W : STRING;
+                      PA : in out PARSE_ARRAY; PA_LAST : in out INTEGER;
+                      LINE_NUMBER : INTEGER; WORD_NUMBER : INTEGER);   
 
   procedure ROMAN_NUMERALS(INPUT_WORD : STRING;
                            PA : in out PARSE_ARRAY; PA_LAST : in out INTEGER);

@@ -18,7 +18,13 @@ package WORD_PARAMETERS is
   --  UNKNOWNS is used to record the words that the program fails to find
   UNKNOWNS : TEXT_IO.FILE_TYPE;
 
+  --  This is a flag to tell if there has been trimming for this word
+  TRIMMED : BOOLEAN := FALSE;
+  
+  
   type MODE_TYPE is (      
+                      TRIM_OUTPUT, 
+                      
                       HAVE_OUTPUT_FILE,        
                       WRITE_OUTPUT_TO_FILE,    
 
@@ -32,14 +38,12 @@ package WORD_PARAMETERS is
                       DO_TRICKS,               
                     
                       DO_DICTIONARY_FORMS,     
-                      DO_EXAMPLES,             
                       SHOW_AGE,                
                       SHOW_FREQUENCY,          
 
+                      DO_EXAMPLES,             
                       DO_ONLY_MEANINGS,        
-                      DO_STEMS_FOR_UNKNOWN, 
-                         
-                      TRIM_OUTPUT       );         
+                      DO_STEMS_FOR_UNKNOWN       );         
 
   package MODE_TYPE_IO is new TEXT_IO.ENUMERATION_IO(MODE_TYPE); 
 
@@ -48,7 +52,7 @@ package WORD_PARAMETERS is
 
   WORDS_MODE : MODE_ARRAY;        --  Initialized in body
 
-
+  
   
   procedure CHANGE_PARAMETERS;  
 

@@ -1,8 +1,38 @@
-requiem                      
-N 3 1 ACC S F T                                     X  X  X  B  O
-rest (from labor), respite; intermission, pause, break; amusemant, hobby;
+agantur   
+V      3 1 PRES PASSIVE SUB 3 P  IMPERS             F  X  X  E  E         
+let them be treated; let it be a matter or question of;
+agatur
+V      3 1 PRES PASSIVE SUB 3 S  IMPERS             F  X  X  E  E         
+let it be treated; let it be a matter or question of;
+necessest
+V     5 1 PRES  ACTIVE  IND  3 S IMPERS             X  X  X  C  X         
+it is necessary/essential/unavoidable/true; it is inevitable/by natural law;
+aforem 
+V     5 1 IMPF  ACTIVE  SUB  1 S TO_BEING           X  X  X  C  X         
+be away/absent/distant/missing; be free/removed from; be lacking; be distinct;
+afores 
+V     5 1 IMPF  ACTIVE  SUB  2 S TO_BEING           X  X  X  C  X         
+be away/absent/distant/missing; be free/removed from; be lacking; be distinct;
+aforet 
+V     5 1 IMPF  ACTIVE  SUB  3 S TO_BEING           X  X  X  C  X         
+be away/absent/distant/missing; be free/removed from; be lacking; be distinct;
+aforemus 
+V     5 1 IMPF  ACTIVE  SUB  1 P TO_BEING           X  X  X  C  X         
+be away/absent/distant/missing; be free/removed from; be lacking; be distinct;
+aforetis 
+V     5 1 IMPF  ACTIVE  SUB  2 P TO_BEING           X  X  X  C  X         
+be away/absent/distant/missing; be free/removed from; be lacking; be distinct;
+aforent
+V     5 1 IMPF  ACTIVE  SUB  3 P TO_BEING           X  X  X  C  X         
+be away/absent/distant/missing; be free/removed from; be lacking; be distinct;
+afore                        
+V    5 1 FUT  ACTIVE INF  0 X TO_BEING              X  X  X  C  X
+be away/absent/distant/missing; be free/removed from; be lacking; be distinct;
+memento                      
+V  0 0   PRES ACTIVE IMP  2 S TRANS                 X  X  X  C  O
+remember; be mindful of;
 mementote                    
-V  0 0   PRES ACTIVE IMP  2 X TRANS                 D  E  X  C  E
+V  0 0   PRES ACTIVE IMP  2 P TRANS                 X  X  X  C  O
 remember; be mindful of;
 cette                        
 V    3 1 PRES ACTIVE IMP  2 P TRANS                 X  X  X  B  O
@@ -13,9 +43,6 @@ give/bring here!/hand over, come (now/here); tell/show us, out with it! behold!
 adesdum                      
 V    5 1 PRES ACTIVE IMP  2 S TO_BEING              X  X  X  C  X
 come hither; (ades dum);
-afore                        
-V    5 0 FUT  ACTIVE INF  0 X TO_BEING              X  X  X  C  X
-be away/absent/distant/missing; be free/removed from; be lacking; be distinct;
 chely                        
 N 9 9 VOC S F T                                     X  X  X  C  S
 lyre, harp; tortoise shell (from which lyres were made); tortoise;
@@ -51,6 +78,12 @@ PRON 4 2 NOM P N DEMONS                             X  X  X  B  X
 same, the same, the very same; also; (idem, eadem, idem);
 eadem                           
 PRON 4 2 ACC P N DEMONS                             X  X  X  B  X
+same, the same, the very same; also; (idem, eadem, idem);
+eundem                           
+PRON 4 2 ACC S M DEMONS                             X  X  X  B  X
+same, the same, the very same; also; (idem, eadem, idem);
+eodem                           
+PRON 4 2 ABL S X DEMONS                             X  X  X  B  X
 same, the same, the very same; also; (idem, eadem, idem);
 quisquis                        
 PRON 1 2 NOM S C ADJECT                             X  X  X  B  X
@@ -100,9 +133,12 @@ each one;
 unumquodque                     
 PRON 1 0 ACC S M INDEF                              X  X  X  D  W
 each one;
-usquequo                        
-ADV  POS                                            X  X  X  D  W
-how long? (Douay); to what point/time/extent?;
+quantumcumque                   
+N 2 2 NOM S N T                                     X  X  X  D  O
+however much/little; as much as; whatever;  
+quantumcumque                   
+N 2 2 ACC S N T                                     X  X  X  D  O
+however much/little; as much as; whatever; 
 mi                              
 ADJ 1 1 VOC S M POS                                 X  X  X  B  X
 my, mine;
@@ -145,15 +181,12 @@ ox; bull; cow; cattle (pl.);
 mensuum                                
 N 3 3 GEN P M t                                     X  X  X  C  O
 month;                      
+republicae                      
+N 5 1 GEN S F t                                     X  X  X  B  X
+of the state/republic; (res publica => the state);       
 rusi                            
 N 3 1 LOC S N w                                     X  X  X  B  X
 country; ( = in the country); (ancient form carried on); 
-vi  
-N      3 3 ABL S F T         X X X A O 
-strength (sg.), force, power, might, violence;
-vis 
-N      3 3 ACC P F T         X X X D O 
-strength (bodily) (pl.), force, power, might, violence; resources; large body;
 mavis                           
 V     6 2 PRES  ACTIVE  IND  2 S X                  X  X  X  B  X
 prefer;
@@ -175,3 +208,9 @@ be willing; wish;
 nullius                         
 N 9 9 GEN S M p                                     X  X  X  C  X
 no one;
+utriusque
+ADJ    1 2   GEN S X  POS          X X X A O 
+each/either (of two); both (separately); each side (pl.), each set;
+utrius
+ADJ    1 2   GEN S X  POS          X X X A O 
+which (of two), whichever, no matter which; one, either, one or other;

@@ -1,3 +1,4 @@
+with STRINGS_PACKAGE; use STRINGS_PACKAGE;
 with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
 with CONFIG; use CONFIG;
 with PREFACE;
@@ -15,10 +16,13 @@ package body WORD_PARAMETERS is
   REPLY : array (BOOLEAN) of REPLY_TYPE := (N, Y);
   MODE_OF_REPLY : array (REPLY_TYPE) of BOOLEAN := (FALSE, TRUE);
 
-
+  BLANK_INPUT : exception;
+  
   --  The default modes are set in the body so that they can be changed
   --  with only this being recompiled, not the rest of the with'ing system
   DEFAULT_MODE_ARRAY : constant MODE_ARRAY := (
+                      TRIM_OUTPUT                 => TRUE,      
+
                       HAVE_OUTPUT_FILE            => FALSE,
                       WRITE_OUTPUT_TO_FILE        => FALSE,
 
@@ -32,16 +36,27 @@ package body WORD_PARAMETERS is
                       DO_TRICKS                   => TRUE,
 
                       DO_DICTIONARY_FORMS         => TRUE,
-                      DO_EXAMPLES                 => FALSE,
                       SHOW_AGE                    => FALSE,
                       SHOW_FREQUENCY              => FALSE,
 
+                      DO_EXAMPLES                 => FALSE,
                       DO_ONLY_MEANINGS            => FALSE,
-                      DO_STEMS_FOR_UNKNOWN        => FALSE,
-
-                      TRIM_OUTPUT                 => TRUE    );
+                      DO_STEMS_FOR_UNKNOWN        => FALSE    );
 
   BAD_MODE_FILE : exception;
+
+
+TRIM_OUTPUT_HELP : constant HELP_TYPE :=  (
+   "This option instructs the program to remove from the output list of   ",
+   "possible constructs those which are least likely.  At the present     ",
+   "stage, there is not much trimming except for removing Uncommon and    ",
+   "non-classical (Archaic/Medieval) when more common results are found   ",
+   "and this action is requested (MDEV), however, if the program grows    ",
+   "more powerful this may be a useful option.  A newly added trim is to  ",
+   "ignore enclitics if a normal word is found.  This may be excessive.   ",
+   "There certainly is no absolute assurence that the items removed are   ",
+   "not correct, just that they are statistically less likely.            ",
+   "                      Since little is now done, the default is Y(es)  " );
 
 
 HAVE_OUTPUT_FILE_HELP : constant HELP_TYPE :=  (
@@ -150,28 +165,30 @@ DO_TRICKS_HELP : constant HELP_TYPE :=  (
 DO_DICTIONARY_FORMS_HELP : constant HELP_TYPE :=  (
    "This option instructs the program to output a line with the forms     ",
    "normally associated with a dictionary entry (NOM and GEN of a noun,   ",
-   "the four principle parts of a verb, M-F-N NOM of an adjective, ...).  ",
+   "the four principal parts of a verb, M-F-N NOM of an adjective, ...).  ",
    "This occurs when there is other output (i.e., not with UNKNOWNS_ONLY).",
    "The default choice is N(o), but it can be turned on with a Y(es).     " );
+
+SHOW_AGE_HELP : constant HELP_TYPE :=  (
+   "This option causes a flag, like '<Late>' to appear for inflection or  ",
+   "form in the output.  The AGE indicates when this word/inflection was  ",
+   "in use, at least from indications is dictionary citations.  It is     ",
+   "just an indication, not controlling, useful when there are choices.   ",
+   "No indication means that it is common throughout all periods.         ",
+   "The default choice is Y(es), but it can be turned off with a N(o).    " );
+
+SHOW_FREQUENCY_HELP : constant HELP_TYPE :=  (
+   "This option causes a flag, like '<rare>' to appear for inflection or  ",
+   "form in the output.  The FREQ is indicates the relative usage of the  ",
+   "word or inflection, from indications is dictionary citations.  It is  ",
+   "just an indication, not controlling, useful when there are choices.   ",
+   "No indication means that it is common throughout all periods.         ",
+   "The default choice is Y(es), but it can be turned off with a N(o).    " );
 
 DO_EXAMPLES_HELP : constant HELP_TYPE :=  (
    "This option instructs the program to provide examples of usage of the ",
    "cases/tenses/etc. that were constructed.  The default choice is N(o). ",
    "This produces lengthly output and is turned on with the choice Y(es). " );
-
-SHOW_AGE_HELP : constant HELP_TYPE :=  (
-   "This option causes a flag, like '<Late>' to be put before the meaning ",
-   "in the output.  The AGE is an indication when this word/meaning came  ",
-   "into use, at least from indications is dictionary citations.  It is   ",
-   "just an indication, not controlling, useful when there are choices.   ",
-   "The default choice is N(o), but it can be turned on with a Y(es).     " );
-
-SHOW_FREQUENCY_HELP : constant HELP_TYPE :=  (
-   "This option causes a flag, like '<rare>' to be put before the meaning ",
-   "in the output.  The FREQ is an indication of the relative usage of the",
-   "word use, at least from indications is dictionary citations.  It is   ",
-   "just an indication, not controlling, useful when there are choices.   ",
-   "The default choice is N(o), but it can be turned on with a Y(es).     " );
 
 DO_ONLY_MEANINGS_HELP : constant HELP_TYPE :=  (
    "This option instructs the program to only output the MEANING for a    ",
@@ -197,18 +214,6 @@ DO_STEMS_FOR_UNKNOWN_HELP : constant HELP_TYPE :=  (
    "probably only be used with individual UNKNOWN words, and off-line     ",
    "from full translations, therefore the default choice is N(o).         ",
    "This processing can be turned on with the choice of Y(es).            " );
-
-
-TRIM_OUTPUT_HELP : constant HELP_TYPE :=  (
-   "This option instructs the program to remove from the output list of   ",
-   "possible constructs those which are least likely.  At the present     ",
-   "stage, there is not much trimming except for removing Uncommon and    ",
-   "non-classical (Archaic/Medieval) when more common results are found   ",
-   "and this action is requested (MDEV), however, if the program grows    ",
-   "more powerful this may be a useful option.  Nevertheless, there is no ",
-   "absolute assurence that the items removed are not correct, just that  ",
-   "they are statistically less likely (e.g., vocatives or locatives in   ",
-   "certain situations).  Since little is now done, the default is Y(es)  " );
 
 
 SAVE_PARAMETERS_HELP : constant HELP_TYPE :=  (
@@ -283,9 +288,12 @@ SAVE_PARAMETERS_HELP : constant HELP_TYPE :=  (
     PUT(REPLY(WORDS_MODE(MO))); PUT(" =>");
     GET_LINE(L1, LL);
     if LL /= 0  then
-      if L1(1) = '?'  then
+      if TRIM(L1(1..LL)) = ""  then
+        PUT_LINE("Blank input, skipping the reat of CHANGE_PARAMETERS");
+        raise BLANK_INPUT;                 
+      elsif L1(1) = '?'  then
         PUT(HELP);
-        INQUIRE(MO);
+        INQUIRE(MO, HELP);
       else
         GET(L1(1..LL), R, LL);
         WORDS_MODE(MO) := MODE_OF_REPLY(R);
@@ -302,8 +310,13 @@ SAVE_PARAMETERS_HELP : constant HELP_TYPE :=  (
 
   begin
 
+    
+    PUT_LINE("To set/change parameters reply Y/y or N/n.  Return accepts current value.");
+    PUT_LINE("A '?' reply gives infomation/help on that parameter.  A space skips the rest.");
+    NEW_LINE;
+     
   --  Interactive mode - lets you do things on unknown words
-
+        
   --  You can say it is a noun and then look at the endings
   --  Or look all the endings and guess what part of speech
 
@@ -329,6 +342,9 @@ SAVE_PARAMETERS_HELP : constant HELP_TYPE :=  (
 
   --  Maybe to turn on or off pre/suffix
   --  Maybe to allow the user to look at just all the prefixes that match
+
+    INQUIRE(TRIM_OUTPUT, TRIM_OUTPUT_HELP);
+
 
     INQUIRE(HAVE_OUTPUT_FILE, HAVE_OUTPUT_FILE_HELP);
 
@@ -378,19 +394,16 @@ SAVE_PARAMETERS_HELP : constant HELP_TYPE :=  (
 
     INQUIRE(DO_DICTIONARY_FORMS, DO_DICTIONARY_FORMS_HELP);
 
-    INQUIRE(DO_EXAMPLES, DO_EXAMPLES_HELP);
-
     INQUIRE(SHOW_AGE, SHOW_AGE_HELP);
 
     INQUIRE(SHOW_FREQUENCY, SHOW_FREQUENCY_HELP);
 
 
+    INQUIRE(DO_EXAMPLES, DO_EXAMPLES_HELP);
+
     INQUIRE(DO_ONLY_MEANINGS, DO_ONLY_MEANINGS_HELP);
 
     INQUIRE(DO_STEMS_FOR_UNKNOWN, DO_STEMS_FOR_UNKNOWN_HELP);
-
-
-    INQUIRE(TRIM_OUTPUT, TRIM_OUTPUT_HELP);
 
 
     PUT("Do you wish to save this set of parameters? Y or N (Default) ");
@@ -412,6 +425,8 @@ SAVE_PARAMETERS_HELP : constant HELP_TYPE :=  (
     NEW_LINE;
 
   exception
+    when BLANK_INPUT  =>
+      null;
     when others =>
       PUT_LINE("Bad input - terminating CHANGE_PARAMETERS");
 

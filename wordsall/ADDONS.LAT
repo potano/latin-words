@@ -71,51 +71,32 @@
 --
 --  magna,; uno. one
 --
-PREFIX neu   
+--  TICKONS
+--
+PREFIX ec   
 PACK PACK
-nor, and..not, neither..nor (adding a alternative or prohibition, w/qui)
+is there any...that? does any? (w/qui, sometimes w/nam) (passionate interrogation)
 PREFIX ne    
 PACK PACK
 not (introducing negative clause, w/qui); verily, truely  (affirmative particle)
+PREFIX nescio
+PACK PACK
+(w/qui/quis) nescioquis=> some (unknown/unspecified), one/someone or other;
+PREFIX neu   
+PACK PACK
+nor, and..not, neither..nor (adding a alternative or prohibition, w/qui)
 PREFIX seu  
 PACK PACK
 or if (w/qui); 
 PREFIX si   
 PACK PACK
 if, when, in so much, even if (assumed fact/wish/unfinished, w/qui); 
-PREFIX ec   
-PACK PACK
-is there any...that? does any? (w/qui, sometimes w/nam) (passionate interrogation)
-PREFIX aequi
-X X 
-equi-, equal; 
-PREFIX amphi
-X X 
-having two/double, (on) both/opposite (sides), front and back
-PREFIX archi
-X X 
-arch-, chief-, first, master; great; extremely, very;
-PREFIX aedi
-X X 
-having to do with buildings/temples
-PREFIX alti
-X X 
-high, lofty
-PREFIX ambi
-X X 
-around, round about; having two          
-PREFIX ante
-X X 
-ante-, - before
-PREFIX auri
-X X 
-golden, gold-; of gold, gold-colored;
+--
+--  Pure PREFIXES
+--
 PREFIX abs
 X X 
 - away, off; - aside
-PREFIX amb 
-X X 
-around, round about; having two          
 PREFIX ab
 V V 
 - away, off; - aside
@@ -128,27 +109,57 @@ X X
 PREFIX ad
 X X
 - to, towards, near, for, together (adeo => go to)
+PREFIX aedi
+X X 
+having to do with buildings/temples
+PREFIX aequi
+X X 
+equi-, equal; 
 PREFIX af f
 X X 
 - to, towards, near, for, together (adeo => go to)
 PREFIX ag g
 X X 
 - to, towards, near, for, together (adeo => go to)
+PREFIX alti
+X X 
+high, lofty
+PREFIX ambi
+X X 
+around, round about; having two          
+PREFIX amb 
+X X 
+around, round about; having two          
+PREFIX amphi
+X X 
+having two/double, (on) both/opposite (sides), front and back
 PREFIX am    
 X X 
 around, round about; having two
+PREFIX ante
+X X 
+ante-, - before
+PREFIX anti
+X X 
+anti-, counter-, against, contrary, opposite/opposed to; (and for ante-/before);
 PREFIX an   
 X X 
 around, round about; having two
 PREFIX ap p
 X X 
 - to, towards, near, for, together (adeo => go to)
+PREFIX archi
+X X 
+arch-, chief-, first, master; great; extremely, very;
 PREFIX as s
 X X 
 - to, towards, near, for, together (adeo => go to)
 PREFIX at t
 X X 
 - to, towards, near, for, together (adeo => go to)
+PREFIX auri
+X X 
+golden, gold-; of gold, gold-colored;
 PREFIX au f
 X X 
 - away, off (aufero => make off with, carry away); - aside
@@ -179,9 +190,6 @@ hundred (numerical prefix)
 PREFIX circum
 X X 
 - around, about, near
-PREFIX contra
-X X 
-- against
 PREFIX col  l
 X X 
 - together, completely, forcibly, strongly 
@@ -194,6 +202,9 @@ X X
 PREFIX conn  i
 X X 
 - together, completely, forcibly, strongly 
+PREFIX contra
+X X 
+- against
 PREFIX con
 X X  
 - together; completely, strongly, forcibly, violently;
@@ -206,6 +217,9 @@ ten (numerical prefix)
 PREFIX  decu
 X X 
 ten (numerical prefix)
+PREFIX de
+V V 
+- down, off, away, from; not, removal, reversal; utterly/completely, (intensive);
 PREFIX dif f
 V V 
 - apart, in different directions
@@ -215,9 +229,6 @@ V V
 PREFIX di
 V V 
 - apart, in different directions
-PREFIX de
-V V 
-- down, off, away, from; not, removal, reversal; utterly/completely, (intensive);
 PREFIX duode
 NUM NUM
 - less two/two less than (numerical prefix); (duodeviginti => 20 less 2 = 18);
@@ -260,6 +271,9 @@ V V
 PREFIX il l
 V V    
 - in, - on, - against; not -, un-  
+PREFIX im b
+V V     
+- in, - on, - against; not -, un-  
 PREFIX im m
 V V     
 - in, - on, - against; not -, un-  
@@ -269,21 +283,21 @@ V V
 PREFIX in  
 V V     
 - in, - on, - against; not -, un-  
-PREFIX ir r
-V V      
-- in, - on, - against; not -, un-  
 PREFIX in
 ADJ ADJ
 not -, un- 
+PREFIX ir r
+V V      
+- in, - on, - against; not -, un-  
 PREFIX male
 V V
 ill, bad
 PREFIX multi
 N N
 much, many
-PREFIX nescio
-PACK PACK
-(w/qui/quis) nescioquis=> some (unknown/unspecified), one/someone or other;
+PREFIX ne 
+ADV ADV
+not
 PREFIX non
 V V
 not
@@ -305,15 +319,15 @@ V V
 PREFIX os t
 V V 
 - towards, to meet, in opposition
-PREFIX por
-V V
-- forward
 PREFIX per
 ADJ ADJ
 very -, - completely, - thoroughly
 PREFIX per
 V V 
 - through, thoroughly, completely; adds to the force of the verb  
+PREFIX por
+V V
+- forward
 PREFIX praeter
 V V
 past or by  (drive past, drive by, flow past, flow by)
@@ -380,9 +394,9 @@ six (numerical prefix)
 PREFIX sex
 X X     
 six-                     
-PREFIX se
-V V 
-- apart, apart from; away (se-cedo = go away, withdraw, secede)
+--PREFIX se      --  conflict with semet
+--V V 
+--- apart, apart from; away (se-cedo = go away, withdraw, secede)
 PREFIX  sim 
 X X 
 one (numerical prefix), single, simple
@@ -390,8 +404,11 @@ PREFIX sub
 V V 
 - up to, - under, up from under; to the aid
 PREFIX sub
+N N     
+somewhat -, -ish; rather -; under, from under/below; lesser/assistant;
+PREFIX sub
 ADJ ADJ
-somewhat -, -ish; rather -
+somewhat -, -ish; rather -; under, from under/below; lesser/assistant;
 PREFIX suc  c
 V V 
 - up to, - under, up from under; to the aid
@@ -411,6 +428,9 @@ PREFIX trans
 V V 
 - across, - over
 PREFIX tra
+V V 
+- across, - over
+PREFIX tre i
 V V 
 - across, - over
 PREFIX  tri
@@ -768,6 +788,9 @@ SUFFIX an
 NUM 2 N 2 1 M p 0
 soldiers of the Nth Legion
 SUFFIX an
+ADJ 2 ADJ 1 1 POS 0
+-anus; (indicates former gens when adopted into another, Sejus -> Sejanus);
+SUFFIX an
 N 2 ADJ 1 1 POS 0
 -an, -ain; of, pertaining/belonging to; connected with; derived/coming from
 SUFFIX en
@@ -824,6 +847,12 @@ N 2 ADJ 1 1 POS 2
 SUFFIX iter 
 ADJ 2 ADV POS 1
 -ily; -ly;
+SUFFIX ior  
+ADJ 2 ADJ 0 0 COMP  3
+-er, more ~; makes ADJ POS into ADJ COMP
+SUFFIX por
+N 2 N 3 1 M P 0   
+-'s boy; (slave's name adding -por for -puer to anme of master);
 SUFFIX ar 
 X 2 N 3 4 N t 0   
 means/instrument/place for special purpose of N/V (calco/calcar - tread/spur)
@@ -844,7 +873,7 @@ V 2 N 2 2 N t 0
 means, instrument; place
 SUFFIX or  
 V 4 N 3 1 M p  0
--or; -er; indicates the doer; one who preforms the action of the verb (act.or)
+-or; -er; indicates the doer; one who performs the action of the verb (act.or)
 SUFFIX or  
 V 2 N 3 1 M p  0
 the thing of the verb; result of; (abstract noun) amor = love, timor = fear
@@ -908,9 +937,12 @@ N 2 ADJ 1 1 POS 0
 SUFFIX ulent
 N 2 ADJ 1 1 POS 0
 -ulent; full of; prone to; rich in; abounding in; 
+SUFFIX ament
+V 2 N 2 2 N t 0  
+-ment; -ion; act of; instrument/equipment/means for ~ing; result of ~ing;
 SUFFIX ment
 V 2 N 2 2 N t 0  
--ment; act of; means of; result of
+-ment; -ion; act of; instrument/equipment/means for ~ing; result of ~ing;
 SUFFIX etat i
 V 4 N 3 1 F t  2
 -ness, makes abstract noun
@@ -979,7 +1011,7 @@ N 2 N 3 1 M P   1
 denotes one who makes (the source noun), master of, professional in
 SUFFIX rix 
 V 4 N 3 1 F p  1
--or; -er; indicates the doer; one who preforms the action of the verb (act.or)
+-ess, -or; -er; indicates the doer; one who performs action of verb (act.ess)
 SUFFIX ax
 X 2 ADJ 3 1 POS 1
 -ing; having a tendency/ability
@@ -1002,18 +1034,23 @@ X 2 ADJ 3 1 POS 1
 --  The order of this list is significant.  The program checks in order.
 --  The longer or less frequent tackon should be placed earlier in the list.
 --
+--  ENCLITICS
+--
 TACKON que
 X
-and (enclitic, translated before attached word); completes "plerus"/"uter"
+-que = and (enclitic, translated before attached word); completes plerus/uter;
 TACKON ne 
 X
-is it not that (enclitic) (introduces a question or alternative)
+-ne = is it not that (enclitic); or ...(introduces a question or alternative);
 TACKON ve  
 X
-or, if you will (enclitic) or as you please; or
+-ve = or if you will (enclitic); or as you please; or;             rare
 TACKON est 
 PRON 4 1 X
-is, in a contraction (idest = it/that is)         
+-est = is, in a contraction; (idest = it/that is);                 rare      
+--
+--  TACKONS  --  that are not PACKONS -- not w/qu PRONS
+--
 TACKON ce            
 PRON 3 1 ADJECT
 TACKON w/hic this
@@ -1035,6 +1072,15 @@ TACKON with (enclitic with PRON 5 0); w/ABL  mecum => at my house;
 TACKON met           
 PRON 5 0 PERS   
 TACKON w/personal self, own; on subst PERS (meamet=my own, egomet=myself)
+TACKON cumque   
+ADJ 0 0 POS         
+-ever/-soever; (for generalized/indefinite force); (what/how -> what/however);
+TACKON cunque   
+ADJ 0 0 POS         
+-ever/-soever; (for generalized/indefinite force); (what/how -> what/however);
+--
+--  PACKONS
+--
 TACKON cumque            
 PACK    1  0 REL 
 PACKON w/qui => whoever; whatever; everyone who, all that, anything that

@@ -8,12 +8,12 @@ package ADDONS_PACKAGE is
   NULL_FIX_TYPE : constant FIX_TYPE := NULL_STEM_TYPE;
   MAX_FIX_SIZE : constant := MAX_STEM_SIZE;
 
-  subtype TARGET_PART_TYPE is PART_OF_SPEECH_TYPE range X..V;  
+  subtype TARGET_POFS_TYPE is PART_OF_SPEECH_TYPE range X..V;  
 
 
-  type TARGET_ENTRY(PART : TARGET_PART_TYPE := X) is
+  type TARGET_ENTRY(POFS: TARGET_POFS_TYPE := X) is
     record
-      case PART is
+      case POFS is
         when N  => 
           N : NOUN_ENTRY;
           NOUN_KIND : NOUN_KIND_TYPE;
@@ -109,7 +109,7 @@ package ADDONS_PACKAGE is
 
  type TACKON_ITEM is
     record
-      PART : PART_OF_SPEECH_TYPE := TACKON;
+      POFS: PART_OF_SPEECH_TYPE := TACKON;
       TACK : STEM_TYPE := NULL_STEM_TYPE;
       ENTR : TACKON_ENTRY := NULL_TACKON_ENTRY;
       MNPC : DICT_IO.COUNT := NULL_MNPC;
@@ -120,7 +120,7 @@ package ADDONS_PACKAGE is
 
   type PREFIX_ITEM is
     record
-      PART : PART_OF_SPEECH_TYPE := PREFIX;
+      POFS: PART_OF_SPEECH_TYPE := PREFIX;
       FIX  : FIX_TYPE := NULL_FIX_TYPE;
       CONNECT : CHARACTER := ' ';
       ENTR : PREFIX_ENTRY := NULL_PREFIX_ENTRY;
@@ -132,7 +132,7 @@ package ADDONS_PACKAGE is
 
   type SUFFIX_ITEM is
     record
-      PART : PART_OF_SPEECH_TYPE := SUFFIX;
+      POFS: PART_OF_SPEECH_TYPE := SUFFIX;
       FIX  : FIX_TYPE := NULL_FIX_TYPE;
       CONNECT    : CHARACTER := ' ';
       ENTR : SUFFIX_ENTRY := NULL_SUFFIX_ENTRY;

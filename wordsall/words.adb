@@ -14,6 +14,22 @@ begin
     SUPPRESS_PREFACE := FALSE;
     PARSE;
 
+  elsif Ada.Command_Line.ARGUMENT_COUNT = 1  then      --  Simple WORDS
+    ONE_ARGUMENT:
+    declare
+      INPUT_NAME  : constant STRING := TRIM(Ada.Command_Line.Argument(1));
+    begin
+      OPEN(INPUT, IN_FILE, INPUT_NAME);
+      METHOD := COMMAND_LINE_FILES;
+      SET_INPUT(INPUT);
+      SUPPRESS_PREFACE := TRUE;
+      PARSE;
+    exception                  --  Triggers on INPUT
+      when NAME_ERROR  =>
+        METHOD := COMMAND_LINE_INPUT;            --  Found word in command line
+
+    end ONE_ARGUMENT;
+
   elsif Ada.Command_Line.ARGUMENT_COUNT = 2  then    --  INPUT and OUTPUT files
     TWO_ARGUMENTS:
     declare

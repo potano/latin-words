@@ -2484,7 +2484,7 @@ begin  --  initialization of body of INFLECTIONS_PACKAGE
 
   DECN_RECORD_IO.DEFAULT_WIDTH :=
                                   1 + 1 +   --WHICH_TYPE_IO_DEFAULT_WIDTH + 1 +
-                                  1;        --VARIENT_TYPE_IO_DEFAULT_WIDTH;
+                                  1;        --VARIANT_TYPE_IO_DEFAULT_WIDTH;
   TENSE_VOICE_MOOD_RECORD_IO.DEFAULT_WIDTH :=
                    TENSE_TYPE_IO.DEFAULT_WIDTH + 1 +
                    VOICE_TYPE_IO.DEFAULT_WIDTH + 1 +
@@ -2541,7 +2541,7 @@ begin  --  initialization of body of INFLECTIONS_PACKAGE
   PREFIX_RECORD_IO.DEFAULT_WIDTH := 0;
   SUFFIX_RECORD_IO.DEFAULT_WIDTH := 0;
   QUALITY_RECORD_IO.DEFAULT_WIDTH := PART_OF_SPEECH_TYPE_IO.DEFAULT_WIDTH + 1 +
-                                  VERB_RECORD_IO.DEFAULT_WIDTH; --  Largest
+                                  VPAR_RECORD_IO.DEFAULT_WIDTH; --  Largest
   ENDING_RECORD_IO.DEFAULT_WIDTH := 3 + 1 +
                                     MAX_ENDING_SIZE;
   INFLECTION_RECORD_IO.DEFAULT_WIDTH := QUALITY_RECORD_IO.DEFAULT_WIDTH + 1 +

@@ -3,6 +3,8 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
 with ADDONS_PACKAGE; use ADDONS_PACKAGE;
 with WORD_SUPPORT_PACKAGE; use WORD_SUPPORT_PACKAGE;
 package WORD_PACKAGE is
+    
+  LINE_NUMBER, WORD_NUMBER : INTEGER := 0;
 
   type STEM_ARRAY_TYPE is array (INTEGER range <>) of STEM_TYPE;
   subtype STEM_ARRAY is STEM_ARRAY_TYPE(0..MAX_STEM_SIZE);
@@ -23,7 +25,7 @@ package WORD_PACKAGE is
   type PRUNED_DICTIONARY_LIST is array (1..80) of PRUNED_DICTIONARY_ITEM;
   --  Aug 96   QU_PRON max 42, PACK max 54
   --  Jan 97   QU_PRON max 42, PACK max 74  --  Might reduce
-
+ 
   PDL : PRUNED_DICTIONARY_LIST := (others => NULL_PRUNED_DICTIONARY_ITEM);
   PDL_INDEX : INTEGER := 0;
 
@@ -38,6 +40,22 @@ package WORD_PACKAGE is
   RRR_MEANING : MEANING_TYPE := NULL_MEANING_TYPE;  --  For Roman Numerals
   PPP_MEANING : MEANING_TYPE := NULL_MEANING_TYPE;  --  For COMPOUNDED
 
+  
+  function MIN(A, B : INTEGER) return INTEGER;  
+      
+  function LTU(C, D : CHARACTER) return BOOLEAN;  
+      
+  function EQU(C, D : CHARACTER) return BOOLEAN;   
+      
+  function GTU(C, D : CHARACTER) return BOOLEAN;  
+      
+  function LTU(S, T : STRING) return BOOLEAN;  
+      
+  function GTU(S, T : STRING) return BOOLEAN;  
+      
+  function EQU(S, T : STRING) return BOOLEAN;  
+      
+           
   procedure RUN_INFLECTIONS(S : in STRING; SL : in out SAL;
                             RESTRICTION : DICT_RESTRICTION := REGULAR);
 

@@ -1,4 +1,5 @@
 with TEXT_IO;
+with STRINGS_PACKAGE; use STRINGS_PACKAGE;
 with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;   --  Omit when put name here
 with WORD_PARAMETERS; use WORD_PARAMETERS;
 with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
@@ -20,13 +21,14 @@ package body DEVELOPER_PARAMETERS is
   REPLY : array (BOOLEAN) of REPLY_TYPE := (N, Y);
   MDEV_OF_REPLY : array (REPLY_TYPE) of BOOLEAN := (FALSE, TRUE);
 
-
+  BLANK_INPUT : exception;
+  
   --  The default MDEVs are set in the body so that they can be changed
   --  with only this being recompiled, not the rest of the with'ing system
   DEFAULT_MDEV_ARRAY : constant MDEV_ARRAY := (
 
-                      HAVE_DEBUG_FILE             => FALSE,
-                      WRITE_DEBUG_FILE            => FALSE,
+     --               HAVE_DEBUG_FILE             => FALSE,
+     --               WRITE_DEBUG_FILE            => FALSE,
 
                       HAVE_STATISTICS_FILE        => FALSE,
                       WRITE_STATISTICS_FILE       => FALSE,
@@ -46,6 +48,7 @@ package body DEVELOPER_PARAMETERS is
                       DO_FIXES_ANYWAY             => FALSE,
                       USE_PREFIXES                => TRUE, 
                       USE_SUFFIXES                => TRUE, 
+                      USE_TACKONS                 => TRUE, 
                       
                       DO_MEDIEVAL_TRICKS          => TRUE,
                       DO_SYNCOPE                  => TRUE,
@@ -59,6 +62,8 @@ package body DEVELOPER_PARAMETERS is
                       DO_U_FOR_V                  => FALSE,
 
                       PAUSE_IN_SCREEN_OUTPUT      => TRUE,
+                      NO_SCREEN_ACTIVITY          => FALSE,
+                      
                       MINIMIZE_OUTPUT             => TRUE    );
 
   BAD_MDEV_FILE : exception;
@@ -66,27 +71,27 @@ package body DEVELOPER_PARAMETERS is
 
 
 
-HAVE_DEBUG_FILE_HELP : constant HELP_TYPE :=  (
-   "This option instructs the program to create a file which can hold     ",
-   "certain internal information about the current search.  The file is   ",
-   "overwritten for every word in order to prevent it from growing out of ",
-   "hand, so information about the last word searched is saved in case of ",
-   "failure.  The debug output file is named " & DEBUG_FULL_NAME
-                                   & (42+DEBUG_FULL_NAME'LENGTH..70 => ' '),
-   "Use of this option, along with the WRITE_DEBUG_FILE option may slow   ",
-   "the program significantly.  This information is usually only useful   ",
-   "to the developer, so the default is N(o).                             " );
-
-WRITE_DEBUG_FILE_HELP : constant HELP_TYPE :=  (
-   "This option instructs the program, when HAVE_DEBUG_FILE is on, to put ",
-   "some debug data to a file named " & DEBUG_FULL_NAME
-                                   & (33+DEBUG_FULL_NAME'LENGTH..70 => ' '),
-   "This option may be turned on and off while running of the program,    ",
-   "thereby capturing only certain desired results.  The file is reset and",
-   "restarted after each word parsed, so that it does not get too big.    ",
-   "If the option HAVE_DEBUG_FILE is off, the user will not be given a    ",
-   "chance to turn this one on.                  Default is N(o).         " );
-
+--HAVE_DEBUG_FILE_HELP : constant HELP_TYPE :=  (
+--   "This option instructs the program to create a file which can hold     ",
+--   "certain internal information about the current search.  The file is   ",
+--   "overwritten for every word in order to prevent it from growing out of ",
+--   "hand, so information about the last word searched is saved in case of ",
+--   "failure.  The debug output file is named " & DEBUG_FULL_NAME
+--                                   & (42+DEBUG_FULL_NAME'LENGTH..70 => ' '),
+--   "Use of this option, along with the WRITE_DEBUG_FILE option may slow   ",
+--   "the program significantly.  This information is usually only useful   ",
+--   "to the developer, so the default is N(o).                             " );
+--
+--WRITE_DEBUG_FILE_HELP : constant HELP_TYPE :=  (
+--   "This option instructs the program, when HAVE_DEBUG_FILE is on, to put ",
+--   "some debug data to a file named " & DEBUG_FULL_NAME
+--                                   & (33+DEBUG_FULL_NAME'LENGTH..70 => ' '),
+--   "This option may be turned on and off while running of the program,    ",
+--   "thereby capturing only certain desired results.  The file is reset and",
+--   "restarted after each word parsed, so that it does not get too big.    ",
+--   "If the option HAVE_DEBUG_FILE is off, the user will not be given a    ",
+--   "chance to turn this one on.                  Default is N(o).         " );
+--
 
 HAVE_STATISTICS_FILE_HELP : constant HELP_TYPE :=  (
    "This option instructs the program to create a file which can hold     ",
@@ -208,8 +213,7 @@ USE_PREFIXES_HELP : constant HELP_TYPE :=  (
    "employed by the developer while experimenting with the ADDONS file.   ",
    "This option is only effective in connection with DO_FIXES.            ",
    "This is primarily a development tool, so the conventional user should ",
-   "probably maintain the default  choice of Y(es).                       ",
-   "      ------    PRESENTLY NOT IMPLEMENTED    ------                   " );
+   "probably maintain the default  choice of Y(es).                       " );
 
 USE_SUFFIXES_HELP : constant HELP_TYPE :=  (
    "This option instructs the program to implement suffixes from ADDONS   ",
@@ -220,8 +224,18 @@ USE_SUFFIXES_HELP : constant HELP_TYPE :=  (
    "employed by the developer while experimenting with the ADDONS file.   ",
    "This option is only effective in connection with DO_FIXES.            ",
    "This is primarily a development tool, so the conventional user should ",
-   "probably maintain the default  choice of Y(es).                       ",
-   "      ------    PRESENTLY NOT IMPLEMENTED    ------                   " );
+   "probably maintain the default  choice of Y(es).                       " );
+
+USE_TACKONS_HELP : constant HELP_TYPE :=  (
+   "This option instructs the program to implement TACKONS from ADDONS    ",
+   "whenever and wherever FIXES are called for.  The purpose of this      ",
+   "option is to allow some flexibility while the program in running to   ",
+   "select various combinations of fixes, to turn them on and off,        ",
+   "individually as well as collectively.  This is an option usually      ",
+   "employed by the developer while experimenting with the ADDONS file.   ",
+   "This option is only effective in connection with DO_FIXES.            ",
+   "This is primarily a development tool, so the conventional user should ",
+   "probably maintain the default  choice of Y(es).                       " );
 
 
 DO_MEDIEVAL_TRICKS_HELP : constant HELP_TYPE :=  (
@@ -258,11 +272,6 @@ INCLUDE_UNKNOWN_CONTEXT_HELP : constant HELP_TYPE :=  (
    "large text files in which it is expected that there will be relatively",
    "few UNKNOWNS.    The main use at the moment is to provide display     ",
    "of the input line on the output file in the case of UNKNOWNS_ONLY.    ");
-
-MINIMIZE_OUTPUT_HELP : constant HELP_TYPE :=  (
-   "This option instructs the program to minimize the output.  This is a  ",
-   "somewhat flexible term, but the use of this option will probably lead ",
-   "to less output.                        The default is Y(es).          " );
 
 OMIT_ARCHAIC_HELP : constant HELP_TYPE :=  (
    "THIS OPTION IS CAN ONLY BE ACTIVE IF WORDS_MODE(TRIM_OUTPUT) IS SET!  ",
@@ -320,6 +329,20 @@ PAUSE_IN_SCREEN_OUTPUT_HELP : constant HELP_TYPE :=  (
    "This option is active only for keyboard entry or command line input,  ",
    "and only when there is no output file.  It is moot if only single word",
    "input or brief output.                 The default is Y(es).          " );
+
+
+NO_SCREEN_ACTIVITY_HELP : constant HELP_TYPE :=  (
+   "This option instructs the program not to keep a running screen of the ",
+   "input.  This is probably only to be used by the developer to calibrate",
+   "run times for large text file input, removing the time necessary to   ",
+   "write to screen.                       The default is N(o).           ");
+ 
+    
+
+MINIMIZE_OUTPUT_HELP : constant HELP_TYPE :=  (
+   "This option instructs the program to minimize the output.  This is a  ",
+   "somewhat flexible term, but the use of this option will probably lead ",
+   "to less output.                        The default is Y(es).          " );
 
 
 SAVE_PARAMETERS_HELP : constant HELP_TYPE :=  (
@@ -541,9 +564,12 @@ LOAD_DICTIONARY(DICT_LOC,
     PUT(REPLY(WORDS_MDEV(MO))); PUT(" =>");
     GET_LINE(L1, LL);
     if LL /= 0  then
-      if L1(1) = '?'  then
+      if TRIM(L1(1..LL)) = ""  then
+        PUT_LINE("Blank input, skipping the rest of CHANGE_DEVELOPER_MODES");
+        raise BLANK_INPUT;
+      elsif L1(1) = '?'  then
         PUT(HELP);
-        INQUIRE(MO);
+        INQUIRE(MO, HELP);
       else
         GET(L1(1..LL), R, LL);
         WORDS_MDEV(MO) := MDEV_OF_REPLY(R);
@@ -559,7 +585,12 @@ LOAD_DICTIONARY(DICT_LOC,
     R  : REPLY_TYPE;
 
   begin
-
+    
+  PUT_LINE("To set developer modes reply Y/y or N/n.  Return accepts current value.");
+  PUT_LINE("A '?' reply gives infomation/help on that parameter.  A space skips the rest.");
+  PUT_LINE("Developer modes are only for special requirements and may not all be operable.");
+  NEW_LINE;
+  
   --  Interactive MDEV - lets you do things on unknown words
 
   --  You can say it is a noun and then look at the endings
@@ -589,23 +620,23 @@ LOAD_DICTIONARY(DICT_LOC,
   --  Maybe to allow the user to look at just all the prefixes that match
 
 
-    INQUIRE(HAVE_DEBUG_FILE, HAVE_DEBUG_FILE_HELP);
-    if IS_OPEN(DBG)  and then not WORDS_MDEV(HAVE_DEBUG_FILE)  then
-      DELETE(DBG);
-      WORDS_MDEV(WRITE_DEBUG_FILE) := FALSE;
-    end if;
-    if not IS_OPEN(DBG) and then WORDS_MDEV(HAVE_DEBUG_FILE)  then
-      begin
-        CREATE(DBG, OUT_FILE, DEBUG_FULL_NAME);
-      exception
-        when others =>
-          PUT_LINE("Cannot CREATE WORD.DBG - Check if it is in use elsewhere");
-      end;
-    end if;
-
-    if WORDS_MDEV(HAVE_DEBUG_FILE)  then
-      INQUIRE(WRITE_DEBUG_FILE, WRITE_DEBUG_FILE_HELP);
-    end if;
+--    INQUIRE(HAVE_DEBUG_FILE, HAVE_DEBUG_FILE_HELP);
+--    if IS_OPEN(DBG)  and then not WORDS_MDEV(HAVE_DEBUG_FILE)  then
+--      DELETE(DBG);
+--      WORDS_MDEV(WRITE_DEBUG_FILE) := FALSE;
+--    end if;
+--    if not IS_OPEN(DBG) and then WORDS_MDEV(HAVE_DEBUG_FILE)  then
+--      begin
+--        CREATE(DBG, OUT_FILE, DEBUG_FULL_NAME);
+--      exception
+--        when others =>
+--          PUT_LINE("Cannot CREATE WORD.DBG - Check if it is in use elsewhere");
+--      end;
+--    end if;
+--
+--    if WORDS_MDEV(HAVE_DEBUG_FILE)  then
+--      INQUIRE(WRITE_DEBUG_FILE, WRITE_DEBUG_FILE_HELP);
+--    end if;
 
     INQUIRE(HAVE_STATISTICS_FILE, HAVE_STATISTICS_FILE_HELP);
     if IS_OPEN(STATS)  and then not WORDS_MDEV(HAVE_STATISTICS_FILE)  then
@@ -658,6 +689,8 @@ LOAD_DICTIONARY(DICT_LOC,
     
     INQUIRE(USE_SUFFIXES, USE_SUFFIXES_HELP);
     
+    INQUIRE(USE_TACKONS, USE_TACKONS_HELP);
+    
         
     if WORDS_MODE(DO_TRICKS) then
       INQUIRE(DO_MEDIEVAL_TRICKS, DO_MEDIEVAL_TRICKS_HELP);
@@ -682,7 +715,10 @@ LOAD_DICTIONARY(DICT_LOC,
 
 
     INQUIRE(PAUSE_IN_SCREEN_OUTPUT, PAUSE_IN_SCREEN_OUTPUT_HELP);
+    
+    INQUIRE(NO_SCREEN_ACTIVITY, NO_SCREEN_ACTIVITY_HELP);        
 
+    
     INQUIRE(MINIMIZE_OUTPUT, MINIMIZE_OUTPUT_HELP);
 
 
@@ -765,8 +801,10 @@ LOAD_DICTIONARY(DICT_LOC,
     NEW_LINE;
 
   exception
+    when BLANK_INPUT  =>
+      null;
     when others =>
-      PUT_LINE("Bad input - terminating CHANGE_DEVELOPER_MODES");
+      PUT_LINE("Bad input - terminating CHANGE_DEVELOPER_PARAMETERS");
 
   end CHANGE_DEVELOPER_MODES;
 
@@ -795,10 +833,10 @@ begin
   end DO_MDEV_FILE;
 
 
-  if not IS_OPEN(DBG) and then WORDS_MDEV(HAVE_DEBUG_FILE)  then
-    CREATE(DBG, OUT_FILE, DEBUG_FULL_NAME);
-    PREFACE.PUT_LINE("WORD.DBG Created at Initialization");
-  end if;
+--  if not IS_OPEN(DBG) and then WORDS_MDEV(HAVE_DEBUG_FILE)  then
+--    CREATE(DBG, OUT_FILE, DEBUG_FULL_NAME);
+--    PREFACE.PUT_LINE("WORD.DBG Created at Initialization");
+--  end if;
   if not IS_OPEN(STATS) and then WORDS_MDEV(HAVE_STATISTICS_FILE)  then
     CREATE(STATS, OUT_FILE, STATS_FULL_NAME);
     PREFACE.PUT_LINE("WORD.STA Created at Initialization");

@@ -31,7 +31,7 @@ package INFLECTIONS_PACKAGE is
           PREP,      --  PREPosition
           CONJ,      --  CONJunction
           INTERJ,    --  INTERJection
-          TACKON,    --  TACKON -- artificial for code
+          TACKON,    --  TACKON --  artificial for code
           PREFIX,    --  PREFIX --  here artificial for code
           SUFFIX     --  SUFFIX --  here artificial for code
                                 );                                   
@@ -42,15 +42,15 @@ package INFLECTIONS_PACKAGE is
 
   subtype WHICH_TYPE is NATURAL range 0..9;
 
-  subtype VARIENT_TYPE is NATURAL range 0..9;
+  subtype VARIANT_TYPE is NATURAL range 0..9;
 
   WHICH_TYPE_IO_DEFAULT_WIDTH : INTEGER := 1;
-  VARIENT_TYPE_IO_DEFAULT_WIDTH : INTEGER := 1;
+  VARIANT_TYPE_IO_DEFAULT_WIDTH : INTEGER := 1;
   
   type DECN_RECORD is
     record
       WHICH        : WHICH_TYPE := 0;
-      VAR          : VARIENT_TYPE := 0;
+      VAR          : VARIANT_TYPE := 0;
     end record;
 
   package DECN_RECORD_IO is
@@ -592,33 +592,33 @@ type INTERJECTION_RECORD is
     X,   --              --  In use throughout the ages/unknown -- the default
     A,   --  archaic     --  Very early forms, obsolete by classical times
     B,   --  early       --  Early Latin, pre-classical, used for effect/poetry
-    C,   --  classical   --  Limited to classical (~200 BC - 200 AD)
-    D,   --  late        --  Late, post-classical, early Christian (3-6)
-    E,   --  later       --  Latin not in use in Classical/Roman times (7-10)
-    F,   --  medieval    --  Spanning E and G, including late medieval (11-15)
-    G,   --  modern      --  Latin not in use before 16th century (16-18)
-    H    --  neo         --  Coined recently, words for new things (19-20)
+    C,   --  classical   --  Limited to classical (~150 BC - 200 AD)
+    D,   --  late        --  Late, post-classical (3rd-5th centuries)
+    E,   --  later       --  Latin not in use in Classical times (6-10) Christian
+    F,   --  medieval    --  Medieval (11th-15th centuries)
+    G,   --  neo         --  Latin post 15th - Scholarly/Scientific   (16-18)
+    H    --  modern      --  Coined recently, words for new things (19-20)
                       );
   package AGE_TYPE_IO is new TEXT_IO.ENUMERATION_IO(AGE_TYPE);
   
 
-  type FREQUENCY_TYPE is (
+  type FREQUENCY_TYPE is (     --  For dictionary entries
     X,    --              --  Unknown or unspecified
     A,    --  very freq   --  Very frequent, in all Elementry Latin books
     B,    --  frequent    --  Frequent, in top 10 percent           
     C,    --  common      --  For Dictionary, in top 10,000 words
     D,    --  lesser      --  For Dictionary, in top 20,000 words
     E,    --  uncommon    --  2 or 3 citations
-    F,    --  very rare   --  Only one citation in OLD or L&S
-    I,    --  inscription --  Presently not much used
+    F,    --  very rare   --  Having only single citation in OLD or L&S
+    I,    --  inscription --  Only citation is inscription
     M,    --  graffiti    --  Presently not much used
-    N     --  Pliny       --  Things that may appear only in Pliny
+    N     --  Pliny       --  Things that appear only in Pliny Natural History
                            );
   
   --  For inflections, the same type is used with different weights
 --  X,    --              --  Unknown or unspecified
 --  A,    --  most freq   --  Very frequent, the most common
---  B,    --  sometimes   --  sometimes, a not unusual varient
+--  B,    --  sometimes   --  sometimes, a not unusual VARIANT
 --  C,    --  uncommon    --  occasionally seen
 --  D,    --  infrequent  --  recognizable variant, but unlikely
 --  E,    --  rare        --  for a few cases, very unlikely
@@ -660,7 +660,7 @@ type INTERJECTION_RECORD is
   subtype INFLECTIONS_SECTION_4 is CHARACTER range 't'..'u';
 
   SIZE_OF_BLANK_INFLECTIONS   : constant INTEGER :=  60;    --  ############
-  SIZE_OF_INFLECTIONS_SECTION : constant INTEGER := 520;    --  ############
+  SIZE_OF_INFLECTIONS_SECTION : constant INTEGER := 540;    --  ############
 
   type INFLECTION_ARRAY is array (POSITIVE range <>) of INFLECTION_RECORD;
   subtype LEL_SECTION is INFLECTION_ARRAY(1..SIZE_OF_INFLECTIONS_SECTION);

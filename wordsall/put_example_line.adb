@@ -4,15 +4,15 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
 with CONFIG; use CONFIG;
 with WORD_PARAMETERS; use WORD_PARAMETERS;
 --with LATIN_DEBUG; 
-procedure PUT_EXAMPLE_LINE(OUTPUT : TEXT_IO.FILE_TYPE; PR : in PARSE_RECORD; KE : in KIND_ENTRY) is
+procedure PUT_EXAMPLE_LINE(OUTPUT : TEXT_IO.FILE_TYPE; IR : in INFLECTION_RECORD; KE : in KIND_ENTRY) is
 --      use LATIN_DEBUG;
 
-    procedure PUT_VERB_EXAMPLE(OUTPUT : TEXT_IO.FILE_TYPE; PR : in PARSE_RECORD; KE : in KIND_ENTRY) is
-      PERSON : constant PERSON_TYPE      := PR.IR.QUAL.V.PERSON;
-      NUMBER : constant NUMBER_TYPE      := PR.IR.QUAL.V.NUMBER;
-      TENSE  : constant TENSE_TYPE       := PR.IR.QUAL.V.TENSE_VOICE_MOOD.TENSE;
-      MOOD   : constant MOOD_TYPE        := PR.IR.QUAL.V.TENSE_VOICE_MOOD.MOOD; 
-      VOICE  : VOICE_TYPE       := PR.IR.QUAL.V.TENSE_VOICE_MOOD.VOICE;
+    procedure PUT_VERB_EXAMPLE(OUTPUT : TEXT_IO.FILE_TYPE; IR : in INFLECTION_RECORD; KE : in KIND_ENTRY) is
+      PERSON : constant PERSON_TYPE      := IR.QUAL.V.PERSON;
+      NUMBER : constant NUMBER_TYPE      := IR.QUAL.V.NUMBER;
+      TENSE  : constant TENSE_TYPE       := IR.QUAL.V.TENSE_VOICE_MOOD.TENSE;
+      MOOD   : constant MOOD_TYPE        := IR.QUAL.V.TENSE_VOICE_MOOD.MOOD; 
+      VOICE  : VOICE_TYPE       := IR.QUAL.V.TENSE_VOICE_MOOD.VOICE;
       KIND   : VERB_KIND_TYPE   := KE.V_KIND; 
 --  Nothing on  (part), gerund, 
 
@@ -26,8 +26,13 @@ procedure PUT_EXAMPLE_LINE(OUTPUT : TEXT_IO.FILE_TYPE; PR : in PARSE_RECORD; KE 
           return "to ";
         end if;
 
-        if MOOD = IMP and TENSE = PRES  then
-          return "";
+        if MOOD = IMP and TENSE = PRES  and NUMBER = P  then
+          return "(you) ";
+        end if;
+        
+        if MOOD = SUB and TENSE = PRES  and 
+           PERSON = 1 and NUMBER = P  then
+          return "let us ";   --  G&L 263 1
         end if;
         
         if  NUMBER = S  then
@@ -72,9 +77,9 @@ procedure PUT_EXAMPLE_LINE(OUTPUT : TEXT_IO.FILE_TYPE; PR : in PARSE_RECORD; KE 
             if PERSON = 1  then
               return "will ";
             elsif  PERSON = 2  then
-              return "shall ";
+              return "(shall) ";
             elsif  PERSON = 3  then
-              return "shall ";
+              return "(shall) ";
             else
               return "";
             end if;
@@ -166,42 +171,45 @@ procedure PUT_EXAMPLE_LINE(OUTPUT : TEXT_IO.FILE_TYPE; PR : in PARSE_RECORD; KE 
       begin
         if MOOD = IMP  then
           if VOICE = ACTIVE  then
-            return " !";
+            return "!";
           elsif VOICE = PASSIVE  then
-            return "ed !";
+            return "ed!";
           else
             return "";
           end if;
-        end if;
-        if VOICE = ACTIVE  then
-          if TENSE = PRES  then
-            if (PERSON = 3) and (NUMBER = S)  then
-              return "s";
-            else
+        elsif MOOD = IND  then
+          if VOICE = ACTIVE  then
+            if TENSE = PRES  then
+              if (PERSON = 3) and (NUMBER = S)  then
+                return "s";
+              else
+                return "";
+              end if;
+            elsif TENSE = IMPF   then
+              if (PERSON = 1 or PERSON = 3) and (NUMBER = S)  then
+                return "ed/was ~ing";
+              else
+                return "ed/were ~ing";
+              end if;
+            elsif TENSE in PERF..FUTP   then
+              return "ed";
+            else 
               return "";
             end if;
-          elsif TENSE = IMPF   then
-            if (PERSON = 1 or PERSON = 3) and (NUMBER = S)  then
-              return "ed/was _ing";
-            else
-              return "ed/were _ing";
-            end if;
-          elsif TENSE in PERF..FUTP   then
+          elsif VOICE = PASSIVE  then
             return "ed";
           else 
             return "";
           end if;
-        elsif VOICE = PASSIVE  then
-          return "ed";
         else 
           return "";
-        end if;
+       end if;
       end ED;
       
       function SUB return STRING is 
       begin
         if MOOD = SUB  then
-          return "*";
+          return "may/must/should ";
         else 
           return "";
         end if;
@@ -215,7 +223,7 @@ procedure PUT_EXAMPLE_LINE(OUTPUT : TEXT_IO.FILE_TYPE; PR : in PARSE_RECORD; KE 
           VOICE := ACTIVE;    --  Should only have allowed PASSIVE at this point
         end if;
   
-        TEXT_IO.PUT(OUTPUT, THEY & SUB & SHALL & HAVE & SUB & BEEN & "_" & ED);
+        TEXT_IO.PUT(OUTPUT, THEY & SUB & SHALL & HAVE & BEEN & "~" & ED);
     
     end PUT_VERB_EXAMPLE;  
     
@@ -228,26 +236,26 @@ procedure PUT_EXAMPLE_LINE(OUTPUT : TEXT_IO.FILE_TYPE; PR : in PARSE_RECORD; KE 
 
     if WORDS_MODE(DO_EXAMPLES)  and then (not (CONFIGURATION = MEANINGS))   then
             
-case PR.IR.QUAL.POFS is 
+case IR.QUAL.POFS is 
 when N => 
-  case PR.IR.QUAL.N.CS is
+  case IR.QUAL.N.CS is
   when GEN =>
-          TEXT_IO.PUT(OUTPUT, "_'s; of _"); 
+          TEXT_IO.PUT(OUTPUT, "~'s; of ~"); 
           TEXT_IO.NEW_LINE(OUTPUT);
   when ABL =>
           TEXT_IO.NEW_LINE(OUTPUT);      --  Info too much for same line
           TEXT_IO.SET_COL(OUTPUT, 6);
           TEXT_IO.PUT(OUTPUT, 
-"from _ (separ); because of _ (cause); than _ (compar); of _ (circumstance)");
+"from _ (separ); because of ~ (cause); than ~ (compar); of ~ (circumstance)");
           TEXT_IO.NEW_LINE(OUTPUT);
   when DAT =>
           TEXT_IO.NEW_LINE(OUTPUT);      --  Info too much for same line
           TEXT_IO.SET_COL(OUTPUT, 6);
           TEXT_IO.PUT(OUTPUT, 
-      "for _ (purpose, reference); to _ (w/adjectives); to _ (double dative)");
+      "for _ (purpose, reference); to ~ (w/adjectives); to ~ (double dative)");
           TEXT_IO.NEW_LINE(OUTPUT);
   when LOC =>
-          TEXT_IO.PUT(OUTPUT, "at _ (place where)");
+          TEXT_IO.PUT(OUTPUT, "at ~ (place where)");
           TEXT_IO.NEW_LINE(OUTPUT);
   when others  => 
           null;
@@ -255,12 +263,12 @@ when N =>
   end case;
 
 when ADJ => 
-  case PR.IR.QUAL.ADJ.CO is
+  case IR.QUAL.ADJ.CO is
   when COMP  => 
-          TEXT_IO.PUT(OUTPUT, "_er; more/too _");
+          TEXT_IO.PUT(OUTPUT, "~er; more/too _");
           TEXT_IO.NEW_LINE(OUTPUT);
   when SUPER => 
-          TEXT_IO.PUT(OUTPUT, "_est; most/very");
+          TEXT_IO.PUT(OUTPUT, "~est; most/very");
           TEXT_IO.NEW_LINE(OUTPUT);
   when others  => 
           null;
@@ -268,12 +276,12 @@ when ADJ =>
   end case;
 
   when ADV => 
-    case PR.IR.QUAL.ADV.CO is
+    case IR.QUAL.ADV.CO is
       when COMP  => 
-        TEXT_IO.PUT(OUTPUT, "more/too _(ly)");
+        TEXT_IO.PUT(OUTPUT, "more/too ~(ly)");
         TEXT_IO.NEW_LINE(OUTPUT);
       when SUPER => 
-        TEXT_IO.PUT(OUTPUT, "most/very _(ly)");
+        TEXT_IO.PUT(OUTPUT, "most/very ~(ly)");
         TEXT_IO.NEW_LINE(OUTPUT);
       when others  => 
         null;
@@ -283,22 +291,22 @@ when ADJ =>
 when V => 
         --TEXT_IO.NEW_LINE(OUTPUT);        --  Verb info too much for same line
         TEXT_IO.SET_COL(OUTPUT, 6);
-        PUT_VERB_EXAMPLE(OUTPUT, PR, KE);
+        PUT_VERB_EXAMPLE(OUTPUT, IR, KE);
         TEXT_IO.NEW_LINE(OUTPUT);
                 
 when VPAR => 
   --    TEXT_IO.NEW_LINE(OUTPUT);        --  Verb info too much for same line
-  case PR.IR.QUAL.VPAR.TENSE_VOICE_MOOD.TENSE is
+  case IR.QUAL.VPAR.TENSE_VOICE_MOOD.TENSE is
     when PERF  => 
       TEXT_IO.PUT(OUTPUT, 
-             "PERF PASSIVE PPL often used as ADJ or N (amatus => belov.ed)");
+             "~ed  PERF PASSIVE PPL often used as ADJ or N (amatus => belov.ed)");
       TEXT_IO.NEW_LINE(OUTPUT);
     when PRES  => 
       TEXT_IO.PUT(OUTPUT, 
-             "PRES ACTIVE PPL often used as ADJ or N (lov.ing, curl.y)");
+             "~ing  PRES ACTIVE PPL often used as ADJ or N (lov.ing, curl.y)");
       TEXT_IO.NEW_LINE(OUTPUT);
     when FUT   => 
-      if PR.IR.QUAL.VPAR.TENSE_VOICE_MOOD.VOICE = ACTIVE  then
+      if IR.QUAL.VPAR.TENSE_VOICE_MOOD.VOICE = ACTIVE  then
         TEXT_IO.PUT(OUTPUT, 
                "about to ~  FUT ACTIVE PPL often used as ADJ or N");
         TEXT_IO.NEW_LINE(OUTPUT);
@@ -314,13 +322,13 @@ when VPAR =>
     
   when SUPINE => 
     --TEXT_IO.NEW_LINE(OUTPUT);
-    if PR.IR.QUAL.SUPINE.CS = ACC  then
+    if IR.QUAL.SUPINE.CS = ACC  then
         TEXT_IO.PUT(OUTPUT, 
-"to ~ - expresses purpose of verb of motion; may take a direct object");
+"to ~  expresses purpose of verb of motion; may take a direct object");
         TEXT_IO.NEW_LINE(OUTPUT);
-    elsif PR.IR.QUAL.SUPINE.CS = ABL  then
+    elsif IR.QUAL.SUPINE.CS = ABL  then
         TEXT_IO.PUT(OUTPUT, 
-"to ~ - after ADJ indicating aspect/respect in which something is/is done");
+"to ~  after ADJ indicating aspect/respect in which something is/is done");
         TEXT_IO.NEW_LINE(OUTPUT);
     end if;   
     

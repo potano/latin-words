@@ -1,6 +1,10 @@
 with TEXT_IO;
 package DEVELOPER_PARAMETERS is
 
+--  These are a few strange declarations to be used in diagnostics;
+  SRA_MAX, SRAA_MAX, DMA_MAX : INTEGER := 0;
+  PA_LAST_MAX, FINAL_PA_LAST_MAX : INTEGER := 0;
+  
 --  This package defines a number of parameters that areused in the program
 --  The default values are set in the body, so that they may be changed easily
 
@@ -11,17 +15,18 @@ package DEVELOPER_PARAMETERS is
   MDEV_FILE : TEXT_IO.FILE_TYPE;
   MDEV_FULL_NAME : constant STRING := "WORD.MDV";
 
-  --  DBG collects debug output for one entry at a time
-  DBG : TEXT_IO.FILE_TYPE;
-  DEBUG_FULL_NAME : constant STRING := "WORD.DBG";
+--  Debug not currently in use
+--  --  DBG collects debug output for one entry at a time
+--  DBG : TEXT_IO.FILE_TYPE;
+--  DEBUG_FULL_NAME : constant STRING := "WORD.DBG";
 
   --  STATS collects statistics on the program, stems used, inflections, etc.
   STATS : TEXT_IO.FILE_TYPE;
   STATS_FULL_NAME : constant STRING := "WORD.STA";
 
   type MDEV_TYPE is (   
-                      HAVE_DEBUG_FILE,      
-                      WRITE_DEBUG_FILE,     
+     --               HAVE_DEBUG_FILE,      
+     --               WRITE_DEBUG_FILE,     
 
                       HAVE_STATISTICS_FILE, 
                       WRITE_STATISTICS_FILE,
@@ -41,6 +46,7 @@ package DEVELOPER_PARAMETERS is
                       DO_FIXES_ANYWAY,       
                       USE_PREFIXES,          
                       USE_SUFFIXES,       
+                      USE_TACKONS,       
 
                       DO_MEDIEVAL_TRICKS,    
                       DO_SYNCOPE,            
@@ -54,6 +60,8 @@ package DEVELOPER_PARAMETERS is
                       DO_U_FOR_V,    
                     
                       PAUSE_IN_SCREEN_OUTPUT, 
+                      NO_SCREEN_ACTIVITY,   
+                        
                       MINIMIZE_OUTPUT         );
 
   package MDEV_TYPE_IO is new TEXT_IO.ENUMERATION_IO(MDEV_TYPE); 

@@ -17,7 +17,7 @@ package body LINE_STUFF is
                             DICTIONARY_FILE_NAME : STRING)  is
   --  For loading a DICTIONARY list from a file
   --  Only used now for DICT.LOC
-    --use LATIN_DEBUG;
+   
     DICTIONARY_FILE : FILE_TYPE;
     BLK_STEM : constant STEM_TYPE := NULL_STEM_TYPE;
     STS : STEMS_TYPE := NULL_STEMS_TYPE;
@@ -64,13 +64,19 @@ package body LINE_STUFF is
     while not END_OF_FILE(DICTIONARY_FILE)  loop
       ST_LINE := BLANK_LINE;
       GET_NON_COMMENT_LINE(DICTIONARY_FILE, ST_LINE, LAST);      --  STEMS
-
-      LINE := BLANK_LINE;
-      GET_NON_COMMENT_LINE(DICTIONARY_FILE, LINE, L);           --  PART
-      PART_ENTRY_IO.GET(LINE(1..L), PT, LL);
-      KIND_ENTRY_IO.GET(LINE(LL+1..L), PT.POFS, KIND, LL);
-      TRANSLATION_RECORD_IO.GET(LINE(LL+1..L), TRAN, LLL);
+  --TEXT_IO.PUT_LINE("READ STEMS");
   
+      LINE := BLANK_LINE;
+   --TEXT_IO.PUT("1 ");
+   GET_NON_COMMENT_LINE(DICTIONARY_FILE, LINE, L);           --  PART
+   --   TEXT_IO.PUT("2 ");
+   PART_ENTRY_IO.GET(LINE(1..L), PT, LL);
+   --   TEXT_IO.PUT("3 ");
+   KIND_ENTRY_IO.GET(LINE(LL+1..L), PT.POFS, KIND, LL);
+   --   TEXT_IO.PUT("4 ");
+   TRANSLATION_RECORD_IO.GET(LINE(LL+1..L), TRAN, LLL);
+ -- TEXT_IO.PUT("5 ");
+  -- TEXT_IO.PUT_LINE("READ PART");
   
 --  Specialize for parts
 --  If ADV then look if the CO is something other than X
@@ -95,7 +101,11 @@ package body LINE_STUFF is
  
       LINE := BLANK_LINE;
       GET_NON_COMMENT_LINE(DICTIONARY_FILE, LINE, L);         --  MEANING
-      MEAN := HEAD(TRIM(LINE(1..L)), MAX_MEANING_SIZE);
+      MEAN := HEAD(TRIM(LINE(1..L)), MAX_MEANING_SIZE);         
+ --TEXT_IO.PUT_LINE("READ MEANING");
+      
+      
+      
     --  Now take care of other first letters in a gross way
     FC1 := LOWER_CASE(STS(1)(1));
     FC2 := LOWER_CASE(STS(2)(1));
@@ -410,7 +420,7 @@ package body LINE_STUFF is
 
     procedure GET(F : in FILE_TYPE; P : out TACKON_LINE) is
     begin
-      GET(F, P.PART);
+      GET(F, P.POFS);
       GET(F, SPACER);
       GET(F, P.TACK);
       GET(F, SPACER);
@@ -422,7 +432,7 @@ package body LINE_STUFF is
 
     procedure GET(P : out TACKON_LINE) is
     begin
-      GET(P.PART);
+      GET(P.POFS);
       GET(SPACER);
       GET(P.TACK);
       GET(SPACER);
@@ -433,7 +443,7 @@ package body LINE_STUFF is
 
     procedure PUT(F : in FILE_TYPE; P : in TACKON_LINE) is
     begin
-      PUT(F, P.PART);
+      PUT(F, P.POFS);
       PUT(F, ' ');
       PUT(F, P.TACK);
       PUT(F, ' ');
@@ -444,7 +454,7 @@ package body LINE_STUFF is
 
     procedure PUT(P : in TACKON_LINE) is
     begin
-      PUT(P.PART);
+      PUT(P.POFS);
       PUT(' ');
       PUT(P.TACK);
       PUT(' ');
@@ -458,7 +468,7 @@ package body LINE_STUFF is
       M : INTEGER := 0;
     begin
       M := L + DICTIONARY_KIND_IO.DEFAULT_WIDTH;
-      GET(S(L+1..M), P.PART, L);
+      GET(S(L+1..M), P.POFS, L);
       L := M + 1;
       M := L + MAX_STEM_SIZE;
       P.TACK := S(L+1..M);
@@ -477,7 +487,7 @@ package body LINE_STUFF is
       M : INTEGER := 0;
     begin
       M := L + DICTIONARY_KIND_IO.DEFAULT_WIDTH;
-      PUT(S(L+1..M), P.PART);
+      PUT(S(L+1..M), P.POFS);
       L := M + 1;
       S(L) := ' ';
       M := L + MAX_STEM_SIZE;
@@ -504,7 +514,7 @@ package body LINE_STUFF is
 
     procedure GET(F : in FILE_TYPE; P : out PREFIX_LINE) is
     begin
-      GET(F, P.PART);
+      GET(F, P.POFS);
       GET(F, SPACER);
       GET(F, P.FIX);
       GET(F, SPACER);
@@ -518,7 +528,7 @@ package body LINE_STUFF is
 
     procedure GET(P : out PREFIX_LINE) is
     begin
-      GET(P.PART);
+      GET(P.POFS);
       GET(SPACER);
       GET(P.FIX);
       GET(SPACER);
@@ -531,7 +541,7 @@ package body LINE_STUFF is
 
     procedure PUT(F : in FILE_TYPE; P : in PREFIX_LINE) is
     begin
-      PUT(F, P.PART);
+      PUT(F, P.POFS);
       PUT(F, ' ');
       PUT(F, P.FIX);
       PUT(F, ' ');
@@ -544,7 +554,7 @@ package body LINE_STUFF is
 
     procedure PUT(P : in PREFIX_LINE) is
     begin
-      PUT(P.PART);
+      PUT(P.POFS);
       PUT(' ');
       PUT(P.FIX);
       PUT(' ');
@@ -560,7 +570,7 @@ package body LINE_STUFF is
       M : INTEGER := 0;
     begin
       M := L + DICTIONARY_KIND_IO.DEFAULT_WIDTH;
-      GET(S(L+1..S'LAST), P.PART, L);
+      GET(S(L+1..S'LAST), P.POFS, L);
       L := M;
       L := L + 1;
       M := L + MAX_STEM_SIZE;
@@ -584,7 +594,7 @@ package body LINE_STUFF is
       M : INTEGER := 0;
     begin
       M := L + DICTIONARY_KIND_IO.DEFAULT_WIDTH;
-      PUT(S(L+1..M), P.PART);
+      PUT(S(L+1..M), P.POFS);
       L := M + 1;
       S(L) :=  ' ';
       M := L + MAX_STEM_SIZE;
@@ -614,7 +624,7 @@ package body LINE_STUFF is
 
     procedure GET(F : in FILE_TYPE; P : out SUFFIX_LINE) is
     begin
-      GET(F, P.PART);
+      GET(F, P.POFS);
       GET(F, SPACER);
       GET(F, P.FIX);
       GET(F, SPACER);
@@ -628,7 +638,7 @@ package body LINE_STUFF is
 
     procedure GET(P : out SUFFIX_LINE) is
     begin
-      GET(P.PART);
+      GET(P.POFS);
       GET(SPACER);
       GET(P.FIX);
       GET(SPACER);
@@ -641,7 +651,7 @@ package body LINE_STUFF is
 
     procedure PUT(F : in FILE_TYPE; P : in SUFFIX_LINE) is
     begin
-      PUT(F, P.PART);
+      PUT(F, P.POFS);
       PUT(F, ' ');
       PUT(F, P.FIX);
       PUT(F, ' ');
@@ -654,7 +664,7 @@ package body LINE_STUFF is
 
     procedure PUT(P : in SUFFIX_LINE) is
     begin
-      PUT(P.PART);
+      PUT(P.POFS);
       PUT(' ');
       PUT(P.FIX);
       PUT(' ');
@@ -670,7 +680,7 @@ package body LINE_STUFF is
       M : INTEGER := 0;
     begin
       M := L + DICTIONARY_KIND_IO.DEFAULT_WIDTH;
-      GET(S(L+1..S'LAST), P.PART, L);
+      GET(S(L+1..S'LAST), P.POFS, L);
       L := M;
       L := L + 1;
       M := L + MAX_STEM_SIZE;
@@ -694,7 +704,7 @@ package body LINE_STUFF is
       M : INTEGER := 0;
     begin
       M := L + DICTIONARY_KIND_IO.DEFAULT_WIDTH;
-      PUT(S(L+1..M), P.PART);
+      PUT(S(L+1..M), P.POFS);
       L := M + 1;
       S(L) :=  ' ';
       M := L + MAX_STEM_SIZE;
@@ -846,8 +856,8 @@ package body LINE_STUFF is
     if DICT_IO.IS_OPEN(DICT_FILE(D_K))  then
       DICT_IO.DELETE(DICT_FILE(D_K));
     end if;
-    DICT_IO.CREATE(DICT_FILE(D_K), DICT_IO.INOUT_FILE,
-          ADD_FILE_NAME_EXTENSION(DICT_FILE_NAME, DICTIONARY_KIND'IMAGE(D_K)));
+    DICT_IO.CREATE(DICT_FILE(D_K), DICT_IO.INOUT_FILE,  "");
+         -- ADD_FILE_NAME_EXTENSION(DICT_FILE_NAME, DICTIONARY_KIND'IMAGE(D_K)));
 
     while not END_OF_FILE(UNIQUES_FILE)  loop
       STEM_LINE := BLANKS;

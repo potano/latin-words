@@ -8,12 +8,18 @@ procedure MAKEINFL is
   use TEXT_IO;
   use INTEGER_IO;
   use INFLECTION_RECORD_IO;
+  use QUALITY_RECORD_IO;
+  --use STEM_KEY_TYPE_IO;
+  use ENDING_RECORD_IO;
+  use AGE_TYPE_IO;
+  use FREQUENCY_TYPE_IO;
   use LEL_SECTION_IO;
-
-  PORTING : constant BOOLEAN:= FALSE;   --TRUE;
+  
+  PORTING : constant BOOLEAN := TRUE;    --FALSE for WAKEINFL;
 
   M, N   : INTEGER := 0;
-
+  N1, N2, N3, N4, N5 : INTEGER := 0;
+  
   OUTPUT : TEXT_IO.FILE_TYPE;
   INFLECTIONS_SECTIONS_FILE : LEL_SECTION_IO.FILE_TYPE;
 
@@ -115,6 +121,7 @@ ILC := L_I;                              --  Resetting the list to start over
       ILC(0, ' ') := ILC(0, ' ').SUCC;
     end loop;
 WRITE(INFLECTIONS_SECTIONS_FILE, LEL, 5);
+N5 := J5;
 
 NULL_LEL;
 ILC := L_I;                              --  Resetting the list to start over
@@ -137,6 +144,7 @@ end if;
     end loop;
     end loop;
     WRITE(INFLECTIONS_SECTIONS_FILE, LEL, 1);
+    N1 := J1;
 
 NULL_LEL;
 ILC := L_I;                              --  Resetting the list to start over
@@ -159,6 +167,7 @@ end if;
     end loop;
     end loop;
     WRITE(INFLECTIONS_SECTIONS_FILE, LEL, 2);
+    N2 := J2;
 
 
 NULL_LEL;
@@ -182,6 +191,7 @@ end if;
     end loop;
     end loop;
     WRITE(INFLECTIONS_SECTIONS_FILE, LEL, 3);
+    N3 := J3;
 
 
 NULL_LEL;
@@ -204,8 +214,7 @@ end if;
       end loop;
     end loop;
     end loop;
-
-
+    
     --  Now put the PACK in 4            --  Maybe it should be in 5 ????
 ILC := L_I;                              --  Resetting the list to start over
 for CH in CHARACTER range 'a'..'z'  loop
@@ -224,6 +233,7 @@ end if;
     end loop;
     end loop;
     WRITE(INFLECTIONS_SECTIONS_FILE, LEL, 4);
+    N4 := J4;
 
     CLOSE(INFLECTIONS_SECTIONS_FILE);
 
@@ -266,10 +276,19 @@ end if;
                       INFLECTIONS_SECTIONS_NAME);
 
 if not PORTING  then
-    for I in BEL'RANGE    loop                     --  Non-blank endings
+    for I in BEL'RANGE    loop                     --  Blank endings
       if  BEL(I) /= NULL_INFLECTION_RECORD  then
-        PUT(OUTPUT, BEL(I)); NEW_LINE(OUTPUT);
         M := M + 1;
+        PUT(OUTPUT, BEL(I).QUAL); 
+        SET_COL(OUTPUT, 50);
+        PUT(OUTPUT, BEL(I).KEY, 1); 
+        SET_COL(OUTPUT, 52);
+        PUT(OUTPUT, BEL(I).ENDING); 
+        SET_COL(OUTPUT, 62);
+        PUT(OUTPUT, BEL(I).AGE); 
+        SET_COL(OUTPUT, 64);
+        PUT(OUTPUT, BEL(I).FREQ); 
+        NEW_LINE(OUTPUT);
       end if;
     end loop;
 end if;
@@ -280,8 +299,17 @@ READ(INFLECTIONS_SECTIONS_FILE, LEL, LEL_SECTION_IO.POSITIVE_COUNT(N));
 if not PORTING  then
     for I in LEL'RANGE    loop                     --  Non-blank endings
       if  LEL(I) /= NULL_INFLECTION_RECORD  then
-        PUT(OUTPUT, LEL(I)); NEW_LINE(OUTPUT);
         M := M + 1;
+        PUT(OUTPUT, LEL(I).QUAL); 
+        SET_COL(OUTPUT, 50);
+        PUT(OUTPUT, LEL(I).KEY, 1); 
+        SET_COL(OUTPUT, 52);
+        PUT(OUTPUT, LEL(I).ENDING); 
+        SET_COL(OUTPUT, 62);
+        PUT(OUTPUT, LEL(I).AGE); 
+        SET_COL(OUTPUT, 64);
+        PUT(OUTPUT, LEL(I).FREQ); 
+        NEW_LINE(OUTPUT);
       end if;
     end loop;
 end if;
@@ -319,6 +347,15 @@ PUT(N); PUT("    "); PUT(I); PUT("    "); PUT(PELF(N, I));
 end if;
 end loop;
 end loop;
+NEW_LINE;
+
+
+NEW_LINE;
+PUT(N5);  PUT("    ");
+PUT(N1);  PUT("    ");
+PUT(N2);  PUT("    ");
+PUT(N3);  PUT("    ");
+PUT(N4);  PUT("    ");
 NEW_LINE;
 
 

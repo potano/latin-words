@@ -1,6 +1,6 @@
 with STRINGS_PACKAGE; use STRINGS_PACKAGE;
 with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
---with DEVELOPER_PARAMETERS; use DEVELOPER_PARAMETERS;
+with DEVELOPER_PARAMETERS; use DEVELOPER_PARAMETERS;
 with PREFACE;
 with INFLECTIONS_PACKAGE; use INFLECTIONS_PACKAGE;
 with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
@@ -54,7 +54,7 @@ package body ADDONS_PACKAGE is
     L, LAST, TIC, PRE, SUF, TAC, PAC : INTEGER := 0;
     ADDONS_FILE : TEXT_IO.FILE_TYPE;
     D_K : constant DICTIONARY_KIND := ADDONS;
-    PART : PART_OF_SPEECH_TYPE;
+    POFS: PART_OF_SPEECH_TYPE;
     DE : DICTIONARY_ENTRY := NULL_DICTIONARY_ENTRY;
     MEAN : MEANING_TYPE := NULL_MEANING_TYPE;
     M : DICT_IO.POSITIVE_COUNT := 1;
@@ -120,23 +120,25 @@ package body ADDONS_PACKAGE is
           ADD_FILE_NAME_EXTENSION(DICT_FILE_NAME, DICTIONARY_KIND'IMAGE(D_K)));
 
     while not END_OF_FILE(ADDONS_FILE)  loop
+      DE := NULL_DICTIONARY_ENTRY;
       GET_NO_COMMENT_LINE(ADDONS_FILE, S, LAST);
-      GET(S(1..LAST), PART, L);
-      case PART is
+      GET(S(1..LAST), POFS, L);
+      case POFS is
         when TACKON  =>
-          TS := HEAD(TRIM(S(L+1..LAST)), MAX_STEM_SIZE);
-
+            TS := HEAD(TRIM(S(L+1..LAST)), MAX_STEM_SIZE);
+            DE.STEMS(1) := TS;
+            
             GET_LINE(ADDONS_FILE, S, LAST);
             GET(S(1..LAST), TN, L);
             GET_LINE(ADDONS_FILE, S, LAST);
             MEAN := HEAD(S(1..LAST), MAX_MEANING_SIZE);
 
-          if  TN.BASE.PART = PACK   and then
+          if  TN.BASE.POFS= PACK   and then
              (TN.BASE.PACK.DECL.WHICH = 1 or
               TN.BASE.PACK.DECL.WHICH = 2)  and then
               MEAN(1..9) = "PACKON w/"  then
             PAC := PAC + 1;
-            PACKONS (PAC).PART := PART;
+            PACKONS (PAC).POFS:= POFS;
             PACKONS(PAC).TACK := TS;
             PACKONS(PAC).ENTR := TN;
             DICT_IO.SET_INDEX(DICT_FILE(D_K), M);
@@ -147,7 +149,7 @@ package body ADDONS_PACKAGE is
 
           else
             TAC := TAC + 1;
-            TACKONS (TAC).PART := PART;
+            TACKONS (TAC).POFS:= POFS;
             TACKONS(TAC).TACK := TS;
             TACKONS(TAC).ENTR := TN;
             DICT_IO.SET_INDEX(DICT_FILE(D_K), M);
@@ -172,7 +174,7 @@ package body ADDONS_PACKAGE is
 
           if  PM.ENTR.ROOT = PACK     then
             TIC := TIC + 1;
-            TICKONS (TIC).PART := PART;
+            TICKONS (TIC).POFS:= POFS;
             TICKONS(TIC).FIX  := PM.FIX;
             TICKONS(TIC).CONNECT  := PM.CONNECT;
             TICKONS(TIC).ENTR := PM.ENTR;
@@ -182,10 +184,11 @@ package body ADDONS_PACKAGE is
             --DICT_IO.WRITE(DICT_FILE(D_K), MEAN);
             TICKONS (TIC).MNPC := M;
             M := M + 1;
-
+ 
+ 
           else
             PRE := PRE + 1;
-            PREFIXES(PRE).PART := PART;
+            PREFIXES(PRE).POFS:= POFS;
             PREFIXES(PRE).FIX  := PM.FIX;
             PREFIXES(PRE).CONNECT  := PM.CONNECT;
             PREFIXES(PRE).ENTR := PM.ENTR;
@@ -202,7 +205,7 @@ package body ADDONS_PACKAGE is
 
         when SUFFIX  =>
         SUF := SUF + 1;
-        SUFFIXES(SUF).PART := PART;
+        SUFFIXES(SUF).POFS:= POFS;
         EXTRACT_FIX(S(L+1..LAST), SUFFIXES(SUF).FIX, SUFFIXES(SUF).CONNECT);
         GET_LINE(ADDONS_FILE, S, LAST);
         GET(S(1..LAST), SUFFIXES(SUF).ENTR, L);
@@ -255,7 +258,8 @@ package body ADDONS_PACKAGE is
     Z  : constant INTEGER := XF'LENGTH;
   begin
 --PUT_LINE("In SUB TACKON " & INTEGER'IMAGE(L) & INTEGER'IMAGE(Z));
-    if L > Z  and then
+    if WORDS_MDEV(USE_TACKONS) and then
+      L > Z  and then
        --WD(L-Z+1..L) = XF(1..Z)  then
        EQU(WD(L-Z+1..L),  XF(1..Z)) then
 --PUT("In SUBTRACT_TACKON we got a hit   "); PUT_LINE(X.TACK);
@@ -272,7 +276,8 @@ package body ADDONS_PACKAGE is
     Z  : constant INTEGER := XF'LENGTH;
     ST : STEM_TYPE := HEAD(WD, MAX_STEM_SIZE);
   begin
-    if X /= NULL_PREFIX_ITEM and then
+    if WORDS_MDEV(USE_PREFIXES) and then
+       X /= NULL_PREFIX_ITEM and then
        WD'LENGTH > Z  and then
        --WD(1..Z) = XF(1..Z)  and then
        EQU(WD(1..Z),  XF(1..Z)) and then
@@ -294,7 +299,8 @@ package body ADDONS_PACKAGE is
   begin
 --PUT_LINE("In SUBTRACT_SUFFIX  Z = " & INTEGER'IMAGE(Z) & 
 --"  CONNECT >" & X.CONNECT & '<');
-    if X /= NULL_SUFFIX_ITEM and then
+    if WORDS_MDEV(USE_SUFFIXES) and then
+      X /= NULL_SUFFIX_ITEM and then
        WD'LENGTH > Z  and then
        --WD(L-Z+1..L) = XF(1..Z)  and then
        EQU(WD(L-Z+1..L),  XF(1..Z))  and then
@@ -312,14 +318,22 @@ package body ADDONS_PACKAGE is
                     PREFIX : PREFIX_ITEM) return STEM_TYPE is
     FPX : constant STRING := TRIM(PREFIX.FIX) & STEM;
   begin
-    return HEAD(FPX, MAX_STEM_SIZE);
+    if WORDS_MDEV(USE_PREFIXES)  then
+      return HEAD(FPX, MAX_STEM_SIZE);
+    else
+      return STEM;
+    end if;
   end ADD_PREFIX;
 
   function ADD_SUFFIX(STEM : STEM_TYPE;
                     SUFFIX : SUFFIX_ITEM) return STEM_TYPE is
     FPX : constant STRING := TRIM(STEM) & SUFFIX.FIX;
   begin
-    return HEAD(FPX, MAX_STEM_SIZE);
+    if WORDS_MDEV(USE_SUFFIXES)  then
+      return HEAD(FPX, MAX_STEM_SIZE);
+    else
+      return STEM;
+    end if;
   end ADD_SUFFIX;
 
 
@@ -376,7 +390,7 @@ package body ADDONS_PACKAGE is
 
 
   procedure GET(F : in FILE_TYPE; P : out TARGET_ENTRY) is
-    PS : TARGET_PART_TYPE := X;
+    PS : TARGET_POFS_TYPE := X;
   begin
     GET(F, PS);
     GET(F, SPACER);
@@ -408,13 +422,13 @@ package body ADDONS_PACKAGE is
         GET(F, VERB_KIND);
         P := (V, VERB, VERB_KIND);
       when X =>
-        P := (PART => X);
+        P := (POFS=> X);
     end case;
     return;
   end GET;
 
   procedure GET(P : out TARGET_ENTRY) is
-    PS : TARGET_PART_TYPE := X;
+    PS : TARGET_POFS_TYPE := X;
   begin
     GET(PS);
     GET(SPACER);
@@ -446,7 +460,7 @@ package body ADDONS_PACKAGE is
         GET(VERB_KIND);
         P := (V, VERB, VERB_KIND);
       when X =>
-        P := (PART => X);
+        P := (POFS=> X);
     end case;
     return;
   end GET;
@@ -454,9 +468,9 @@ package body ADDONS_PACKAGE is
   procedure PUT(F : in FILE_TYPE; P : in TARGET_ENTRY) is
     C : POSITIVE := POSITIVE(COL(F));
   begin
-    PUT(F, P.PART);
+    PUT(F, P.POFS);
     PUT(F, ' ');
-    case P.PART is
+    case P.POFS is
       when N =>
         PUT(F, P.N);
         PUT(F, P.NOUN_KIND);
@@ -487,9 +501,9 @@ package body ADDONS_PACKAGE is
   procedure PUT(P : in TARGET_ENTRY) is
     C : POSITIVE := POSITIVE(COL);
   begin
-    PUT(P.PART);
+    PUT(P.POFS);
     PUT(' ');
-    case P.PART is
+    case P.POFS is
       when N =>
         PUT(P.N);
         PUT(P.NOUN_KIND);
@@ -518,7 +532,7 @@ package body ADDONS_PACKAGE is
 
   procedure GET(S : in STRING; P : out TARGET_ENTRY; LAST : out INTEGER) is
     L : INTEGER := S'FIRST - 1;
-    PS : TARGET_PART_TYPE := X;
+    PS : TARGET_POFS_TYPE := X;
   begin
     GET(S, PS, L);
     L := L + 1;
@@ -550,7 +564,7 @@ package body ADDONS_PACKAGE is
         GET(S(L+1..S'LAST), VERB_KIND, LAST);
         P := (V, VERB, VERB_KIND);
       when X =>
-        P := (PART => X);
+        P := (POFS=> X);
     end case;
     return;
   end GET;
@@ -561,10 +575,10 @@ package body ADDONS_PACKAGE is
     M : INTEGER := 0;
   begin
     M := L + PART_OF_SPEECH_TYPE_IO.DEFAULT_WIDTH;
-    PUT(S(L+1..M), P.PART);
+    PUT(S(L+1..M), P.POFS);
     L := M + 1;
     S(L) :=  ' ';
-    case P.PART is
+    case P.POFS is
       when N =>
         M := L + NOUN_ENTRY_IO.DEFAULT_WIDTH;
         PUT(S(L+1..M), P.N);

@@ -1,3 +1,4 @@
+with TEXT_IO;
 with STRINGS_PACKAGE; use STRINGS_PACKAGE;
 with INFLECTIONS_PACKAGE; use INFLECTIONS_PACKAGE;
 with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
@@ -19,8 +20,29 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
         FORM := HEAD(TRIM(FORM) & TRIM(FACTOR), 100);
       end ADD_UP;
 
-    begin
+      procedure ADD_TO(FACTOR : STRING) is
+      begin
+        FORM := HEAD(TRIM(FORM) & FACTOR, 100);
+      end ADD_TO;
 
+    begin
+        --  So I can call with a NULL_DICTIONARY_ENTRY and not bomb
+        if DE = NULL_DICTIONARY_ENTRY  then
+          return "";
+        end if;
+        
+        if (DE.PART.POFS = PREP)   then
+          return TRIM(DE.STEMS(1)) & "  " & PART_OF_SPEECH_TYPE'IMAGE(DE.PART.POFS) & 
+                  "  " & CASE_TYPE'IMAGE(DE.PART.PREP.OBJ);
+        end if;
+
+        if DE.STEMS(2) = NULL_STEM_TYPE  and 
+           DE.STEMS(3) = NULL_STEM_TYPE  and
+           DE.STEMS(4) = NULL_STEM_TYPE       then
+          return TRIM(DE.STEMS(1) & "  " & PART_OF_SPEECH_TYPE'IMAGE(DE.PART.POFS));  
+          --  For UNIQUES, CONJ, INTERJ, ...
+        end if;
+        
 
         if DE.PART.POFS = N    then
           if DE.PART.N.DECL.WHICH = 1  then
@@ -289,7 +311,7 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
           else
 
             if DE.KIND = (V, DEP)  then
-              OX(3) := ADD(NULL_OX, "-");
+              OX(3) := ADD(NULL_OX, "DEP");
               OX(4) := ADD(DE.STEMS(4), "us sum");
               if DE.PART.V.CON.WHICH = 1  then
                 OX(1) := ADD(DE.STEMS(1), "or");
@@ -381,12 +403,13 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
 
               if DE.KIND = (V, IMPERS)  then
                 OX(3) := ADD(DE.STEMS(1), "it");
+                OX(4) := ADD(DE.STEMS(4), "us est");
               elsif DE.PART.V.CON = (5, 1)  then
                 OX(3) := ADD(DE.STEMS(3), "i");
                 OX(4) := ADD(DE.STEMS(4), "urus");
                elsif DE.PART.V.CON.WHICH = 9  then
-                OX(3) := ADD("", "Additional");
-                OX(4) := ADD("", "Forms");
+                OX(3) := ADD("", "additional");
+                OX(4) := ADD("", "forms");
                else
                 OX(3) := ADD(DE.STEMS(3), "i");
                 OX(4) := ADD(DE.STEMS(4), "us");
@@ -487,6 +510,8 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
         end if;
         if OX(3)(1..3) = "zzz"  then
           ADD_UP(", - ");
+        elsif OX(3)(1..3) = "DEP"  then
+          null;
         elsif OX(3) /= NULL_OX  then
           ADD_UP(", " & TRIM(OX(3)));
         end if;
@@ -496,8 +521,14 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
           ADD_UP(", " & TRIM(OX(4)));
         end if;
 
-
-
+ 
+      ADD_TO("  " & PART_OF_SPEECH_TYPE'IMAGE(DE.PART.POFS)& "  ");
+      if DE.PART.POFS = N  then
+        ADD_TO("  " & GENDER_TYPE'IMAGE(DE.PART.N.GENDER) & "  ");
+      end if;
+      if (DE.PART.POFS = V)  and then  (DE.KIND.V_KIND in GEN..PERFDEF)  then
+        ADD_TO("  " & VERB_KIND_TYPE'IMAGE(DE.KIND.V_KIND) & "  ");
+      end if;
 
       return TRIM(FORM);
 
