@@ -1,0 +1,148 @@
+requiem                      
+N 3 1 ACC S F T  0 0                            X        X  X  X  B  O
+rest (from labor), respite; intermission, pause, break; amusemant, hobby;
+cette                        
+V    3 1 PRES ACTIVE IMP  2 P TRANS    0 0      X        X  X  X  B  O
+give/bring here!/hand over, come (now/here); tell/show us, out with it! behold!
+cedo                         
+V    3 1 PRES ACTIVE IMP  2 S TRANS    0 0      X        X  X  X  B  O
+give/bring here!/hand over, come (now/here); tell/show us, out with it! behold!
+adesdum                      
+V    5 1 PRES ACTIVE IMP  2 S TO_BEING 0 0      X        X  X  X  C  X
+come hither; (ades dum);
+afore                        
+V    5 0 FUT  ACTIVE INF  0 X TO_BEING 0 0      X        X  X  X  C  X
+be away/absent/distant/missing; be free/removed from; be lacking; be distinct;
+chely                        
+N 9 9 VOC S F T  0 0                            X        X  X  X  C  S
+lyre, harp; tortoise shell (from which lyres were made); tortoise;
+chelyn                         
+N 9 9 ACC S F T  0 0                            X        X  X  X  C  O
+lyre, harp; tortoise shell (from which lyres were made); tortoise;
+iusiurandum                     
+N 2 1 NOM S N t  0 0                            X        X  X  X  C  X
+an oath (ius iurandum)                                                   
+iurisiurandi                     
+N 2 1 GEN S N t  0 0                            X        X  X  X  C  X
+an oath (ius iurandum)                                                   
+iusiurandum                     
+N 2 1 ACC S N t  0 0                            X        X  X  X  C  X
+an oath (ius iurandum)                                                   
+iureiurando                     
+N 2 1 ABL S N t  0 0                            X        X  X  X  C  X
+an oath (ius iurandum)                                                   
+eadem                           
+PRON 4 2 NOM S F DEMONS  0 0                    X        X  X  X  B  X
+same, the same, the very same; also; (idem, eadem, idem);
+eadem                           
+PRON 4 2 NOM P N DEMONS  0 0                    X        X  X  X  B  X
+same, the same, the very same; also; (idem, eadem, idem);
+eadem                           
+PRON 4 2 ACC P N DEMONS  0 0                    X        X  X  X  B  X
+same, the same, the very same; also; (idem, eadem, idem);
+quisquis                        
+PRON 1 2 NOM S C ADJECT  0 0                    X        X  X  X  B  X
+whoever; every one who; whoever it be; everyone; each
+quidquid                        
+PRON 1 6 NOM S N INDEF   0 0                    X        X  X  X  B  X
+whatever, whatsoever; everything which; each one; each; everything; anything
+quicquid                        
+PRON 1 6 NOM S N INDEF   0 0                    X        X  X  X  B  X
+whatever, whatsoever; everything which; each one; each; everything; anything
+quodquod                        
+PRON 1 7 NOM S N ADJECT  0 0                    X        X  X  X  B  X
+whatever, whatsoever; everything which; each one; each; everything; anything
+quemquem                        
+PRON 1 0 ACC S M ADJECT  0 0                    X        X  X  X  C  X
+whomever; every one who; whomever it be; everyone; each
+quidquid                        
+PRON 1 6 ACC S N ADJECT  0 0                    X        X  X  X  C  X
+whatever, whatsoever; everything which; each one; each; everything; anything
+quicquid                        
+PRON 1 6 ACC S N ADJECT  0 0                    X        X  X  X  C  X
+whatever, whatsoever; everything which; each one; each; everything; anything
+quodquod                        
+PRON 1 7 ACC S N ADJECT  0 0                    X        X  X  X  C  X
+whatever, whatsoever; everything which; each one; each; everything; anything
+quoquo                          
+PRON 1 0 ABL S X ADJECT  0 0                    X        X  X  X  C  X
+whoever; whatever, whatsoever; every one who; everything which; each one; each
+quicquam                        
+PRON 1 6 NOM S N ADJECT  0 0                    X        X  X  X  C  X
+any; anything; anything whatsoever
+quicquam                        
+PRON 1 6 ACC S N ADJECT  0 0                    X        X  X  X  C  X
+any; anything; anything whatsoever
+mi                              
+ADJ 1 1 VOC S M POS   0 0                       X        X  X  X  B  X
+my, mine
+di                                     
+N 2 1 NOM P M p  0 0                            X        X  E  X  C  X
+god                                                                      
+dii                                    
+N 2 1 NOM P M p  0 0                            X        X  E  X  C  X
+god                                                                      
+deus                                   
+N 2 1 VOC S M p  0 0                            X        X  E  X  C  X
+god; God!: Oh God;                                                        
+di                                     
+N 2 1 VOC P M p  0 0                            X        X  E  X  C  X
+god                                                                      
+dii                                    
+N 2 1 VOC P M p  0 0                            X        X  E  X  C  X
+god                                                                      
+dis                                    
+N 2 1 ABL P M p  0 0                            X        X  E  X  C  X
+god                                                                      
+diis                                   
+N 2 1 DAT P M p  0 0                            X        X  E  X  C  X
+god                                                                      
+dis                                    
+N 2 1 DAT P M p  0 0                            X        X  E  X  C  X
+god                                                                      
+diis                                   
+N 2 1 ABL P M p  0 0                            X        X  E  X  C  X
+god                                                                      
+boum                                   
+N 3 1 GEN P C t  0 0                            X        X  A  X  E  O
+ox, bull; cow; cattle (pl.)
+bobus                                  
+N 3 1 DAT P C t  0 0                            X        X  A  X  D  O
+ox, bull; cow; cattle (pl.)
+bobus                                  
+N 3 1 ABL P C t  0 0                            X        X  A  X  D  O
+ox, bull; cow; cattle (pl.)
+rusi                            
+N 3 1 LOC S N w   0 0                           X        X  X  X  B  X
+country ( = in the country) (ancient form carried on) 
+mavis                           
+V     6 2 PRES  ACTIVE  IND  2 S X 0 0          X        X  X  X  B  X
+prefer
+mavult                          
+V     6 2 PRES  ACTIVE  IND  3 S X 0 0          X        X  X  X  B  X
+prefer
+mavultis                        
+V     6 2 PRES  ACTIVE  IND  2 P X 0 0          X        X  X  X  B  X
+prefer
+vis                             
+V     6 2 PRES  ACTIVE  IND  2 S X 0 0          X        X  X  X  A  X
+be willing; wish
+vult                            
+V     6 2 PRES  ACTIVE  IND  3 S X 0 0          X        X  X  X  A  X
+be willing; wish
+vultis                          
+V     6 2 PRES  ACTIVE  IND  2 P X 0 0          X        X  X  X  A  X
+be willing; wish
+duc                             
+V     3 1 PRES  ACTIVE  IMP  2 S X 0 0          X        X  X  X  A  G
+lead;        Imperative drops expected 'e' in this case  (G&L 160)
+dic                             
+V     3 1 PRES  ACTIVE  IMP  2 S X 0 0          X        X  X  X  A  G
+say, tell;   Imperative drops expected 'e' in this case  (G&L 160)
+fac                             
+V     3 1 PRES  ACTIVE  IMP  2 S X 0 0          X        X  X  X  A  G
+make, do, create; reckon (w/GEN), consider; IMP drops expected 'e'  (G&L 160)
+nullius                         
+N 9 9 GEN S M p  0 0                            X        X  X  X  C  X
+no one
+

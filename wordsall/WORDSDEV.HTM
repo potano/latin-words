@@ -1,0 +1,183 @@
+<HTML>
+<HEAD>
+<TITLE>WORDS - DEVELOPMENT/REHOSTING</TITLE>
+</HEAD>
+<BODY>
+<P>
+
+<H1>WORDS - Version 1.94a
+<BR>LATIN-to-ENGLISH DICTIONARY PROGRAM
+<BR>DEVELOPERS/REHOSTERS PAGE</H1>
+
+<P>
+<H3>This page provides the Ada source code for a
+Latin-to-English dictionary program 
+for the PC, and the dictionary material sufficient to re-host.  
+<BR>Instructions below.</H3>
+
+<HR>
+<P>21 June 1999 - A very slight modification of the Windows WORDS 
+(nominally called Version 1.94a) has been mounted as the regular 
+distribution.  This differs from the previous 1.94 only in a couple
+of deep data record definitions (which are invisible to the use), and
+in that the 3-way option has been reactivated.
+
+<P>Anyone using the new version must reinitiate their
+WORD.MOD and WORD.MDV parameter files, if they are using such.
+
+
+<HR>
+<H3>The WORDS System</H3>
+<P>
+There is a <A HREF="wordsall.zip"><B>WORDSALL.ZIP</B></A> 
+zip of all the Ada source files for WORDS, and support programs
+and data to generate the necessary dictionaries and inflections
+for re-hosting the WORDS Latin-to-English word parsing/translation
+system on any machine with an Ada 95 compiler.
+(It can be made to work with Ada 83 also by replacing on routine.)
+
+
+<P>This a console program (keyboard entry), without fancy Windows GUI,
+and is thereby system independent.
+
+
+<HR>
+<P>
+WORDSALL contains the Ada source files for WORDS 
+<PRE>
+strings_package.ads
+strings_package.adb
+latin_file_names.ads
+latin_file_names.adb
+config.ads
+preface.ads
+word_parameters.ads
+developer_parameters.ads
+preface.adb
+put_stat.adb
+word_parameters.adb
+inflections_package.adb
+inflections_package.ads
+dictionary_package.ads
+dictionary_package.adb
+addons_package.ads
+addons_package.adb
+uniques_package.ads
+word_support_package.ads
+latin_debug.ads
+word_support_package.adb
+latin_debug.adb
+word_package.ads
+line_stuff.ads
+line_stuff.adb
+developer_parameters.adb
+tricks_package.ads
+word_package.adb
+tricks_package.adb
+list_package.ads
+list_list.adb      
+dictionary_form.adb
+list_package-put_example_line.adb
+list_package.adb
+parse.adb
+words.adb
+</PRE>
+<P>
+three supporting programs
+<PRE>
+makedict.adb
+makestem.adb
+makeinfl.adb
+</PRE>
+<P>
+and DOS ASCII data files for them to act upon to produce WORDS data files
+<PRE>
+DICTLINE.GEN
+STEMDICT.GEN
+INFLECTS.
+</PRE>
+<P>
+the other WORDS DOS ASCII supporting files
+<PRE>
+ADDONS.
+UNIQUES.
+</PRE>
+<P>
+<B>(Please note that the final period in these filenemes is important 
+Some systems will drop a final period when copying.)</B>
+
+<P>
+and a couple of DOS ASCII text files for testing
+<PRE>
+TEST500.
+1000.
+</PRE>
+<BR>
+
+<HR>
+
+<P>
+The process is to download the WORDSALL.ZIP and unzip into a suitable 
+subdirectory.  (If the zip form is unsuitable for your system, I can 
+provide the files in an uncompressed form.)  The wordy file names 
+are for compliance with the restrictions of the GNAT system.  They may
+be renamed, and I can provide an alternative.  However, the long file 
+names demand an UNZIP that preserves them, if GNAT is to be used.
+
+For example, in a GNAT environment (one would maximally optimize the 
+main program): 
+
+<PRE>
+gnatmake -O3 words
+gnatmake makedict
+gnatmake makestem
+gnatmake makeinfl
+</PRE>
+<P>
+This produces executables for WORDS, MAKEDICT, MAKESTEM, and MAKEINFL.
+Executing the latter three against the input respectively of 
+<PRE>
+DICTLINE.GEN
+STEMLIST.GEN
+INFLECTS. 
+</PRE>
+<P>
+(when they ask for DICTIONARY say G) produces 
+<PRE>
+DICTFILE.GEN
+STEMFILE.GEN
+INDXFILE.GEN
+INFLECTS.SEC
+</PRE>
+<P>
+Along with ADDONS. and UNIQUES., this is the set of data for WORDS.
+
+<P>
+The only problem that has appeared on porting so far is that one must
+be careful of file names.  WORDS uses several files that it calls by name,
+among these are ADDONS. and UNIQUES.  These names are set in 
+LATIN_FILE_NAMES and can be changed, but they are at any one time fixed.
+There have been difficulties in the transfer to another system in losing
+the period.  These have been problems in transfer, not in either source
+or target system, and have been easily rectified by inspection. 
+All of my systems are case-independent on file names.  If one
+is running in a case-dependent system (UNIX), this is a point to check.
+Note that the data files are capitalized, source files are not.  
+
+<P>
+There are two test files attached.  TEST500. is 100 lines from five 
+different authors.  1000. is 1000 lines of Carsar's Gallic War.
+
+
+
+
+
+<HR>
+<P>
+For comments mail to
+<A HREF="mailto:whitaker@erols.com"> <B>whitaker@erols.com</B></A>
+<BR>
+
+<P>
+</BODY>
+</HTML>
