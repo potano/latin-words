@@ -1,11 +1,11 @@
 <HTML>
 <HEAD>
-<TITLE>WORDS - Version 1.97 for Linux (i386)</TITLE>
+<TITLE>WORDS - Version 1.97 for Linux/FreeBSD (i386)</TITLE>
 </HEAD>
 <BODY>
 <P>
 
-<H1>WORDS - Version 1.97 for Linux (i386)
+<H1>WORDS - Version 1.97 for Linux/FreeBSD (i386)
 <BR>LATIN-to-ENGLISH DICTIONARY PROGRAM</H1>
 
 
@@ -18,6 +18,8 @@ with the adjustments cited below.
 Note while initially the library changes in FreeBSD 3.4 gave trouble,
 the program now runs without problem under FreeBDC-3.4-STABLE
 and FreeBSD 4.0 and 4.1.
+
+<P><B>There is now a native FreeBSD. (see below)</B>
 
 
 <HR>
@@ -82,9 +84,11 @@ href="ftp://petrus.thomasaquinas.edu/pub/linux/words/README">README</a></b>
 for further details.
 
 <HR>
-<H3>Running under FreeBSD</H3>
+<H3>Running LINUX code under FreeBSD</H3>
 
-<P>The only modification is how one can setup Linux mode on a FreeBSD machine.
+<P>The Linux code will run under FreeBSD, or try the native Free BSD below.
+The only modification for the Linux code is is how one can setup Linux mode
+on a FreeBSD machine.
 This will work with FreeBSD-3.2 and FreeBSD-3.4-STABLE.
 
 <P>1) Install linux_lib-2.6.1 in /usr/ports/emulators/linux_lib : make
@@ -94,6 +98,22 @@ install
 <BR>Matt Heckaman reports that it runs great on FreeBSD 4.0 and 4.1 with
 linux_base-6.1 port installed (/usr/ports/emulators/linux_base).
 
+<HR>
+<H3>Native FreeBSD</H3>
+
+<P>Philip Paeps has a <A HREF="http://www.paeps.cx/words/words-1.97-freebsd4-i386.tar.gz">
+<B>FreeBSD package</B></A>, compiled on FreeBSD 4.7-PRERELEASE for an
+i386.
+The package is in .tar.gz form.
+
+
+<!--
+<P>There is now a native (compiled on and for) FreeBSD provided by Carl Eaton,
+also in .tar.gz form.
+<A HREF="http://members.bellatlantic.net/~vze2jkcx/words/words-1_97-freebsd.tar.gz">
+<B>FreeBSD binary</B></A>
+<BR>Download is 1,628,447 bytes.
+-->
 
 <BR>
 </BODY>
