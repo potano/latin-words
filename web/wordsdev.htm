@@ -5,7 +5,7 @@
 <BODY>
 <P>
 
-<H1>WORDS - Version 1.94a
+<H1>WORDS - Version 1.95a
 <BR>LATIN-to-ENGLISH DICTIONARY PROGRAM
 <BR>DEVELOPERS/REHOSTERS PAGE</H1>
 
@@ -16,14 +16,17 @@ for the PC, and the dictionary material sufficient to re-host.
 <BR>Instructions below.</H3>
 
 <HR>
-<P>21 June 1999 - A very slight modification of the Windows WORDS
-(nominally called Version 1.94a) has been mounted as the regular
-distribution.  This differs from the previous 1.94 only in a couple
-of deep data record definitions (which are invisible to the use), and
-in that the 3-way option has been reactivated.
+<P>25 April 2000 Version 1.95a released.
+<BR>The dictionary is somewhat larger than 1.95
+<BR>It has somewhat improved output for complex meanings
 
-<P>Anyone using the new version must reinitiate their
-WORD.MOD and WORD.MDV parameter files, if they are using such.
+<P>The 1.95 characteristics are continues
+<BR>It can discriminate on the basis of AGE or FREQ, rejecting unlikely
+results if there are more common ones.  Controlling parameters are introduced.
+Check the defaults for youe particular application.
+<BR>Some output (qui) may be a bit better.
+<BR>One procedure (LIST_LIST) has been added.  It is used by LIST_PACKAGE.
+
 
 
 <HR>
@@ -34,7 +37,7 @@ zip of all the Ada source files for WORDS, and support programs
 and data to generate the necessary dictionaries and inflections
 for re-hosting the WORDS Latin-to-English word parsing/translation
 system on any machine with an Ada 95 compiler.
-(It can be made to work with Ada 83 also by replacing on routine.)
+(It can be made to work with Ada 83 also by replacing the driver routine.)
 
 
 <P>This a console program (keyboard entry), without fancy Windows GUI,
@@ -75,6 +78,7 @@ tricks_package.ads
 word_package.adb
 tricks_package.adb
 list_package.ads
+list_list.adb
 dictionary_form.adb
 list_package-put_example_line.adb
 list_package.adb
@@ -102,12 +106,9 @@ ADDONS.
 UNIQUES.
 </PRE>
 <P>
-and a couple of DOS ASCII text files for testing
-<PRE>
-TEST500.
-1000.
-</PRE>
-<BR>
+<B>(Please note that the final period in these filenemes is important
+Some systems will drop a final period when copying.)</B>
+
 
 <HR>
 
@@ -159,9 +160,6 @@ All of my systems are case-independent on file names.  If one
 is running in a case-dependent system (UNIX), this is a point to check.
 Note that the data files are capitalized, source files are not.
 
-<P>
-There are two test files attached.  TEST500. is 100 lines from five
-different authors.  1000. is 1000 lines of Carsar's Gallic War.
 
 
 
