@@ -44,12 +44,15 @@ package body DEVELOPER_PARAMETERS is
 
                       DO_ONLY_FIXES               => FALSE,
                       DO_FIXES_ANYWAY             => FALSE,
-                      DO_MEDIEVAL_TRICKS          => FALSE,
+                      USE_PREFIXES                => TRUE, 
+                      USE_SUFFIXES                => TRUE, 
+                      
+                      DO_MEDIEVAL_TRICKS          => TRUE,
                       DO_SYNCOPE                  => TRUE,
                       INCLUDE_UNKNOWN_CONTEXT     => TRUE,
 
                       OMIT_ARCHAIC                => TRUE,
-                      OMIT_MEDIEVAL               => TRUE,
+                      OMIT_MEDIEVAL               => FALSE,
                       OMIT_UNCOMMON               => TRUE,
 
                       DO_I_FOR_J                  => FALSE,
@@ -187,13 +190,37 @@ DO_FIXES_ANYWAY_HELP : constant HELP_TYPE :=  (
    "This option instructs the program to do both the normal dictionary    ",
    "search and then process for the various prefixes and suffixes too.    ",
    "This is a pure research tool allowing one to consider the possibility ",
-   "of strangge constructions, even in the presence of conventional       ",
+   "of strange constructions, even in the presence of conventional        ",
    "results, e.g., alte => deeply (ADV), but al+t+e => wing+ed (ADJ VOC)  ",
    "(If multiple suffixes were supported this could also be wing+ed+ly.)  ",
    "This option is only available if DO_FIXES is turned on.               ",
    "This is entirely a development and research tool, not to be used in   ",
    "conventional translation situations, so the default choice is N(o).   ",
    "This processing can be turned on with the choice of Y(es).            ",
+   "      ------    PRESENTLY NOT IMPLEMENTED    ------                   " );
+
+USE_PREFIXES_HELP : constant HELP_TYPE :=  (
+   "This option instructs the program to implement prefixes from ADDONS   ",
+   "whenever and wherever FIXES are called for.  The purpose of this      ",
+   "option is to allow some flexibility while the program in running to   ",
+   "select various combinations of fixes, to turn them on and off,        ",
+   "individually as well as collectively.  This is an option usually      ",
+   "employed by the developer while experimenting with the ADDONS file.   ",
+   "This option is only effective in connection with DO_FIXES.            ",
+   "This is primarily a development tool, so the conventional user should ",
+   "probably maintain the default  choice of Y(es).                       ",
+   "      ------    PRESENTLY NOT IMPLEMENTED    ------                   " );
+
+USE_SUFFIXES_HELP : constant HELP_TYPE :=  (
+   "This option instructs the program to implement suffixes from ADDONS   ",
+   "whenever and wherever FIXES are called for.  The purpose of this      ",
+   "option is to allow some flexibility while the program in running to   ",
+   "select various combinations of fixes, to turn them on and off,        ",
+   "individually as well as collectively.  This is an option usually      ",
+   "employed by the developer while experimenting with the ADDONS file.   ",
+   "This option is only effective in connection with DO_FIXES.            ",
+   "This is primarily a development tool, so the conventional user should ",
+   "probably maintain the default  choice of Y(es).                       ",
    "      ------    PRESENTLY NOT IMPLEMENTED    ------                   " );
 
 
@@ -568,7 +595,12 @@ LOAD_DICTIONARY(DICT_LOC,
       WORDS_MDEV(WRITE_DEBUG_FILE) := FALSE;
     end if;
     if not IS_OPEN(DBG) and then WORDS_MDEV(HAVE_DEBUG_FILE)  then
-      CREATE(DBG, OUT_FILE, DEBUG_FULL_NAME);
+      begin
+        CREATE(DBG, OUT_FILE, DEBUG_FULL_NAME);
+      exception
+        when others =>
+          PUT_LINE("Cannot CREATE WORD.DBG - Check if it is in use elsewhere");
+      end;
     end if;
 
     if WORDS_MDEV(HAVE_DEBUG_FILE)  then
@@ -581,7 +613,12 @@ LOAD_DICTIONARY(DICT_LOC,
       WORDS_MDEV(WRITE_STATISTICS_FILE) := FALSE;
     end if;
     if not IS_OPEN(STATS) and then WORDS_MDEV(HAVE_STATISTICS_FILE)  then
-      CREATE(STATS, OUT_FILE, STATS_FULL_NAME);
+      begin
+        CREATE(STATS, OUT_FILE, STATS_FULL_NAME);
+      exception
+        when others =>
+          PUT_LINE("Cannot CREATE WORD.STA - Check if it is in use elsewhere");
+      end;
     end if;
 
     if WORDS_MDEV(HAVE_STATISTICS_FILE)  then
@@ -617,7 +654,11 @@ LOAD_DICTIONARY(DICT_LOC,
       INQUIRE(DO_FIXES_ANYWAY, DO_FIXES_ANYWAY_HELP);
     end if;
 
-
+    INQUIRE(USE_PREFIXES, USE_PREFIXES_HELP);
+    
+    INQUIRE(USE_SUFFIXES, USE_SUFFIXES_HELP);
+    
+        
     if WORDS_MODE(DO_TRICKS) then
       INQUIRE(DO_MEDIEVAL_TRICKS, DO_MEDIEVAL_TRICKS_HELP);
     end if;

@@ -3,12 +3,11 @@ with PREFACE;
 package body INFLECTIONS_PACKAGE is
   use TEXT_IO;
 
-
-
+  
   function "<" (LEFT, RIGHT : QUALITY_RECORD) return BOOLEAN is
   begin
-    if LEFT.PART = RIGHT.PART  then
-    case LEFT.PART is
+    if LEFT.POFS = RIGHT.POFS  then
+    case LEFT.POFS is
       when N =>
         if LEFT.N.DECL.WHICH < RIGHT.N.DECL.WHICH  or else
           (LEFT.N.DECL.WHICH = RIGHT.N.DECL.WHICH  and then
@@ -24,13 +23,7 @@ package body INFLECTIONS_PACKAGE is
           LEFT.N.DECL.VAR = RIGHT.N.DECL.VAR  and then
           LEFT.N.NUMBER = RIGHT.N.NUMBER and then
           LEFT.N.CS = RIGHT.N.CS and then
-          LEFT.N.GENDER < RIGHT.N.GENDER)  or else
-         (LEFT.N.DECL.WHICH = RIGHT.N.DECL.WHICH  and then
-          LEFT.N.DECL.VAR = RIGHT.N.DECL.VAR  and then
-          LEFT.N.NUMBER = RIGHT.N.NUMBER and then
-          LEFT.N.CS = RIGHT.N.CS and then
-          LEFT.N.GENDER = RIGHT.N.GENDER  and then
-          LEFT.N.KIND < RIGHT.N.KIND)   then
+          LEFT.N.GENDER < RIGHT.N.GENDER)  then
           return TRUE;
         end if;
       when PRON =>
@@ -48,13 +41,7 @@ package body INFLECTIONS_PACKAGE is
           LEFT.PRON.DECL.VAR = RIGHT.PRON.DECL.VAR  and then
           LEFT.PRON.NUMBER = RIGHT.PRON.NUMBER and then
           LEFT.PRON.CS = RIGHT.PRON.CS and then
-          LEFT.PRON.GENDER < RIGHT.PRON.GENDER)  or else
-         (LEFT.PRON.DECL.WHICH = RIGHT.PRON.DECL.WHICH  and then
-          LEFT.PRON.DECL.VAR = RIGHT.PRON.DECL.VAR  and then
-          LEFT.PRON.NUMBER = RIGHT.PRON.NUMBER and then
-          LEFT.PRON.CS = RIGHT.PRON.CS and then
-          LEFT.PRON.GENDER = RIGHT.PRON.GENDER  and then
-          LEFT.PRON.KIND < RIGHT.PRON.KIND)   then
+          LEFT.PRON.GENDER < RIGHT.PRON.GENDER) then
           return TRUE;
         end if;
       when PACK =>
@@ -72,13 +59,7 @@ package body INFLECTIONS_PACKAGE is
           LEFT.PACK.DECL.VAR = RIGHT.PACK.DECL.VAR  and then
           LEFT.PACK.NUMBER = RIGHT.PACK.NUMBER and then
           LEFT.PACK.CS = RIGHT.PACK.CS and then
-          LEFT.PACK.GENDER < RIGHT.PACK.GENDER)  or else
-         (LEFT.PACK.DECL.WHICH = RIGHT.PACK.DECL.WHICH  and then
-          LEFT.PACK.DECL.VAR = RIGHT.PACK.DECL.VAR  and then
-          LEFT.PACK.NUMBER = RIGHT.PACK.NUMBER and then
-          LEFT.PACK.CS = RIGHT.PACK.CS and then
-          LEFT.PACK.GENDER = RIGHT.PACK.GENDER  and then
-          LEFT.PACK.KIND < RIGHT.PACK.KIND)   then
+          LEFT.PACK.GENDER < RIGHT.PACK.GENDER)   then
           return TRUE;
         end if;
       when ADJ =>
@@ -135,15 +116,7 @@ LEFT.V.TENSE_VOICE_MOOD.MOOD   < RIGHT.V.TENSE_VOICE_MOOD.MOOD )  or else
 LEFT.V.TENSE_VOICE_MOOD.TENSE = RIGHT.V.TENSE_VOICE_MOOD.TENSE and then
 LEFT.V.TENSE_VOICE_MOOD.VOICE = RIGHT.V.TENSE_VOICE_MOOD.VOICE and then
 LEFT.V.TENSE_VOICE_MOOD.MOOD   = RIGHT.V.TENSE_VOICE_MOOD.MOOD   and then
-          LEFT.V.PERSON < RIGHT.V.PERSON)  or else
-         (LEFT.V.CON.WHICH = RIGHT.V.CON.WHICH  and then
-          LEFT.V.CON.VAR = RIGHT.V.CON.VAR  and then
-          LEFT.V.NUMBER = RIGHT.V.NUMBER and then
-LEFT.V.TENSE_VOICE_MOOD.TENSE = RIGHT.V.TENSE_VOICE_MOOD.TENSE and then
-LEFT.V.TENSE_VOICE_MOOD.VOICE = RIGHT.V.TENSE_VOICE_MOOD.VOICE and then
-LEFT.V.TENSE_VOICE_MOOD.MOOD   = RIGHT.V.TENSE_VOICE_MOOD.MOOD   and then
-          LEFT.V.PERSON = RIGHT.V.PERSON  and then
-          LEFT.V.KIND < RIGHT.V.KIND)   then
+          LEFT.V.PERSON < RIGHT.V.PERSON)   then
           return TRUE;
         end if;
       when VPAR =>
@@ -209,7 +182,7 @@ LEFT.V.TENSE_VOICE_MOOD.MOOD   = RIGHT.V.TENSE_VOICE_MOOD.MOOD   and then
           LEFT.NUM.NUMBER = RIGHT.NUM.NUMBER and then
           LEFT.NUM.CS = RIGHT.NUM.CS and then
           LEFT.NUM.GENDER = RIGHT.NUM.GENDER  and then
-          LEFT.NUM.KIND < RIGHT.NUM.KIND)   then
+          LEFT.NUM.SORT < RIGHT.NUM.SORT)   then
           return TRUE;
         end if;
       when TACKON =>
@@ -222,12 +195,12 @@ LEFT.V.TENSE_VOICE_MOOD.MOOD   = RIGHT.V.TENSE_VOICE_MOOD.MOOD   and then
         null;
     end case;
     else
-      return LEFT.PART < RIGHT.PART;
+      return LEFT.POFS < RIGHT.POFS;
     end if;
     return FALSE;
   exception
     when CONSTRAINT_ERROR  =>
-      return LEFT.PART < RIGHT.PART;
+      return LEFT.POFS < RIGHT.POFS;
   end "<";
 
 
@@ -351,7 +324,7 @@ LEFT.V.TENSE_VOICE_MOOD.MOOD   = RIGHT.V.TENSE_VOICE_MOOD.MOOD   and then
   end "<=";
 
 
-  function "<=" (LEFT, RIGHT : NUMERAL_KIND_TYPE)   return BOOLEAN is
+  function "<=" (LEFT, RIGHT : NUMERAL_SORT_TYPE)   return BOOLEAN is
   begin
     if (RIGHT = LEFT   or else
         RIGHT = X)  then
@@ -560,7 +533,6 @@ package body NOUN_RECORD_IO is
   use CASE_TYPE_IO;
   use GENDER_TYPE_IO;
   use NUMBER_TYPE_IO;
-  use NOUN_KIND_TYPE_IO;
   SPACER : CHARACTER := ' ';
 
 
@@ -573,8 +545,6 @@ package body NOUN_RECORD_IO is
     GET(F, N.NUMBER);
     GET(F, SPACER);
     GET(F, N.GENDER);
-    GET(F, SPACER);
-    GET(F, N.KIND);
   end GET;
 
   procedure GET(N : out NOUN_RECORD) is
@@ -586,8 +556,6 @@ package body NOUN_RECORD_IO is
     GET(N.NUMBER);
     GET(SPACER);
     GET(N.GENDER);
-    GET(SPACER);
-    GET(N.KIND);
   end GET;
 
   procedure PUT(F : in FILE_TYPE; N : in NOUN_RECORD) is
@@ -599,8 +567,6 @@ package body NOUN_RECORD_IO is
     PUT(F, N.NUMBER);
     PUT(F, ' ');
     PUT(F, N.GENDER);
-    PUT(F, ' ');
-    PUT(F, N.KIND);
   end PUT;
 
   procedure PUT(N : in NOUN_RECORD) is
@@ -612,8 +578,6 @@ package body NOUN_RECORD_IO is
     PUT(N.NUMBER);
     PUT(' ');
     PUT(N.GENDER);
-    PUT(' ');
-    PUT(N.KIND);
   end PUT;
 
   procedure GET(S : in STRING; N : out NOUN_RECORD; LAST : out INTEGER) is
@@ -625,9 +589,7 @@ package body NOUN_RECORD_IO is
     L := L + 1;
     GET(S(L+1..S'LAST), N.NUMBER, L);
     L := L + 1;
-    GET(S(L+1..S'LAST), N.GENDER, L);
-    L := L + 1;
-    GET(S(L+1..S'LAST), N.KIND, LAST);
+    GET(S(L+1..S'LAST), N.GENDER, LAST);
   end GET;
 
   procedure PUT(S : out STRING; N : in NOUN_RECORD) is
@@ -648,10 +610,6 @@ package body NOUN_RECORD_IO is
     S(L) :=  ' ';
     M := L + GENDER_TYPE_IO.DEFAULT_WIDTH;
     PUT(S(L+1..M), N.GENDER);
-    L := M + 1;
-    S(L) :=  ' ';
-    M := L + NOUN_KIND_TYPE_IO.DEFAULT_WIDTH;
-    PUT(S(L+1..M), N.KIND);
     S(M+1..S'LAST) := (others => ' ');
   end PUT;
 
@@ -664,7 +622,6 @@ package body PRONOUN_RECORD_IO is
   use CASE_TYPE_IO;
   use GENDER_TYPE_IO;
   use NUMBER_TYPE_IO;
-  use PRONOUN_KIND_TYPE_IO;
   SPACER : CHARACTER := ' ';
 
   procedure GET(F : in FILE_TYPE; P : out PRONOUN_RECORD) is
@@ -676,8 +633,6 @@ package body PRONOUN_RECORD_IO is
     GET(F, P.NUMBER);
     GET(F, SPACER);
     GET(F, P.GENDER);
-    GET(F, SPACER);
-    GET(F, P.KIND);
   end GET;
 
   procedure GET(P : out PRONOUN_RECORD) is
@@ -689,8 +644,6 @@ package body PRONOUN_RECORD_IO is
     GET(P.NUMBER);
     GET(SPACER);
     GET(P.GENDER);
-    GET(SPACER);
-    GET(P.KIND);
   end GET;
 
   procedure PUT(F : in FILE_TYPE; P : in PRONOUN_RECORD) is
@@ -702,8 +655,6 @@ package body PRONOUN_RECORD_IO is
     PUT(F, P.NUMBER);
     PUT(F, ' ');
     PUT(F, P.GENDER);
-    PUT(F, ' ');
-    PUT(F, P.KIND);
   end PUT;
 
   procedure PUT(P : in PRONOUN_RECORD) is
@@ -715,8 +666,6 @@ package body PRONOUN_RECORD_IO is
     PUT(P.NUMBER);
     PUT(' ');
     PUT(P.GENDER);
-    PUT(' ');
-    PUT(P.KIND);
   end PUT;
 
   procedure GET(S : in STRING; P : out PRONOUN_RECORD; LAST : out INTEGER) is
@@ -728,9 +677,7 @@ package body PRONOUN_RECORD_IO is
     L := L + 1;
     GET(S(L+1..S'LAST), P.NUMBER, L);
     L := L + 1;
-    GET(S(L+1..S'LAST), P.GENDER, L);
-    L := L + 1;
-    GET(S(L+1..S'LAST), P.KIND, LAST);
+    GET(S(L+1..S'LAST), P.GENDER, LAST);
   end GET;
 
   procedure PUT(S : out STRING; P : in PRONOUN_RECORD) is
@@ -751,10 +698,6 @@ package body PRONOUN_RECORD_IO is
     S(L) :=  ' ';
     M := L + GENDER_TYPE_IO.DEFAULT_WIDTH;
     PUT(S(L+1..M), P.GENDER);
-    L := M + 1;
-    S(L) :=  ' ';
-    M := L + PRONOUN_KIND_TYPE_IO.DEFAULT_WIDTH;
-    PUT(S(L+1..M), P.KIND);
     S(M+1..S'LAST) := (others => ' ');
   end PUT;
 
@@ -765,9 +708,8 @@ end PRONOUN_RECORD_IO;
 package body PROPACK_RECORD_IO is
   use DECN_RECORD_IO;
   use CASE_TYPE_IO;
-  use GENDER_TYPE_IO;
   use NUMBER_TYPE_IO;
-  use PRONOUN_KIND_TYPE_IO;
+  use GENDER_TYPE_IO;
   SPACER : CHARACTER := ' ';
 
   procedure GET(F : in FILE_TYPE; P : out PROPACK_RECORD) is
@@ -779,8 +721,6 @@ package body PROPACK_RECORD_IO is
     GET(F, P.NUMBER);
     GET(F, SPACER);
     GET(F, P.GENDER);
-    GET(F, SPACER);
-    GET(F, P.KIND);
   end GET;
 
   procedure GET(P : out PROPACK_RECORD) is
@@ -792,8 +732,6 @@ package body PROPACK_RECORD_IO is
     GET(P.NUMBER);
     GET(SPACER);
     GET(P.GENDER);
-    GET(SPACER);
-    GET(P.KIND);
   end GET;
 
   procedure PUT(F : in FILE_TYPE; P : in PROPACK_RECORD) is
@@ -805,8 +743,6 @@ package body PROPACK_RECORD_IO is
     PUT(F, P.NUMBER);
     PUT(F, ' ');
     PUT(F, P.GENDER);
-    PUT(F, ' ');
-    PUT(F, P.KIND);
   end PUT;
 
   procedure PUT(P : in PROPACK_RECORD) is
@@ -818,8 +754,6 @@ package body PROPACK_RECORD_IO is
     PUT(P.NUMBER);
     PUT(' ');
     PUT(P.GENDER);
-    PUT(' ');
-    PUT(P.KIND);
   end PUT;
 
   procedure GET(S : in STRING; P : out PROPACK_RECORD; LAST : out INTEGER) is
@@ -831,9 +765,7 @@ package body PROPACK_RECORD_IO is
     L := L + 1;
     GET(S(L+1..S'LAST), P.NUMBER, L);
     L := L + 1;
-    GET(S(L+1..S'LAST), P.GENDER, L);
-    L := L + 1;
-    GET(S(L+1..S'LAST), P.KIND, LAST);
+    GET(S(L+1..S'LAST), P.GENDER, LAST);
   end GET;
 
   procedure PUT(S : out STRING; P : in PROPACK_RECORD) is
@@ -854,10 +786,6 @@ package body PROPACK_RECORD_IO is
     S(L) :=  ' ';
     M := L + GENDER_TYPE_IO.DEFAULT_WIDTH;
     PUT(S(L+1..M), P.GENDER);
-    L := M + 1;
-    S(L) :=  ' ';
-    M := L + PRONOUN_KIND_TYPE_IO.DEFAULT_WIDTH;
-    PUT(S(L+1..M), P.KIND);
     S(M+1..S'LAST) := (others => ' ');
   end PUT;
 
@@ -969,6 +897,112 @@ package body ADJECTIVE_RECORD_IO is
 end ADJECTIVE_RECORD_IO;
 
 
+ 
+package body NUMERAL_RECORD_IO is
+  use DECN_RECORD_IO;
+  use CASE_TYPE_IO;
+  use NUMBER_TYPE_IO;
+  use GENDER_TYPE_IO;
+  use NUMERAL_SORT_TYPE_IO;
+  use GENDER_TYPE_IO;
+  SPACER : CHARACTER := ' ';
+
+
+  procedure GET(F : in FILE_TYPE; NUM : out NUMERAL_RECORD) is
+  begin
+    GET(F, NUM.DECL);
+    GET(F, SPACER);
+    GET(F, NUM.CS);
+    GET(F, SPACER);
+    GET(F, NUM.NUMBER);
+    GET(F, SPACER);
+    GET(F, NUM.GENDER);
+    GET(F, SPACER);
+    GET(F, NUM.SORT);
+  end GET;
+
+  procedure GET(NUM : out NUMERAL_RECORD) is
+  begin
+    GET(NUM.DECL);
+    GET(SPACER);                                                                             
+    GET(SPACER);
+    GET(NUM.NUMBER);
+    GET(SPACER);
+    GET(NUM.GENDER);
+    GET(SPACER);
+    GET(NUM.SORT);
+ end GET;
+
+  procedure PUT(F : in FILE_TYPE; NUM : in NUMERAL_RECORD) is
+  begin
+    PUT(F, NUM.DECL);
+    PUT(F, ' ');
+    PUT(F, NUM.CS);
+    PUT(F, ' ');
+    PUT(F, NUM.NUMBER);
+    PUT(F, ' ');
+    PUT(F, NUM.GENDER);
+    PUT(F, ' ');
+    PUT(F, NUM.SORT);
+  end PUT;
+
+  procedure PUT(NUM : in NUMERAL_RECORD) is
+  begin
+    PUT(NUM.DECL);
+    PUT(' ');
+    PUT(NUM.CS);
+    PUT(' ');
+    PUT(NUM.NUMBER);
+    PUT(' ');
+    PUT(NUM.GENDER);
+    PUT(' ');
+    PUT(NUM.SORT);
+  end PUT;
+
+  procedure GET(S : in STRING; NUM : out NUMERAL_RECORD; LAST : out INTEGER) is
+    L : INTEGER := S'FIRST - 1;
+  begin
+    GET(S(L+1..S'LAST), NUM.DECL, L);
+    L := L + 1;
+    GET(S(L+1..S'LAST), NUM.CS, L);
+    L := L + 1;
+    GET(S(L+1..S'LAST), NUM.NUMBER, L);
+    L := L + 1;
+    GET(S(L+1..S'LAST), NUM.GENDER, L);
+    L := L + 1;
+    GET(S(L+1..S'LAST), NUM.SORT, LAST);
+  end GET;
+
+  procedure PUT(S : out STRING; NUM : in NUMERAL_RECORD) is
+    L : INTEGER := S'FIRST - 1;
+    M : INTEGER := 0;
+  begin
+    M := L + DECN_RECORD_IO.DEFAULT_WIDTH;
+    PUT(S(L+1..M), NUM.DECL);
+    L := M + 1;
+    S(L) :=  ' ';
+    M := L + CASE_TYPE_IO.DEFAULT_WIDTH;
+    PUT(S(L+1..M), NUM.CS);
+    L := M + 1;
+    S(L) :=  ' ';
+    M := L + NUMBER_TYPE_IO.DEFAULT_WIDTH;
+    PUT(S(L+1..M), NUM.NUMBER);
+    L := M + 1;
+    S(L) :=  ' ';
+    M := L + GENDER_TYPE_IO.DEFAULT_WIDTH;
+    PUT(S(L+1..M), NUM.GENDER);
+    L := M + 1;
+    S(L) :=  ' ';
+    M := L + NUMERAL_SORT_TYPE_IO.DEFAULT_WIDTH;
+    PUT(S(L+1..M), NUM.SORT);
+    S(M+1..S'LAST) := (others => ' ');
+  end PUT;
+
+
+end NUMERAL_RECORD_IO;
+
+
+
 package body ADVERB_RECORD_IO is
   use COMPARISON_TYPE_IO;
   SPACER : CHARACTER := ' ';
@@ -1018,7 +1052,6 @@ package body VERB_RECORD_IO is
   use TENSE_VOICE_MOOD_RECORD_IO;
   use PERSON_TYPE_IO;
   use NUMBER_TYPE_IO;
-  use VERB_KIND_TYPE_IO;
   SPACER : CHARACTER := ' ';
 
 
@@ -1031,8 +1064,6 @@ package body VERB_RECORD_IO is
     GET(F, V.PERSON);
     GET(F, SPACER);
     GET(F, V.NUMBER);
-    GET(F, SPACER);
-    GET(F, V.KIND);
   end GET;
 
   procedure GET(V : out VERB_RECORD) is
@@ -1044,8 +1075,6 @@ package body VERB_RECORD_IO is
     GET(V.PERSON);
     GET(SPACER);
     GET(V.NUMBER);
-    GET(SPACER);
-    GET(V.KIND);
   end GET;
 
   procedure PUT(F : in FILE_TYPE; V : in VERB_RECORD) is
@@ -1057,8 +1086,6 @@ package body VERB_RECORD_IO is
     PUT(F, V.PERSON);
     PUT(F, ' ');
     PUT(F, V.NUMBER);
-    PUT(F, ' ');
-    PUT(F, V.KIND);
   end PUT;
 
   procedure PUT(V : in VERB_RECORD) is
@@ -1070,8 +1097,6 @@ package body VERB_RECORD_IO is
     PUT(V.PERSON);
     PUT(' ');
     PUT(V.NUMBER);
-    PUT(' ');
-    PUT(V.KIND);
   end PUT;
 
   procedure GET(S : in STRING; V : out VERB_RECORD; LAST : out INTEGER) is
@@ -1083,9 +1108,7 @@ package body VERB_RECORD_IO is
     L := L + 1;
     GET(S(L+1..S'LAST), V.PERSON, L);
     L := L + 1;
-    GET(S(L+1..S'LAST), V.NUMBER, L);
-    L := L + 1;
-    GET(S(L+1..S'LAST), V.KIND, LAST);
+    GET(S(L+1..S'LAST), V.NUMBER, LAST);
   end GET;
 
   procedure PUT(S : out STRING; V : in VERB_RECORD) is
@@ -1106,10 +1129,6 @@ package body VERB_RECORD_IO is
     S(L) :=  ' ';
     M := L + NUMBER_TYPE_IO.DEFAULT_WIDTH;
     PUT(S(L+1..M), V.NUMBER);
-    L := M + 1;
-    S(L) :=  ' ';
-    M := L + VERB_KIND_TYPE_IO.DEFAULT_WIDTH;
-    PUT(S(L+1..M), V.KIND);
     S(M+1..S'LAST) := (others => ' ');
   end PUT;
 
@@ -1123,7 +1142,6 @@ package body VPAR_RECORD_IO is
   use NUMBER_TYPE_IO;
   use GENDER_TYPE_IO;
   use TENSE_VOICE_MOOD_RECORD_IO;
-  use VERB_KIND_TYPE_IO;
   SPACER : CHARACTER := ' ';
 
 
@@ -1138,8 +1156,6 @@ package body VPAR_RECORD_IO is
     GET(F, VP.GENDER);
     GET(F, SPACER);
     GET(F, VP.TENSE_VOICE_MOOD);
-    GET(F, SPACER);
-    GET(F, VP.KIND);
   end GET;
 
   procedure GET(VP : out VPAR_RECORD) is
@@ -1153,8 +1169,6 @@ package body VPAR_RECORD_IO is
     GET(VP.GENDER);
     GET(SPACER);
     GET(VP.TENSE_VOICE_MOOD);
-    GET(SPACER);
-    GET(VP.KIND);
   end GET;
 
   procedure PUT(F : in FILE_TYPE; VP : in VPAR_RECORD) is
@@ -1168,8 +1182,6 @@ package body VPAR_RECORD_IO is
     PUT(F, VP.GENDER);
     PUT(F, ' ');
     PUT(F, VP.TENSE_VOICE_MOOD);
-    PUT(F, ' ');
-    PUT(F, VP.KIND);
   end PUT;
 
   procedure PUT(VP : in VPAR_RECORD) is
@@ -1183,8 +1195,6 @@ package body VPAR_RECORD_IO is
     PUT(VP.GENDER);
     PUT(' ');
     PUT(VP.TENSE_VOICE_MOOD);
-    PUT(' ');
-    PUT(VP.KIND);
   end PUT;
 
   procedure GET(S : in STRING; VP : out VPAR_RECORD; LAST : out INTEGER) is
@@ -1198,9 +1208,7 @@ package body VPAR_RECORD_IO is
     L := L + 1;
     GET(S(L+1..S'LAST), VP.GENDER, L);
     L := L + 1;
-    GET(S(L+1..S'LAST), VP.TENSE_VOICE_MOOD, L);
-    L := L + 1;
-    GET(S(L+1..S'LAST), VP.KIND, LAST);
+    GET(S(L+1..S'LAST), VP.TENSE_VOICE_MOOD, LAST);
   end GET;
 
   procedure PUT(S : out STRING; VP : in VPAR_RECORD) is
@@ -1225,10 +1233,6 @@ package body VPAR_RECORD_IO is
     S(L) :=  ' ';
     M := L + TENSE_VOICE_MOOD_RECORD_IO.DEFAULT_WIDTH;
     PUT(S(L+1..M), VP.TENSE_VOICE_MOOD);
-    L := M + 1;
-    S(L) :=  ' ';
-    M := L + VERB_KIND_TYPE_IO.DEFAULT_WIDTH;
-    PUT(S(L+1..M), VP.KIND);
     S(M+1..S'LAST) := (others => ' ');
   end PUT;
 
@@ -1241,7 +1245,6 @@ package body SUPINE_RECORD_IO is
   use CASE_TYPE_IO;
   use NUMBER_TYPE_IO;
   use GENDER_TYPE_IO;
-  use VERB_KIND_TYPE_IO;
   SPACER : CHARACTER := ' ';
 
 
@@ -1254,8 +1257,6 @@ package body SUPINE_RECORD_IO is
     GET(F, VP.NUMBER);
     GET(F, SPACER);
     GET(F, VP.GENDER);
-    GET(F, SPACER);
-    GET(F, VP.KIND);
   end GET;
 
   procedure GET(VP : out SUPINE_RECORD) is
@@ -1267,8 +1268,6 @@ package body SUPINE_RECORD_IO is
     GET(VP.NUMBER);
     GET(SPACER);
     GET(VP.GENDER);
-    GET(SPACER);
-    GET(VP.KIND);
   end GET;
 
   procedure PUT(F : in FILE_TYPE; VP : in SUPINE_RECORD) is
@@ -1280,8 +1279,6 @@ package body SUPINE_RECORD_IO is
     PUT(F, VP.NUMBER);
     PUT(F, ' ');
     PUT(F, VP.GENDER);
-    PUT(F, ' ');
-    PUT(F, VP.KIND);
   end PUT;
 
   procedure PUT(VP : in SUPINE_RECORD) is
@@ -1293,8 +1290,6 @@ package body SUPINE_RECORD_IO is
     PUT(VP.NUMBER);
     PUT(' ');
     PUT(VP.GENDER);
-    PUT(' ');
-    PUT(VP.KIND);
   end PUT;
 
   procedure GET(S : in STRING; VP : out SUPINE_RECORD; LAST : out INTEGER) is
@@ -1306,9 +1301,7 @@ package body SUPINE_RECORD_IO is
     L := L + 1;
     GET(S(L+1..S'LAST), VP.NUMBER, L);
     L := L + 1;
-    GET(S(L+1..S'LAST), VP.GENDER, L);
-    L := L + 1;
-    GET(S(L+1..S'LAST), VP.KIND, LAST);
+    GET(S(L+1..S'LAST), VP.GENDER, LAST);
   end GET;
 
   procedure PUT(S : out STRING; VP : in SUPINE_RECORD) is
@@ -1329,10 +1322,6 @@ package body SUPINE_RECORD_IO is
     S(L) :=  ' ';
     M := L + GENDER_TYPE_IO.DEFAULT_WIDTH;
     PUT(S(L+1..M), VP.GENDER);
-    L := M + 1;
-    S(L) :=  ' ';
-    M := L + VERB_KIND_TYPE_IO.DEFAULT_WIDTH;
-    PUT(S(L+1..M), VP.KIND);
     S(M+1..S'LAST) := (others => ' ');
   end PUT;
 
@@ -1465,123 +1454,6 @@ package body INTERJECTION_RECORD_IO is
 
 end INTERJECTION_RECORD_IO;
 
-
-package body NUMERAL_RECORD_IO is
-  use DECN_RECORD_IO;
-  use GENDER_TYPE_IO;
-  use CASE_TYPE_IO;
-  use NUMBER_TYPE_IO;
-  use NUMERAL_KIND_TYPE_IO;
-  use INTEGER_IO;
-  SPACER : CHARACTER := ' ';
-
-
-  procedure GET(F : in FILE_TYPE; NUM : out NUMERAL_RECORD) is
-  begin
-    GET(F, NUM.DECL);
-    GET(F, SPACER);
-    GET(F, NUM.CS);
-    GET(F, SPACER);
-    GET(F, NUM.NUMBER);
-    GET(F, SPACER);
-    GET(F, NUM.GENDER);
-    GET(F, SPACER);
-    GET(F, NUM.KIND);
-    GET(F, SPACER);
-    GET(F, NUM.VALUE);
-  end GET;
-
-  procedure GET(NUM : out NUMERAL_RECORD) is
-  begin
-    GET(NUM.DECL);
-    GET(SPACER);
-    GET(NUM.CS);
-    GET(SPACER);
-    GET(NUM.NUMBER);
-    GET(SPACER);
-    GET(NUM.GENDER);
-    GET(SPACER);
-    GET(NUM.KIND);
-    GET(SPACER);
-
-    GET(NUM.VALUE);
-  end GET;
-
-  procedure PUT(F : in FILE_TYPE; NUM : in NUMERAL_RECORD) is
-  begin
-    PUT(F, NUM.DECL);
-    PUT(F, ' ');
-    PUT(F, NUM.CS);
-    PUT(F, ' ');
-    PUT(F, NUM.NUMBER);
-    PUT(F, ' ');
-    PUT(F, NUM.GENDER);
-    PUT(F, ' ');
-    PUT(F, NUM.KIND);
-    PUT(F, ' ');
-    PUT(F, NUM.VALUE, 5);
-  end PUT;
-
-  procedure PUT(NUM : in NUMERAL_RECORD) is
-  begin
-    PUT(NUM.DECL);
-    PUT(' ');
-    PUT(NUM.CS);
-    PUT(' ');
-    PUT(NUM.NUMBER);
-    PUT(' ');
-    PUT(NUM.GENDER);
-    PUT(' ');
-    PUT(NUM.KIND);
-    PUT(' ');
-    PUT(NUM.VALUE, 5);
-  end PUT;
-
-  procedure GET(S : in STRING; NUM : out NUMERAL_RECORD; LAST : out INTEGER) is
-    L : INTEGER := S'FIRST - 1;
-  begin
-    GET(S(L+1..S'LAST), NUM.DECL, L);
-    L := L + 1;
-    GET(S(L+1..S'LAST), NUM.CS, L);
-    L := L + 1;
-    GET(S(L+1..S'LAST), NUM.NUMBER, L);
-    L := L + 1;
-    GET(S(L+1..S'LAST), NUM.GENDER, L);
-    L := L + 1;
-    GET(S(L+1..S'LAST), NUM.KIND, L);
-    L := L + 1;
-    GET(S(L+1..S'LAST), NUM.VALUE, LAST);
-  end GET;
-
-  procedure PUT(S : out STRING; NUM : in NUMERAL_RECORD) is
-    L : INTEGER := S'FIRST - 1;
-    M : INTEGER := 0;
-  begin
-    M := L + DECN_RECORD_IO.DEFAULT_WIDTH;
-    PUT(S(L+1..M), NUM.DECL);
-    L := M + 1;
-    S(L) :=  ' ';
-    M := L + CASE_TYPE_IO.DEFAULT_WIDTH;
-    PUT(S(L+1..M), NUM.CS);
-    M := L + NUMERAL_KIND_TYPE_IO.DEFAULT_WIDTH;
-    PUT(S(L+1..M), NUM.KIND);
-    L := M + 1;
-    S(L) :=  ' ';
-    M := L + NUMBER_TYPE_IO.DEFAULT_WIDTH;
-    PUT(S(L+1..M), NUM.NUMBER);
-    L := M + 1;
-    S(L) :=  ' ';
-    M := L + GENDER_TYPE_IO.DEFAULT_WIDTH;
-    PUT(S(L+1..M), NUM.GENDER);
-    L := M + 1;
-    S(L) :=  ' ';
-    M := L + 5;    --  Arbitary width for max value in dictionary
-    PUT(S(L+1..M), NUM.VALUE);
-    S(M+1..S'LAST) := (others => ' ');
-  end PUT;
-
-
-end NUMERAL_RECORD_IO;
 
 
 package body TACKON_RECORD_IO is
@@ -1790,7 +1662,7 @@ package body QUALITY_RECORD_IO is
         GET(F, SUFFX);
         P := (SUFFIX, SUFFX);
       when X =>
-        P := (PART => X);
+        P := (POFS => X);
     end case;
     return;
   end GET;
@@ -1847,7 +1719,7 @@ package body QUALITY_RECORD_IO is
         GET(SUFFX);
         P := (SUFFIX, SUFFX);
       when X =>
-        P := (PART => X);
+        P := (POFS => X);
     end case;
     return;
   end GET;
@@ -1855,9 +1727,9 @@ package body QUALITY_RECORD_IO is
   procedure PUT(F : in FILE_TYPE; P : in QUALITY_RECORD) is
     C : POSITIVE := POSITIVE(COL(F));
   begin
-    PUT(F, P.PART);
+    PUT(F, P.POFS);
     PUT(F, ' ');
-    case P.PART is
+    case P.POFS is
       when N =>
         PUT(F, P.N);
       when PRON =>
@@ -1899,9 +1771,9 @@ package body QUALITY_RECORD_IO is
   procedure PUT(P : in QUALITY_RECORD) is
     C : POSITIVE := POSITIVE(COL);
   begin
-    PUT(P.PART);
+    PUT(P.POFS);
     PUT(' ');
-    case P.PART is
+    case P.POFS is
       when N =>
         PUT(P.N);
       when PRON =>
@@ -1993,21 +1865,25 @@ package body QUALITY_RECORD_IO is
         GET(S(L+1..S'LAST), SUFFX, LAST);
         P := (SUFFIX, SUFFX);
       when X =>
-        P := (PART => X);
+        P := (POFS => X);
     end case;
     return;
   end GET;
 
 
   procedure PUT(S : out STRING; P : in QUALITY_RECORD) is
+  --  Note that this does not Put with a uniform width
+  --  which would require a constant QUALITY_RECORD_IO.DEFAULT_WIDTH
+  --  Rather we Put to minimal size with NOUN_RECORD_IO.DEFAULT_WIDTH,
+  --  PRONOUN_RECORD_IO,DEFAULT_WIDTH, ...
     L : INTEGER := S'FIRST - 1;
     M : INTEGER := 0;
   begin
     M := L + PART_OF_SPEECH_TYPE_IO.DEFAULT_WIDTH;
-    PUT(S(L+1..M), P.PART);
+    PUT(S(L+1..M), P.POFS);
     L := M + 1;
     S(L) :=  ' ';
-    case P.PART is
+    case P.POFS is
       when N =>
         M := L + NOUN_RECORD_IO.DEFAULT_WIDTH;
         PUT(S(L+1..M), P.N);
@@ -2268,8 +2144,6 @@ package body INFLECTION_RECORD_IO is
 end INFLECTION_RECORD_IO;
 
 
-
-
 procedure ESTABLISH_INFLECTIONS_SECTION  is
 --  Loads the inflection array from the file prepared in FILE_INFLECTIONS_SECTION
 --  If N = 0 (an artifical flag for the section for blank inflections = 5) 
@@ -2281,7 +2155,7 @@ procedure ESTABLISH_INFLECTIONS_SECTION  is
   procedure LOAD_LEL_INDEXES is
   --  Load arrays from file
     I  : INTEGER := 0;
-    IR : INFLECTION_RECORD;
+    --IR : INFLECTION_RECORD;
     N, XN : INTEGER := 0;
     CH, XCH : CHARACTER := ' ';
     INFLECTIONS_SECTIONS_FILE : LEL_SECTION_IO.FILE_TYPE;
@@ -2480,7 +2354,7 @@ procedure ESTABLISH_INFLECTIONS_SECTION  is
     N4_LOOP:
     loop
 
-       exit C4_LOOP when  LEL(I).QUAL.PART = PRON  and then
+       exit C4_LOOP when  LEL(I).QUAL.POFS = PRON  and then
                          (LEL(I).QUAL.PRON.DECL.WHICH = 1  or
                           LEL(I).QUAL.PRON.DECL.WHICH = 2);
 
@@ -2593,8 +2467,6 @@ begin  --  initialization of body of INFLECTIONS_PACKAGE
 --TEXT_IO.PUT_LINE("Initializing INFLECTIONS_PACKAGE");
 
   PART_OF_SPEECH_TYPE_IO.DEFAULT_WIDTH := PART_OF_SPEECH_TYPE'WIDTH;
-  --WHICH_TYPE_IO_DEFAULT_WIDTH := 1;
-  --VARIENT_TYPE_IO_DEFAULT_WIDTH := 1;
   GENDER_TYPE_IO.DEFAULT_WIDTH := GENDER_TYPE'WIDTH;
   CASE_TYPE_IO.DEFAULT_WIDTH := CASE_TYPE'WIDTH;
   NUMBER_TYPE_IO.DEFAULT_WIDTH := NUMBER_TYPE'WIDTH;
@@ -2606,9 +2478,7 @@ begin  --  initialization of body of INFLECTIONS_PACKAGE
   NOUN_KIND_TYPE_IO.DEFAULT_WIDTH := NOUN_KIND_TYPE'WIDTH;
   PRONOUN_KIND_TYPE_IO.DEFAULT_WIDTH := PRONOUN_KIND_TYPE'WIDTH;
   VERB_KIND_TYPE_IO.DEFAULT_WIDTH := VERB_KIND_TYPE'WIDTH;
-  NUMERAL_KIND_TYPE_IO.DEFAULT_WIDTH := NUMERAL_KIND_TYPE'WIDTH;
-  --STEM_KEY_TYPE_IO_DEFAULT_WIDTH := 1;
-  --ENDING_SIZE_TYPE_IO_DEFAULT_WIDTH := 3;
+  NUMERAL_SORT_TYPE_IO.DEFAULT_WIDTH := NUMERAL_SORT_TYPE'WIDTH;
   AGE_TYPE_IO.DEFAULT_WIDTH := AGE_TYPE'WIDTH;
   FREQUENCY_TYPE_IO.DEFAULT_WIDTH := FREQUENCY_TYPE'WIDTH;
 
@@ -2623,20 +2493,17 @@ begin  --  initialization of body of INFLECTIONS_PACKAGE
                    DECN_RECORD_IO.DEFAULT_WIDTH + 1 +
                    CASE_TYPE_IO.DEFAULT_WIDTH + 1 +
                    NUMBER_TYPE_IO.DEFAULT_WIDTH + 1 +
-                   GENDER_TYPE_IO.DEFAULT_WIDTH + 1 +
-                   NOUN_KIND_TYPE_IO.DEFAULT_WIDTH;
+                   GENDER_TYPE_IO.DEFAULT_WIDTH;
   PRONOUN_RECORD_IO.DEFAULT_WIDTH :=
                    DECN_RECORD_IO.DEFAULT_WIDTH + 1 +
                    CASE_TYPE_IO.DEFAULT_WIDTH + 1 +
                    NUMBER_TYPE_IO.DEFAULT_WIDTH + 1 +
-                   GENDER_TYPE_IO.DEFAULT_WIDTH + 1 +
-                   PRONOUN_KIND_TYPE_IO.DEFAULT_WIDTH;
+                   GENDER_TYPE_IO.DEFAULT_WIDTH;
   PROPACK_RECORD_IO.DEFAULT_WIDTH :=
                    DECN_RECORD_IO.DEFAULT_WIDTH + 1 +
                    CASE_TYPE_IO.DEFAULT_WIDTH + 1 +
                    NUMBER_TYPE_IO.DEFAULT_WIDTH + 1 +
-                   GENDER_TYPE_IO.DEFAULT_WIDTH + 1 +
-                   PRONOUN_KIND_TYPE_IO.DEFAULT_WIDTH;
+                   GENDER_TYPE_IO.DEFAULT_WIDTH;
   ADJECTIVE_RECORD_IO.DEFAULT_WIDTH :=
                    DECN_RECORD_IO.DEFAULT_WIDTH + 1 +
                    CASE_TYPE_IO.DEFAULT_WIDTH + 1 +
@@ -2649,21 +2516,18 @@ begin  --  initialization of body of INFLECTIONS_PACKAGE
                    DECN_RECORD_IO.DEFAULT_WIDTH + 1 +
                    TENSE_VOICE_MOOD_RECORD_IO.DEFAULT_WIDTH + 1 +
                    PERSON_TYPE_IO.DEFAULT_WIDTH + 1 +
-                   NUMBER_TYPE_IO.DEFAULT_WIDTH + 1 +
-                   VERB_KIND_TYPE_IO.DEFAULT_WIDTH;
+                   NUMBER_TYPE_IO.DEFAULT_WIDTH;
   VPAR_RECORD_IO.DEFAULT_WIDTH :=
                    DECN_RECORD_IO.DEFAULT_WIDTH + 1 +
                    CASE_TYPE_IO.DEFAULT_WIDTH + 1 +
                    NUMBER_TYPE_IO.DEFAULT_WIDTH + 1 +
                    GENDER_TYPE_IO.DEFAULT_WIDTH + 1 +
-                   TENSE_VOICE_MOOD_RECORD_IO.DEFAULT_WIDTH + 1 +
-                   VERB_KIND_TYPE_IO.DEFAULT_WIDTH;
+                   TENSE_VOICE_MOOD_RECORD_IO.DEFAULT_WIDTH;
   SUPINE_RECORD_IO.DEFAULT_WIDTH :=
                    DECN_RECORD_IO.DEFAULT_WIDTH + 1 +
                    CASE_TYPE_IO.DEFAULT_WIDTH + 1 +
                    NUMBER_TYPE_IO.DEFAULT_WIDTH + 1 +
-                   GENDER_TYPE_IO.DEFAULT_WIDTH + 1 +
-                   VERB_KIND_TYPE_IO.DEFAULT_WIDTH;
+                   GENDER_TYPE_IO.DEFAULT_WIDTH;
   PREPOSITION_RECORD_IO.DEFAULT_WIDTH := CASE_TYPE_IO.DEFAULT_WIDTH;
   CONJUNCTION_RECORD_IO.DEFAULT_WIDTH := 0;
   INTERJECTION_RECORD_IO.DEFAULT_WIDTH := 0;
@@ -2672,9 +2536,7 @@ begin  --  initialization of body of INFLECTIONS_PACKAGE
                    CASE_TYPE_IO.DEFAULT_WIDTH + 1 +
                    NUMBER_TYPE_IO.DEFAULT_WIDTH + 1 +
                    GENDER_TYPE_IO.DEFAULT_WIDTH + 1 +
-                   NUMERAL_KIND_TYPE_IO.DEFAULT_WIDTH + 1 +
-                   NUM_OUT_SIZE;
-               --  5;   --  PUT NATURAL with width 5, max in dictionary is 1000
+                   NUMERAL_SORT_TYPE_IO.DEFAULT_WIDTH;
   TACKON_RECORD_IO.DEFAULT_WIDTH := 0;
   PREFIX_RECORD_IO.DEFAULT_WIDTH := 0;
   SUFFIX_RECORD_IO.DEFAULT_WIDTH := 0;

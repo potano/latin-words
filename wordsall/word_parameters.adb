@@ -338,8 +338,13 @@ SAVE_PARAMETERS_HELP : constant HELP_TYPE :=  (
       WORDS_MODE(WRITE_OUTPUT_TO_FILE) := FALSE;
     end if;
     if not IS_OPEN(OUTPUT) and then WORDS_MODE(HAVE_OUTPUT_FILE)  then
-      CREATE(OUTPUT, OUT_FILE, OUTPUT_FULL_NAME);
-    end if;
+      begin
+        CREATE(OUTPUT, OUT_FILE, OUTPUT_FULL_NAME);
+      exception
+        when others =>
+          PUT_LINE("Cannot CREATE WORD.OUT - Check if it is in use elsewhere");
+      end;
+      end if;
 
     if WORDS_MODE(HAVE_OUTPUT_FILE)  then
       INQUIRE(WRITE_OUTPUT_TO_FILE, WRITE_OUTPUT_TO_FILE_HELP);
@@ -351,8 +356,13 @@ SAVE_PARAMETERS_HELP : constant HELP_TYPE :=  (
     --  If there is an open file then OK
     --  If not open and you now want to start writing to UNKNOWNS, the CREATE
     if not IS_OPEN(UNKNOWNS) and then WORDS_MODE(WRITE_UNKNOWNS_TO_FILE)  then
-      CREATE(UNKNOWNS, OUT_FILE, UNKNOWNS_FULL_NAME);
-    end if;
+      begin
+        CREATE(UNKNOWNS, OUT_FILE, UNKNOWNS_FULL_NAME);
+      exception
+        when others =>
+          PUT_LINE("Cannot CREATE WORD.UNK - Check if it is in use elsewhere");
+      end;
+      end if;
 
 
     INQUIRE(IGNORE_UNKNOWN_NAMES, IGNORE_UNKNOWN_NAMES_HELP);

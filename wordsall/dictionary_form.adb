@@ -1,8 +1,7 @@
 with STRINGS_PACKAGE; use STRINGS_PACKAGE;
 with INFLECTIONS_PACKAGE; use INFLECTIONS_PACKAGE;
 with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
-  function DICTIONARY_FORM(DE : DICTIONARY_ENTRY;
-                  LINE_NUMBER : INTEGER := 0) return STRING is
+  function DICTIONARY_FORM(DE : DICTIONARY_ENTRY) return STRING is
 
       NULL_OX : constant STRING(1..24) := (others => ' ');
       OX : array (1..4) of STRING (1..24) := (others => NULL_OX);
@@ -23,7 +22,7 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
     begin
 
 
-        if DE.PART.PART = N    then
+        if DE.PART.POFS = N    then
           if DE.PART.N.DECL.WHICH = 1  then
             if DE.PART.N.DECL.VAR = 1  then
               OX(1) := ADD(DE.STEMS(1), "a");
@@ -110,7 +109,7 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
             raise NOT_FOUND;
           end if;
 
-        elsif DE.PART.PART = PRON    then
+        elsif DE.PART.POFS = PRON    then
           if DE.PART.PRON.DECL.WHICH = 3  then
             OX(1) := ADD(DE.STEMS(1), "ic");
             OX(2) := ADD(DE.STEMS(1), "aec");
@@ -149,7 +148,7 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
             raise NOT_FOUND;
           end if;
 
-        elsif DE.PART.PART = ADJ  then
+        elsif DE.PART.POFS = ADJ  then
           if DE.PART.ADJ.CO = COMP  then
             OX(1) := ADD(DE.STEMS(1), "or");
             OX(2) := ADD(DE.STEMS(1), "or");
@@ -198,7 +197,7 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
                 OX(3) := ADD(NULL_OX, "-");
               elsif DE.PART.ADJ.DECL.VAR = 7  then
                 OX(1) := ADD(DE.STEMS(1), "os");
-                OX(2) := ADD(DE.STEMS(1), "os");
+                OX(2) := ADD(DE.STEMS(1), "-");
                 OX(3) := ADD(NULL_OX, "-");
               elsif DE.PART.ADJ.DECL.VAR = 8  then
                 OX(1) := ADD(NULL_OX, "-");
@@ -276,20 +275,20 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
           end if;
 
 
-        elsif (DE.PART.PART = ADV) and then (DE.PART.ADV.CO = X)  then
+        elsif (DE.PART.POFS = ADV) and then (DE.PART.ADV.CO = X)  then
            OX(1) := ADD(DE.STEMS(1), "");
            OX(2) := ADD(DE.STEMS(2), "");
            OX(3) := ADD(DE.STEMS(3), "");
 
 
-        elsif DE.PART.PART = V    then
+        elsif DE.PART.POFS = V    then
           if DE.PART.V.CON = (9, 9)  then
             OX(1) := ADD(DE.STEMS(1), "");
             OX(2) := ADD(NULL_OX, "undeclined");
 
           else
 
-            if DE.PART.V.KIND = DEP  then
+            if DE.KIND = (V, DEP)  then
               OX(3) := ADD(NULL_OX, "-");
               OX(4) := ADD(DE.STEMS(4), "us sum");
               if DE.PART.V.CON.WHICH = 1  then
@@ -312,7 +311,7 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
 
 
             else                            --  Not DEP 
-              if DE.PART.V.KIND = IMPERS  then
+              if DE.KIND = (V, IMPERS)  then
                 if DE.PART.V.CON.WHICH = 1  then
                   OX(1) := ADD(DE.STEMS(1), "at");
                 elsif DE.PART.V.CON.WHICH = 2  then
@@ -380,7 +379,7 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
               end if;                        --  OX(2) handled
 
 
-              if DE.PART.V.KIND = IMPERS  then
+              if DE.KIND = (V, IMPERS)  then
                 OX(3) := ADD(DE.STEMS(1), "it");
               elsif DE.PART.V.CON = (5, 1)  then
                 OX(3) := ADD(DE.STEMS(3), "i");
@@ -398,13 +397,13 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
             if DE.PART.V.CON = (6, 1)  then      --  Finalization correction
                   OX(3) := ADD(OX(3), " (ii)");
             end if;
-            if DE.PART.V.KIND = SEMIDEP  then    --  Finalization correction
+            if DE.KIND  = (V, SEMIDEP)  then    --  Finalization correction
                   OX(4) := ADD(DE.STEMS(4), "us sum");
             end if;
 
           end if;                        --  WHICH  ? 9
 
-        elsif (DE.PART.PART = NUM) and then (DE.PART.NUM.KIND = X)  then
+        elsif (DE.PART.POFS = NUM) and then (DE.PART.NUM.SORT = X)  then
           if DE.PART.NUM.DECL.WHICH = 1  then
             if DE.PART.NUM.DECL.VAR = 1  then
               OX(1) := ADD(DE.STEMS(1), "us -a -um");
@@ -436,7 +435,7 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
 
           end if;
 
-        elsif (DE.PART.PART = NUM) and then (DE.PART.NUM.KIND = CARD)  then
+        elsif (DE.PART.POFS = NUM) and then (DE.PART.NUM.SORT = CARD)  then
           if DE.PART.NUM.DECL.WHICH = 1  then
             if DE.PART.NUM.DECL.VAR = 1  then
               OX(1) := ADD(DE.STEMS(1), "us");
@@ -461,12 +460,12 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
 
           end if;
 
-        elsif (DE.PART.PART = NUM) and then (DE.PART.NUM.KIND = ORD)  then
+        elsif (DE.PART.POFS = NUM) and then (DE.PART.NUM.SORT = ORD)  then
           OX(1) := ADD(DE.STEMS(1), "us");
           OX(2) := ADD(DE.STEMS(1), "a");
           OX(3) := ADD(DE.STEMS(1), "um");
 
-        elsif (DE.PART.PART = NUM) and then (DE.PART.NUM.KIND = DIST)  then
+        elsif (DE.PART.POFS = NUM) and then (DE.PART.NUM.SORT = DIST)  then
           OX(1) := ADD(DE.STEMS(1), "i");
           OX(2) := ADD(DE.STEMS(1), "ae");
           OX(3) := ADD(DE.STEMS(1), "a");

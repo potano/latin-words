@@ -73,6 +73,7 @@ PUT_LINE("Begin  LOAD_INFLECTIONS_LIST");
       READ_A_LINE:
       begin
       GET_NON_COMMENT_LINE(INFLECTIONS_FILE, LINE, LAST);
+
         if LAST > 0  then
           GET(LINE(1..LAST), IR, L);
           SN := IR.ENDING.SIZE;
@@ -92,7 +93,7 @@ PUT_LINE("Begin  LOAD_INFLECTIONS_LIST");
 
     end loop;
     CLOSE(INFLECTIONS_FILE);
---PUT_LINE("INFLECTIONS_LIST LOADED   " & INTEGER'IMAGE(NUMBER_OF_INFLECTIONS));
+PUT_LINE("INFLECTIONS_LIST LOADED   " & INTEGER'IMAGE(NUMBER_OF_INFLECTIONS));
 
 end LOAD_INFLECTIONS_LIST;
 
@@ -121,7 +122,7 @@ ILC := L_I;                              --  Resetting the list to start over
     for N in reverse 1..MAX_ENDING_SIZE  loop
       while ILC(N, CH) /= null  loop
 if   not
-   (ILC(N, CH).IR.QUAL.PART = PRON  and then
+   (ILC(N, CH).IR.QUAL.POFS = PRON  and then
    (ILC(N, CH).IR.QUAL.PRON.DECL.WHICH = 1  or
     ILC(N, CH).IR.QUAL.PRON.DECL.WHICH = 2))  then
 
@@ -143,7 +144,7 @@ ILC := L_I;                              --  Resetting the list to start over
     for N in reverse 1..MAX_ENDING_SIZE  loop
       while ILC(N, CH) /= null  loop
 if   not
-   (ILC(N, CH).IR.QUAL.PART = PRON  and then
+   (ILC(N, CH).IR.QUAL.POFS = PRON  and then
    (ILC(N, CH).IR.QUAL.PRON.DECL.WHICH = 1  or
     ILC(N, CH).IR.QUAL.PRON.DECL.WHICH = 2))  then
 
@@ -166,7 +167,7 @@ ILC := L_I;                              --  Resetting the list to start over
     for N in reverse 1..MAX_ENDING_SIZE  loop
       while ILC(N, CH) /= null  loop
 if   not
-   (ILC(N, CH).IR.QUAL.PART = PRON  and then
+   (ILC(N, CH).IR.QUAL.POFS = PRON  and then
    (ILC(N, CH).IR.QUAL.PRON.DECL.WHICH = 1  or
     ILC(N, CH).IR.QUAL.PRON.DECL.WHICH = 2))  then
 
@@ -189,7 +190,7 @@ ILC := L_I;                              --  Resetting the list to start over
     for N in reverse 1..MAX_ENDING_SIZE  loop
       while ILC(N, CH) /= null  loop
 if   not
-   (ILC(N, CH).IR.QUAL.PART = PRON  and then
+   (ILC(N, CH).IR.QUAL.POFS = PRON  and then
    (ILC(N, CH).IR.QUAL.PRON.DECL.WHICH = 1  or
     ILC(N, CH).IR.QUAL.PRON.DECL.WHICH = 2))  then
 
@@ -210,7 +211,7 @@ ILC := L_I;                              --  Resetting the list to start over
 for CH in CHARACTER range 'a'..'z'  loop
     for N in reverse 1..MAX_ENDING_SIZE  loop
       while ILC(N, CH) /= null  loop
-if (ILC(N, CH).IR.QUAL.PART = PRON  and then
+if (ILC(N, CH).IR.QUAL.POFS = PRON  and then
    (ILC(N, CH).IR.QUAL.PRON.DECL.WHICH = 1  or
     ILC(N, CH).IR.QUAL.PRON.DECL.WHICH = 2))  then  --  2 no longer PACK
 

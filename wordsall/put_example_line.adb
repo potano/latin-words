@@ -1,22 +1,19 @@
 with TEXT_IO; 
 with INFLECTIONS_PACKAGE; use INFLECTIONS_PACKAGE;
 with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
-with WORD_SUPPORT_PACKAGE; use WORD_SUPPORT_PACKAGE;
 with CONFIG; use CONFIG;
-   with STRINGS_PACKAGE; use STRINGS_PACKAGE;
-   with WORD_PARAMETERS; use WORD_PARAMETERS;
-   with ADDONS_PACKAGE; use ADDONS_PACKAGE;
+with WORD_PARAMETERS; use WORD_PARAMETERS;
 --with LATIN_DEBUG; 
-procedure PUT_EXAMPLE_LINE(OUTPUT : TEXT_IO.FILE_TYPE; PR : in PARSE_RECORD) is
+procedure PUT_EXAMPLE_LINE(OUTPUT : TEXT_IO.FILE_TYPE; PR : in PARSE_RECORD; KE : in KIND_ENTRY) is
 --      use LATIN_DEBUG;
 
-    procedure PUT_VERB_EXAMPLE(OUTPUT : TEXT_IO.FILE_TYPE; PR : in PARSE_RECORD) is
+    procedure PUT_VERB_EXAMPLE(OUTPUT : TEXT_IO.FILE_TYPE; PR : in PARSE_RECORD; KE : in KIND_ENTRY) is
       PERSON : constant PERSON_TYPE      := PR.IR.QUAL.V.PERSON;
       NUMBER : constant NUMBER_TYPE      := PR.IR.QUAL.V.NUMBER;
       TENSE  : constant TENSE_TYPE       := PR.IR.QUAL.V.TENSE_VOICE_MOOD.TENSE;
       MOOD   : constant MOOD_TYPE        := PR.IR.QUAL.V.TENSE_VOICE_MOOD.MOOD; 
       VOICE  : VOICE_TYPE       := PR.IR.QUAL.V.TENSE_VOICE_MOOD.VOICE;
-      KIND   : VERB_KIND_TYPE   := PR.IR.QUAL.V.KIND; 
+      KIND   : VERB_KIND_TYPE   := KE.V_KIND; 
 --  Nothing on  (part), gerund, 
 
       function THEY return STRING is
@@ -231,7 +228,7 @@ procedure PUT_EXAMPLE_LINE(OUTPUT : TEXT_IO.FILE_TYPE; PR : in PARSE_RECORD) is
 
     if WORDS_MODE(DO_EXAMPLES)  and then (not (CONFIGURATION = MEANINGS))   then
             
-case PR.IR.QUAL.PART is 
+case PR.IR.QUAL.POFS is 
 when N => 
   case PR.IR.QUAL.N.CS is
   when GEN =>
@@ -286,7 +283,7 @@ when ADJ =>
 when V => 
         --TEXT_IO.NEW_LINE(OUTPUT);        --  Verb info too much for same line
         TEXT_IO.SET_COL(OUTPUT, 6);
-        PUT_VERB_EXAMPLE(OUTPUT, PR);
+        PUT_VERB_EXAMPLE(OUTPUT, PR, KE);
         TEXT_IO.NEW_LINE(OUTPUT);
                 
 when VPAR => 

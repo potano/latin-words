@@ -16,18 +16,23 @@ package ADDONS_PACKAGE is
       case PART is
         when N  => 
           N : NOUN_ENTRY;
+          NOUN_KIND : NOUN_KIND_TYPE;
         when PRON  =>
           PRON : PRONOUN_ENTRY;
+          PRONOUN_KIND : PRONOUN_KIND_TYPE;
         when PACK  =>
           PACK : PROPACK_ENTRY;
+          PROPACK_KIND : PRONOUN_KIND_TYPE;
         when ADJ  => 
           ADJ : ADJECTIVE_ENTRY;
         when NUM  => 
           NUM : NUMERAL_ENTRY;
+          NUMERAL_VALUE : NUMERAL_VALUE_TYPE;
         when ADV  => 
           ADV : ADVERB_ENTRY;
         when V  => 
           V : VERB_ENTRY;
+          VERB_KIND : VERB_KIND_TYPE;
         when others  =>
           null;
       end case;

@@ -10,7 +10,7 @@ with Word_Support_Package; use Word_Support_Package;
     use COUNT_IO;
     use Text_IO; 
     use STEM_IO;
-    use AAMNPC_Record_IO;
+    use MNPC_IO;
     use Part_Entry_IO;
     
     D_K : Dictionary_Kind := XXX;   --  ######################
@@ -110,7 +110,7 @@ begin
       Get(Line(Ll+1..Last), Ds.Key , Ll);
 --PUT(DS.KEY ); NEW_LINE;
 --PUT_LINE("#" & LINE(LL+1..LAST));
-      Get(Line(Ll+1..Last), Ds.Aamnpc , Ll);
+      Get(Line(Ll+1..Last), Ds.mnpc , Ll);
 --PUT(DS.AAMNPC); NEW_LINE;
       Write(STEM_File(D_K), Ds);
       Bbll(Fc, Sc, General) := I;          --  1
@@ -177,7 +177,7 @@ end if;
         Ds.Stem := Line(1..Max_Stem_Size);
         Get(Line(Max_Stem_Size+1..Last), Ds.Part, Ll);
         Get(Line(Ll+1..Last), Ds.Key , Ll);
-        Get(Line(Ll+1..Last), Ds.Aamnpc , Ll);
+        Get(Line(Ll+1..Last), Ds.mnpc , Ll);
         Write(STEM_File(D_K), Ds);
 --Put_Line("Wrote STEMfile");
         

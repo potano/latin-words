@@ -11,6 +11,7 @@ package body ADDONS_PACKAGE is
   use PART_OF_SPEECH_TYPE_IO;
   use TARGET_ENTRY_IO;
   use PART_ENTRY_IO;
+  use KIND_ENTRY_IO;
   use INFLECTIONS_PACKAGE.INTEGER_IO;
 
   function EQU(C, D : CHARACTER) return BOOLEAN is
@@ -57,7 +58,7 @@ package body ADDONS_PACKAGE is
     DE : DICTIONARY_ENTRY := NULL_DICTIONARY_ENTRY;
     MEAN : MEANING_TYPE := NULL_MEANING_TYPE;
     M : DICT_IO.POSITIVE_COUNT := 1;
-    TG : TARGET_ENTRY;
+    --TG : TARGET_ENTRY;
     TN : TACKON_ENTRY;
     PM : PREFIX_ITEM;
     TS : STEM_TYPE;
@@ -139,7 +140,7 @@ package body ADDONS_PACKAGE is
             PACKONS(PAC).TACK := TS;
             PACKONS(PAC).ENTR := TN;
             DICT_IO.SET_INDEX(DICT_FILE(D_K), M);
-            DE.TRAN.MEAN := MEAN;
+            DE.MEAN := MEAN;
             DICT_IO.WRITE(DICT_FILE(D_K), DE);
             PACKONS (PAC).MNPC := M;
             M := M + 1;
@@ -150,7 +151,7 @@ package body ADDONS_PACKAGE is
             TACKONS(TAC).TACK := TS;
             TACKONS(TAC).ENTR := TN;
             DICT_IO.SET_INDEX(DICT_FILE(D_K), M);
-            DE.TRAN.MEAN := MEAN;
+            DE.MEAN := MEAN;
             DICT_IO.WRITE(DICT_FILE(D_K), DE);
             --DICT_IO.WRITE(DICT_FILE(D_K), MEAN);
             TACKONS (TAC).MNPC := M;
@@ -176,7 +177,7 @@ package body ADDONS_PACKAGE is
             TICKONS(TIC).CONNECT  := PM.CONNECT;
             TICKONS(TIC).ENTR := PM.ENTR;
             DICT_IO.SET_INDEX(DICT_FILE(D_K), M);
-            DE.TRAN.MEAN := MEAN;
+            DE.MEAN := MEAN;
             DICT_IO.WRITE(DICT_FILE(D_K), DE);
             --DICT_IO.WRITE(DICT_FILE(D_K), MEAN);
             TICKONS (TIC).MNPC := M;
@@ -189,14 +190,14 @@ package body ADDONS_PACKAGE is
             PREFIXES(PRE).CONNECT  := PM.CONNECT;
             PREFIXES(PRE).ENTR := PM.ENTR;
             DICT_IO.SET_INDEX(DICT_FILE(D_K), M);
-            DE.TRAN.MEAN := MEAN;
+            DE.MEAN := MEAN;
             DICT_IO.WRITE(DICT_FILE(D_K), DE);
             --DICT_IO.WRITE(DICT_FILE(D_K), MEAN);
             PREFIXES(PRE).MNPC := M;
             M := M + 1;
           end if;
 
-          NUMBER_OF_TiCKONS  := TiC;
+          NUMBER_OF_TICKONS  := TIC;
           NUMBER_OF_PREFIXES := PRE;
 
         when SUFFIX  =>
@@ -209,7 +210,7 @@ package body ADDONS_PACKAGE is
         MEAN := HEAD(S(1..LAST), MAX_MEANING_SIZE);
 
         DICT_IO.SET_INDEX(DICT_FILE(D_K), M);
-        DE.TRAN.MEAN := MEAN;
+        DE.MEAN := MEAN;
         DICT_IO.WRITE(DICT_FILE(D_K), DE);
         --DICT_IO.WRITE(DICT_FILE(D_K), MEAN);
         SUFFIXES(SUF).MNPC := M;
@@ -346,6 +347,13 @@ package body ADDONS_PACKAGE is
   use NUMERAL_ENTRY_IO;
   use ADVERB_ENTRY_IO;
   use VERB_ENTRY_IO;
+  use KIND_ENTRY_IO;
+
+  use NOUN_KIND_TYPE_IO;
+  use PRONOUN_KIND_TYPE_IO;
+  use INFLECTIONS_PACKAGE.INTEGER_IO;
+  use VERB_KIND_TYPE_IO;
+  
   SPACER : CHARACTER := ' ';
 
   NOUN  : NOUN_ENTRY;
@@ -356,6 +364,13 @@ package body ADDONS_PACKAGE is
   ADVERB : ADVERB_ENTRY;
   VERB : VERB_ENTRY;
 
+  NOUN_KIND  : NOUN_KIND_TYPE;
+  PRONOUN_KIND : PRONOUN_KIND_TYPE;
+  PROPACK_KIND : PRONOUN_KIND_TYPE;
+  NUMERAL_VALUE : NUMERAL_VALUE_TYPE;
+  VERB_KIND : VERB_KIND_TYPE;
+  
+  KIND : KIND_ENTRY;
 
   P : TARGET_ENTRY;
 
@@ -368,25 +383,30 @@ package body ADDONS_PACKAGE is
     case PS is
       when N =>
         GET(F, NOUN);
-        P := (N, NOUN);
+        GET(F, NOUN_KIND);
+        P := (N, NOUN, NOUN_KIND);
       when PRON =>
         GET(F, PRONOUN);
-        P := (PRON, PRONOUN);
+        GET(F, PRONOUN_KIND);
+        P := (PRON, PRONOUN, PRONOUN_KIND);
       when PACK =>
         GET(F, PROPACK);
-        P := (PACK, PROPACK);
+        GET(F, PROPACK_KIND);
+        P := (PACK, PROPACK, PROPACK_KIND);
       when ADJ =>
         GET(F, ADJECTIVE);
         P := (ADJ, ADJECTIVE);
       when NUM =>
         GET(F, NUMERAL);
-        P := (NUM, NUMERAL);
+        GET(F, NUMERAL_VALUE);
+        P := (NUM, NUMERAL, NUMERAL_VALUE);
       when ADV =>
         GET(F, ADVERB);
         P := (ADV, ADVERB);
       when V =>
         GET(F, VERB);
-        P := (V, VERB);
+        GET(F, VERB_KIND);
+        P := (V, VERB, VERB_KIND);
       when X =>
         P := (PART => X);
     end case;
@@ -401,25 +421,30 @@ package body ADDONS_PACKAGE is
     case PS is
       when N =>
         GET(NOUN);
-        P := (N, NOUN);
+        GET(NOUN_KIND);
+        P := (N, NOUN, NOUN_KIND);
       when PRON =>
         GET(PRONOUN);
-        P := (PRON, PRONOUN);
+        GET(PRONOUN_KIND);
+        P := (PRON, PRONOUN, PRONOUN_KIND);
       when PACK =>
         GET(PROPACK);
-        P := (PACK, PROPACK);
+        GET(PROPACK_KIND);
+        P := (PACK, PROPACK, PROPACK_KIND);
       when ADJ =>
         GET(ADJECTIVE);
         P := (ADJ, ADJECTIVE);
       when NUM =>
         GET(NUMERAL);
-        P := (NUM, NUMERAL);
+        GET(NUMERAL_VALUE);
+        P := (NUM, NUMERAL, NUMERAL_VALUE);
       when ADV =>
         GET(ADVERB);
         P := (ADV, ADVERB);
       when V =>
         GET(VERB);
-        P := (V, VERB);
+        GET(VERB_KIND);
+        P := (V, VERB, VERB_KIND);
       when X =>
         P := (PART => X);
     end case;
@@ -434,18 +459,23 @@ package body ADDONS_PACKAGE is
     case P.PART is
       when N =>
         PUT(F, P.N);
+        PUT(F, P.NOUN_KIND);
       when PRON =>
         PUT(F, P.PRON);
+        PUT(F, P.PRONOUN_KIND);
       when PACK =>
         PUT(F, P.PACK);
+        PUT(F, P.PROPACK_KIND);
       when ADJ =>
         PUT(F, P.ADJ);
       when NUM =>
         PUT(F, P.NUM);
+        PUT(F, P.NUMERAL_VALUE);
       when ADV =>
         PUT(F, P.ADV);
       when V =>
         PUT(F, P.V);
+        PUT(F, P.VERB_KIND);
       when others =>
         null;
     end case;
@@ -462,18 +492,23 @@ package body ADDONS_PACKAGE is
     case P.PART is
       when N =>
         PUT(P.N);
+        PUT(P.NOUN_KIND);
       when PRON =>
         PUT(P.PRON);
+        PUT(P.PRONOUN_KIND);
       when PACK =>
         PUT(P.PACK);
+        PUT(P.PROPACK_KIND);
       when ADJ =>
         PUT(P.ADJ);
       when NUM =>
         PUT(P.NUM);
+        PUT(P.NUMERAL_VALUE);
       when ADV =>
         PUT(P.ADV);
       when V =>
         PUT(P.V);
+        PUT(P.VERB_KIND);
       when others =>
         null;
     end case;
@@ -489,26 +524,31 @@ package body ADDONS_PACKAGE is
     L := L + 1;
     case PS is
       when N =>
-        GET(S(L+1..S'LAST), NOUN, LAST);
-        P := (N, NOUN);
+        GET(S(L+1..S'LAST), NOUN, L);
+        GET(S(L+1..S'LAST), NOUN_KIND, LAST);
+        P := (N, NOUN, NOUN_KIND);
       when PRON =>
-        GET(S(L+1..S'LAST), PRONOUN, LAST);
-        P := (PRON, PRONOUN);
+        GET(S(L+1..S'LAST), PRONOUN, L);
+        GET(S(L+1..S'LAST), PRONOUN_KIND, LAST);
+        P := (PRON, PRONOUN, PRONOUN_KIND);
       when PACK =>
-        GET(S(L+1..S'LAST), PROPACK, LAST);
-        P := (PACK, PROPACK);
+        GET(S(L+1..S'LAST), PROPACK, L);
+        GET(S(L+1..S'LAST), PROPACK_KIND, LAST);
+        P := (PACK, PROPACK, PROPACK_KIND);
       when ADJ =>
         GET(S(L+1..S'LAST), ADJECTIVE, LAST);
         P := (ADJ, ADJECTIVE);
       when NUM =>
-        GET(S(L+1..S'LAST), NUMERAL, LAST);
-        P := (NUM, NUMERAL);
-      when ADV =>
+        GET(S(L+1..S'LAST), NUMERAL, L);
+        GET(S(L+1..S'LAST), NUMERAL_VALUE, LAST);
+        P := (NUM, NUMERAL, NUMERAL_VALUE);
+      when ADV =>  
         GET(S(L+1..S'LAST), ADVERB, LAST);
         P := (ADV, ADVERB);
       when V =>
-        GET(S(L+1..S'LAST), VERB, LAST);
-        P := (V, VERB);
+        GET(S(L+1..S'LAST), VERB, L);
+        GET(S(L+1..S'LAST), VERB_KIND, LAST);
+        P := (V, VERB, VERB_KIND);
       when X =>
         P := (PART => X);
     end case;
@@ -528,24 +568,34 @@ package body ADDONS_PACKAGE is
       when N =>
         M := L + NOUN_ENTRY_IO.DEFAULT_WIDTH;
         PUT(S(L+1..M), P.N);
+        M := L + NOUN_KIND_TYPE_IO.DEFAULT_WIDTH;
+        PUT(S(L+1..M), P.NOUN_KIND);
       when PRON =>
         M := L + PRONOUN_ENTRY_IO.DEFAULT_WIDTH;
         PUT(S(L+1..M), P.PRON);
+        M := L + PRONOUN_KIND_TYPE_IO.DEFAULT_WIDTH;
+        PUT(S(L+1..M), P.PRONOUN_KIND);
       when PACK =>
         M := L + PROPACK_ENTRY_IO.DEFAULT_WIDTH;
         PUT(S(L+1..M), P.PACK);
+        M := L + PRONOUN_KIND_TYPE_IO.DEFAULT_WIDTH;
+        PUT(S(L+1..M), P.PROPACK_KIND);
       when ADJ =>
         M := L + ADJECTIVE_ENTRY_IO.DEFAULT_WIDTH;
         PUT(S(L+1..M), P.ADJ);
       when NUM =>
         M := L + NUMERAL_ENTRY_IO.DEFAULT_WIDTH;
         PUT(S(L+1..M), P.NUM);
+        M := L + NUMERAL_VALUE_TYPE_IO_DEFAULT_WIDTH;
+        PUT(S(L+1..M), P.PRONOUN_KIND);
       when ADV =>
         M := L + ADVERB_ENTRY_IO.DEFAULT_WIDTH;
         PUT(S(L+1..M), P.ADV);
       when V =>
         M := L + VERB_ENTRY_IO.DEFAULT_WIDTH;
         PUT(S(L+1..M), P.V);
+        M := L + PRONOUN_KIND_TYPE_IO.DEFAULT_WIDTH;
+        PUT(S(L+1..M), P.PRONOUN_KIND);
       when others =>
         null;
     end case;

@@ -41,7 +41,7 @@ package body WORD_SUPPORT_PACKAGE is
       end case;
     end ADV_COMP_FROM_KEY;
 
-  function NUM_KIND_FROM_KEY(KEY : STEM_KEY_TYPE) return NUMERAL_KIND_TYPE is
+  function NUM_SORT_FROM_KEY(KEY : STEM_KEY_TYPE) return NUMERAL_SORT_TYPE is
   begin
       case KEY is
         when 1  => return CARD;
@@ -50,7 +50,7 @@ package body WORD_SUPPORT_PACKAGE is
         when 4  => return ADVERB;
         when others  => return X;
       end case;
-  end NUM_KIND_FROM_KEY;
+  end NUM_SORT_FROM_KEY;
 
 
   function FIRST_INDEX(INPUT_WORD : STRING;

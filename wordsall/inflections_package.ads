@@ -4,6 +4,10 @@ package INFLECTIONS_PACKAGE is
   package INTEGER_IO is new TEXT_IO.INTEGER_IO(INTEGER);
   use TEXT_IO;
 
+  --  Generally simple/enumeration types have names ending in _TYPE
+  --            complex/record     types have names ending in _RECORD
+  --            array              types have names ending in _ARRAY
+  
   MAX_STEM_SIZE    : constant := 18;
   MAX_MEANING_SIZE : constant := 80;
 
@@ -40,6 +44,9 @@ package INFLECTIONS_PACKAGE is
 
   subtype VARIENT_TYPE is NATURAL range 0..9;
 
+  WHICH_TYPE_IO_DEFAULT_WIDTH : INTEGER := 1;
+  VARIENT_TYPE_IO_DEFAULT_WIDTH : INTEGER := 1;
+  
   type DECN_RECORD is
     record
       WHICH        : WHICH_TYPE := 0;
@@ -102,8 +109,25 @@ package INFLECTIONS_PACKAGE is
   package COMPARISON_TYPE_IO is new TEXT_IO.ENUMERATION_IO(COMPARISON_TYPE);
 
   subtype STEM_KEY_TYPE is NATURAL range 0..9;
+    
+  STEM_KEY_TYPE_IO_DEFAULT_WIDTH : INTEGER := 1;
   
+  
+  
+  type NUMERAL_SORT_TYPE is (
+         X,          --  all, none, or unknown
+         CARD,       --  CARDinal
+         ORD,        --  ORDinal
+         DIST,       --  DISTributive
+         ADVERB      --  numeral ADVERB
+                            );
 
+
+  package NUMERAL_SORT_TYPE_IO is 
+    new TEXT_IO.ENUMERATION_IO(NUMERAL_SORT_TYPE);
+ 
+ 
+   
   type TENSE_TYPE is (
           X,         --  all, none, or unknown
           PRES,      --  PRESent
@@ -132,7 +156,7 @@ package INFLECTIONS_PACKAGE is
           INF,       --  INFinative
           PPL        --  ParticiPLe
                      );                    
-  
+                                        
   package MOOD_TYPE_IO is new TEXT_IO.ENUMERATION_IO(MOOD_TYPE);
   
   type TENSE_VOICE_MOOD_RECORD is 
@@ -165,7 +189,7 @@ package INFLECTIONS_PACKAGE is
           T,            --  a Thing
           W             --  a place Where
                            ); 
-
+  
   package NOUN_KIND_TYPE_IO is new TEXT_IO.ENUMERATION_IO(NOUN_KIND_TYPE);
 
   type PRONOUN_KIND_TYPE is (
@@ -182,7 +206,12 @@ package INFLECTIONS_PACKAGE is
   package PRONOUN_KIND_TYPE_IO is 
       new TEXT_IO.ENUMERATION_IO(PRONOUN_KIND_TYPE);
   
-  type VERB_KIND_TYPE is (
+   subtype NUMERAL_VALUE_TYPE is NATURAL range 0..1000;
+
+   NUMERAL_VALUE_TYPE_IO_DEFAULT_WIDTH : INTEGER := 5;
+  
+  
+   type VERB_KIND_TYPE is (
           X,         --  all, none, or unknown
           TO_BE,     --  only the verb TO BE (esse)
           TO_BEING,  --  compounds of the verb to be (esse)
@@ -204,14 +233,13 @@ package INFLECTIONS_PACKAGE is
   package VERB_KIND_TYPE_IO is 
       new TEXT_IO.ENUMERATION_IO(VERB_KIND_TYPE);
 
-
+  
 type NOUN_RECORD is
   record
     DECL        : DECN_RECORD;
     CS          : CASE_TYPE := X;
     NUMBER      : NUMBER_TYPE := X;
     GENDER      : GENDER_TYPE := X;
-    KIND        : NOUN_KIND_TYPE := X;
   end record;
  
  package NOUN_RECORD_IO is
@@ -231,7 +259,6 @@ type PRONOUN_RECORD is
     CS          : CASE_TYPE := X;
     NUMBER      : NUMBER_TYPE := X;
     GENDER      : GENDER_TYPE := X;
-    KIND        : PRONOUN_KIND_TYPE := X;
   end record;
 
  package PRONOUN_RECORD_IO is
@@ -251,7 +278,6 @@ type PROPACK_RECORD is
     CS          : CASE_TYPE := X;
     NUMBER      : NUMBER_TYPE := X;
     GENDER      : GENDER_TYPE := X;
-    KIND        : PRONOUN_KIND_TYPE := X;
   end record;
 
  package PROPACK_RECORD_IO is
@@ -285,29 +311,16 @@ type ADJECTIVE_RECORD is
  end ADJECTIVE_RECORD_IO;  
 
 
- type NUMERAL_KIND_TYPE is (
-         X,          --  all, none, or unknown
-         CARD,       --  CARDinal
-         ORD,        --  ORDinal
-         DIST,       --  DISTributive
-         ADVERB      --  numeral ADVERB
-                            );
-
- package NUMERAL_KIND_TYPE_IO is 
-    new TEXT_IO.ENUMERATION_IO(NUMERAL_KIND_TYPE);
- 
- type NUMERAL_RECORD is
+  type NUMERAL_RECORD is
    record
      DECL        : DECN_RECORD;
      CS          : CASE_TYPE := X;
      NUMBER      : NUMBER_TYPE := X;
      GENDER      : GENDER_TYPE := X;
-     KIND        : NUMERAL_KIND_TYPE := X;
-     VALUE       : NATURAL := 0;
-   end record;
+     SORT        : NUMERAL_SORT_TYPE := X;
+  end record;
  
-  NUM_OUT_SIZE : constant := 5;       --  For printout, 1000 should be largest
-
+  
   package NUMERAL_RECORD_IO is
     DEFAULT_WIDTH : NATURAL;
     procedure GET(F : in FILE_TYPE; NUM : out NUMERAL_RECORD);
@@ -340,7 +353,6 @@ type VERB_RECORD is
     TENSE_VOICE_MOOD  : TENSE_VOICE_MOOD_RECORD;    
     PERSON      : PERSON_TYPE := 0;
     NUMBER      : NUMBER_TYPE := X;
-    KIND        : VERB_KIND_TYPE := X;
   end record;
 
  package VERB_RECORD_IO is
@@ -361,7 +373,6 @@ type VPAR_RECORD is
     NUMBER      : NUMBER_TYPE := X;
     GENDER      : GENDER_TYPE := X;
     TENSE_VOICE_MOOD  : TENSE_VOICE_MOOD_RECORD;    
-    KIND        : VERB_KIND_TYPE := X;
   end record;
 
  package VPAR_RECORD_IO is
@@ -381,7 +392,6 @@ type SUPINE_RECORD is
     CS          : CASE_TYPE := X;
     NUMBER      : NUMBER_TYPE := X;
     GENDER      : GENDER_TYPE := X;
-    KIND        : VERB_KIND_TYPE := X;
   end record;
 
  package SUPINE_RECORD_IO is
@@ -498,9 +508,9 @@ type INTERJECTION_RECORD is
   end SUFFIX_RECORD_IO;  
  
 
-  type QUALITY_RECORD(PART : PART_OF_SPEECH_TYPE := X) is
+  type QUALITY_RECORD(POFS : PART_OF_SPEECH_TYPE := X) is
     record
-      case PART is
+      case POFS is
         when N =>
           N : NOUN_RECORD;
         when PRON =>
@@ -555,6 +565,8 @@ type INTERJECTION_RECORD is
   MAX_ENDING_SIZE : constant := 7;     
   subtype ENDING_SIZE_TYPE is INTEGER range 0..MAX_ENDING_SIZE;
 
+  ENDING_SIZE_TYPE_IO_DEFAULT_WIDTH : INTEGER := 3;
+
   subtype ENDING is STRING(1..MAX_ENDING_SIZE);
 
   type ENDING_RECORD is
@@ -575,7 +587,7 @@ type INTERJECTION_RECORD is
   
   NULL_ENDING_RECORD : ENDING_RECORD;
   
-
+  
   type AGE_TYPE is (
     X,   --              --  In use throughout the ages/unknown -- the default
     A,   --  archaic     --  Very early forms, obsolete by classical times

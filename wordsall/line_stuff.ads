@@ -6,25 +6,7 @@ with UNIQUES_PACKAGE; use UNIQUES_PACKAGE;
 package LINE_STUFF is
   use TEXT_IO;
 
-  type PARSE_LINE is
-    record
-      STEM  : STEM_TYPE := NULL_STEM_TYPE;
-      IR    : INFLECTION_RECORD := NULL_INFLECTION_RECORD;
-      D_K   : DICTIONARY_KIND := DEFAULT_DICTIONARY_KIND;
-      TRAN  : TRANSLATION_RECORD := NULL_TRANSLATION_RECORD;
-    end record;
 
-  NULL_PARSE_LINE : PARSE_LINE;
-
-  package PARSE_LINE_IO is
-    DEFAULT_WIDTH : TEXT_IO.FIELD;
-    procedure GET(F : in TEXT_IO.FILE_TYPE; PR : out PARSE_LINE);
-    procedure GET(PR : out PARSE_LINE);
-    procedure PUT(F : in TEXT_IO.FILE_TYPE; PR : in PARSE_LINE);
-    procedure PUT(PR : in PARSE_LINE);
-    procedure GET(S : in STRING; PR : out PARSE_LINE; LAST : out INTEGER);
-    procedure PUT(S : out STRING; PR : in PARSE_LINE);
-  end PARSE_LINE_IO;
 
   type DICTIONARY_ITEM;
   type DICTIONARY_LIST is access DICTIONARY_ITEM;
@@ -106,9 +88,10 @@ package LINE_STUFF is
 
   type UNIQUE_ENTRY is
     record
-      STEM   : STEM_TYPE         := NULL_STEM_TYPE;
-      IR     : INFLECTION_RECORD := NULL_INFLECTION_RECORD;
-      TRAN  : TRANSLATION_RECORD := NULL_TRANSLATION_RECORD;
+      STEM : STEM_TYPE          := NULL_STEM_TYPE;
+      QUAL : QUALITY_RECORD     := NULL_QUALITY_RECORD;
+      KIND : KIND_ENTRY         := NULL_KIND_ENTRY;
+      TRAN : TRANSLATION_RECORD := NULL_TRANSLATION_RECORD;
     end record;
 
   package UNIQUE_ENTRY_IO is

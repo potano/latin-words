@@ -3,16 +3,14 @@ with WORD_PARAMETERS; use WORD_PARAMETERS;
 with INFLECTIONS_PACKAGE; use INFLECTIONS_PACKAGE;
 with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
 with DEVELOPER_PARAMETERS; use DEVELOPER_PARAMETERS;
-with WORD_PACKAGE; use WORD_PACKAGE;
-procedure LIST_LIST(PA : in out PARSE_ARRAY) is
+procedure LIST_LIST(PA : in out PARSE_ARRAY; PA_LAST : in out INTEGER) is
 
   use INFLECTION_RECORD_IO;
   use DICT_IO;
 
-  PA_LAST : INTEGER := PA'LAST;
   PR, OPR : PARSE_RECORD;
   J : INTEGER := 0;
-
+  
 
   procedure ORDER_PARSE_ARRAY(SX : in out PARSE_ARRAY) is
      use INFLECTION_RECORD_IO;
@@ -29,7 +27,9 @@ procedure LIST_LIST(PA : in out PARSE_ARRAY) is
      J : INTEGER := SL'FIRST;
 
    begin
-     if SX'LENGTH = 0              then
+     PA_LAST := PA'LAST;
+     
+    if SX'LENGTH = 0              then
         return;
      end if;
 
@@ -49,8 +49,8 @@ procedure LIST_LIST(PA : in out PARSE_ARRAY) is
 
         function "<" (LEFT, RIGHT : QUALITY_RECORD) return BOOLEAN is
         begin
-          if LEFT.PART = RIGHT.PART  and then
-             LEFT.PART = PRON        and then
+          if LEFT.POFS = RIGHT.POFS  and then
+             LEFT.POFS = PRON        and then
              LEFT.PRON.DECL.WHICH = 1    then
             return (LEFT.PRON.DECL.VAR < RIGHT.PRON.DECL.VAR);
           else
@@ -61,8 +61,8 @@ procedure LIST_LIST(PA : in out PARSE_ARRAY) is
        function EQU (LEFT, RIGHT : QUALITY_RECORD) return BOOLEAN is
         begin
 
-          if LEFT.PART = RIGHT.PART  and then
-             LEFT.PART = PRON        and then
+          if LEFT.POFS = RIGHT.POFS  and then
+             LEFT.POFS = PRON        and then
              LEFT.PRON.DECL.WHICH = 1    then
 
             return (LEFT.PRON.DECL.VAR = RIGHT.PRON.DECL.VAR);
@@ -76,9 +76,9 @@ procedure LIST_LIST(PA : in out PARSE_ARRAY) is
           function MEANING (PR : PARSE_RECORD) return MEANING_TYPE is
           DE : DICTIONARY_ENTRY;
         begin
-          DICT_IO.SET_INDEX(DICT_FILE(PR.D_K), PR.AAMNPC.MNPC);
+          DICT_IO.SET_INDEX(DICT_FILE(PR.D_K), PR.MNPC);
           DICT_IO.READ(DICT_FILE(PR.D_K), DE);
-          return DE.TRAN.MEAN;
+          return DE.MEAN;
         end MEANING;
 
       begin
@@ -94,14 +94,14 @@ procedure LIST_LIST(PA : in out PARSE_ARRAY) is
           for I in SL'FIRST..SL_LAST-1  loop
             --  Maybe <   =  on PR.STEM  -  will have to make up "<"   --  Actually STEM and PART  --  and check that later in print
 
-            if SL(I+1).D_K  > SL(I).D_K   or else  --  Let LOC list first
+            if SL(I+1).D_K  > SL(I).D_K   or else  --  Let DICT.LOC list first
 
                (SL(I+1).D_K  = SL(I).D_K    and then
                 SL(I+1).IR.QUAL < SL(I).IR.QUAL)  or else
 
                (SL(I+1).D_K  = SL(I).D_K    and then
                 EQU(SL(I+1).IR.QUAL, SL(I).IR.QUAL)  and then
-                MEANING(SL(I+1)) < MEANING(SL(I)))  or else
+                MEANING(SL(I+1)) < MEANING(SL(I)))  or else   --  | is > letter
 
                (SL(I+1).D_K  = SL(I).D_K  and then
                 EQU(SL(I+1).IR.QUAL, SL(I).IR.QUAL)  and then
@@ -125,7 +125,9 @@ procedure LIST_LIST(PA : in out PARSE_ARRAY) is
 
          end loop INNER_LOOP;
 
-
+--for I in 1..SX'LAST loop
+--  TEXT_IO.PUT_LINE(INTEGER'IMAGE(I) & MEANING(SX(I)));
+--end loop;
         end SWITCH;
      --------------------------------------------------
 
@@ -175,10 +177,16 @@ procedure LIST_LIST(PA : in out PARSE_ARRAY) is
 
   function ALLOWED_STEM(PR : PARSE_RECORD) return BOOLEAN is
      ALLOWED : BOOLEAN := TRUE;   --  modify as necessary and return it
+     DE : DICTIONARY_ENTRY;
   begin
-  --  NOUN CHECKS
+    if PR. D_K not in GENERAL..LOCAL  then return TRUE; end if;
+    
+    DICT_IO.SET_INDEX(DICT_FILE(PR.D_K), PR.MNPC);
+    DICT_IO.READ(DICT_FILE(PR.D_K), DE);
 
-     if PR.IR.QUAL.PART = N  then            --  if NOUN
+    --  NOUN CHECKS
+
+     if PR.IR.QUAL.POFS = N  then            --  if NOUN
 
 --     --  Check for Vocative being person/name and Locative a place/area
 --        if (PR.IR.QUAL.N.CS = VOC) and then 
@@ -204,8 +212,8 @@ procedure LIST_LIST(PA : in out PARSE_ARRAY) is
                  MEAN : MEANING_TYPE := NULL_MEANING_TYPE;
               begin
                  ALLOWED := FALSE;
-                 DICT_IO.READ(DICT_FILE(PR.D_K), DE, PR.AAMNPC.MNPC);
-                 MEAN := DE.TRAN.MEAN;
+                 DICT_IO.READ(DICT_FILE(PR.D_K), DE, PR.MNPC);
+                 MEAN := DE.MEAN;
                  for J in MEANING_TYPE'FIRST..MEANING_TYPE'LAST-2  loop
                     if MEAN(J..J+2) = "pl."  then
                        ALLOWED := TRUE;
@@ -221,7 +229,7 @@ procedure LIST_LIST(PA : in out PARSE_ARRAY) is
 
      end if;      --  if NOUN                           
 
-     if PR.IR.QUAL.PART = ADJ  then           --  if ADJ
+     if PR.IR.QUAL.POFS = ADJ  then           --  if ADJ
         if  WORDS_MDEV(FOR_WORD_LIST_CHECK)  then
            if (NOM <= PR.IR.QUAL.ADJ.CS) and then
               (S <= PR.IR.QUAL.ADJ.NUMBER) and then
@@ -236,7 +244,7 @@ procedure LIST_LIST(PA : in out PARSE_ARRAY) is
 
      --  VERB CHECKS
 
-     if PR.IR.QUAL.PART = V  then             --  if VERB
+     if PR.IR.QUAL.POFS = V  then             --  if VERB
      --  Check for Verb Imperative being in permitted person
         if (PR.IR.QUAL.V.TENSE_VOICE_MOOD.MOOD = IMP) then
            if (PR.IR.QUAL.V.TENSE_VOICE_MOOD.TENSE = PRES) and
@@ -252,7 +260,7 @@ procedure LIST_LIST(PA : in out PARSE_ARRAY) is
         end if;
 
      --  Check for V IMPERS and demand that only 3rd person    --  ???????
-        if (PR.IR.QUAL.V.KIND = IMPERS) then
+        if (DE.KIND.V_KIND = IMPERS) then
            if (PR.IR.QUAL.V.PERSON = 3)  then
               null;
            else
@@ -262,7 +270,7 @@ procedure LIST_LIST(PA : in out PARSE_ARRAY) is
         end if;
 
      --  Check for V DEP    and demand PASSIVE   
-        if (PR.IR.QUAL.V.KIND = DEP) then
+        if (DE.KIND.V_KIND = DEP) then
            if (PR.IR.QUAL.V.TENSE_VOICE_MOOD.VOICE = PASSIVE)  and
               (PR.IR.QUAL.V.TENSE_VOICE_MOOD.MOOD = INF)  and
               (PR.IR.QUAL.V.TENSE_VOICE_MOOD.TENSE = FUT)  then
@@ -278,7 +286,7 @@ procedure LIST_LIST(PA : in out PARSE_ARRAY) is
         end if;
 
      --  Check for V SEMIDEP    and demand PASSIVE ex Perf  
-        if (PR.IR.QUAL.V.KIND = SEMIDEP) then
+        if (DE.KIND.V_KIND = SEMIDEP) then
            if (PR.IR.QUAL.V.TENSE_VOICE_MOOD.VOICE = PASSIVE)  and
               (PR.IR.QUAL.V.TENSE_VOICE_MOOD.TENSE in PRES..FUT)  and
               (PR.IR.QUAL.V.TENSE_VOICE_MOOD.MOOD in IND..IMP)  then
@@ -295,7 +303,7 @@ procedure LIST_LIST(PA : in out PARSE_ARRAY) is
         end if;
 
 
-        if (PR.IR.QUAL.V.KIND = DEP) then
+        if (DE.KIND.V_KIND = DEP) then
            if (PR.IR.QUAL.V.TENSE_VOICE_MOOD.VOICE = PASSIVE)  and
               (PR.IR.QUAL.V.TENSE_VOICE_MOOD.MOOD = INF)  and
               (PR.IR.QUAL.V.TENSE_VOICE_MOOD.TENSE = FUT)  then
@@ -313,20 +321,20 @@ procedure LIST_LIST(PA : in out PARSE_ARRAY) is
         if  WORDS_MDEV(FOR_WORD_LIST_CHECK)  then
            if (PR.IR.QUAL.V.PERSON = 1) and then
               (PR.IR.QUAL.V.NUMBER = S)  then
-              if ((PR.IR.QUAL.V.KIND in X..INTRANS)  and
+              if ((DE.KIND.V_KIND in X..INTRANS)  and
                      (PR.IR.QUAL.V.TENSE_VOICE_MOOD = (PRES, ACTIVE, IND))) or else
-                 ((PR.IR.QUAL.V.KIND = DEP)  and
+                 ((DE.KIND.V_KIND = DEP)  and
                      (PR.IR.QUAL.V.TENSE_VOICE_MOOD = (PRES, PASSIVE, IND))) or else
-                 ((PR.IR.QUAL.V.KIND = SEMIDEP)  and
+                 ((DE.KIND.V_KIND = SEMIDEP)  and
                      (PR.IR.QUAL.V.TENSE_VOICE_MOOD = (PRES, ACTIVE, IND))) then
                  ALLOWED := TRUE;
-              elsif ((PR.IR.QUAL.V.KIND = PERFDEF)  and
+              elsif ((DE.KIND.V_KIND = PERFDEF)  and
                         (PR.IR.QUAL.V.TENSE_VOICE_MOOD = (PERF, ACTIVE, IND))) then
                  ALLOWED := TRUE;
               else
                  ALLOWED := FALSE;
               end if;
-           elsif (PR.IR.QUAL.V.KIND = IMPERS) then
+           elsif (DE.KIND.V_KIND = IMPERS) then
               if (PR.IR.QUAL.V.PERSON = 3)  and then
                  (PR.IR.QUAL.V.NUMBER = S)  and then
                  (PR.IR.QUAL.V.TENSE_VOICE_MOOD = (PRES, ACTIVE, IND))   then
@@ -343,7 +351,7 @@ procedure LIST_LIST(PA : in out PARSE_ARRAY) is
      end if;        --  if VERB
 
      if  WORDS_MDEV(FOR_WORD_LIST_CHECK)   then       --  Non parts
-        if (PR.IR.QUAL.PART in VPAR..SUPINE)    then
+        if (PR.IR.QUAL.POFS in VPAR..SUPINE)    then
            ALLOWED := FALSE;
         end if;
      end if;                                           --  Non parts
@@ -353,22 +361,33 @@ procedure LIST_LIST(PA : in out PARSE_ARRAY) is
   end ALLOWED_STEM;
 
   begin
+   
   if PA'LENGTH = 0              then
     return;
   end if;
-
---TEXT_IO.PUT_LINE("PA on entering LIST_LIST");
+  
+  PA_LAST := PA'LAST;
+   
+--TEXT_IO.PUT_LINE("PA on entering LIST_LIST     PA'LAST = " & INTEGER'IMAGE(PA'LAST));
 --for I in 1..PA'LAST  loop
 --PARSE_RECORD_IO.PUT(PA(I)); TEXT_IO.NEW_LINE;
 --end loop;
 
-
+RESET_PRONOUN_KIND:
+declare
+  DE : DICTIONARY_ENTRY;
+begin
 for I in 1..PA'LAST  loop
-  if PA(I).IR.QUAL.PART = PRON  and then
-     PA(I).IR.QUAL.PRON.DECL.WHICH =1  then
-    PA(I).IR.QUAL.PRON.DECL.VAR := PRONOUN_KIND_TYPE'POS(PA(I).IR.QUAL.PRON.KIND);
+  if PA(I).D_K = GENERAL  then
+    DICT_IO.SET_INDEX(DICT_FILE(PA(I).D_K), PA(I).MNPC); 
+    DICT_IO.READ(DICT_FILE(PA(I).D_K), DE);
+    if PA(I).IR.QUAL.POFS = PRON  and then
+      PA(I).IR.QUAL.PRON.DECL.WHICH =1  then
+      PA(I).IR.QUAL.PRON.DECL.VAR := PRONOUN_KIND_TYPE'POS(DE.KIND.PRON_KIND);
+    end if;
   end if;
 end loop;
+end RESET_PRONOUN_KIND;
 
 ---------------------------------------------------
 
@@ -390,7 +409,7 @@ end loop;
 --TEXT_IO.NEW_LINE;
 --TEXT_IO.PUT_LINE("SWEEPING    ======================================");
 --TEXT_IO.NEW_LINE;
-
+--
         J := PA_LAST;
 
         while J >= 1  loop        --  Sweep backwards over PA
@@ -408,7 +427,7 @@ end loop;
               P_LAST := P_LAST - 1;
 --TEXT_IO.PUT_LINE(" -------------- " & INTEGER'IMAGE(PA_LAST));
 
-           elsif ((PA(J).D_K in ADDONS..YYY) or (PA(J).IR.QUAL.PART in XONS))   and then
+           elsif ((PA(J).D_K in ADDONS..YYY) or (PA(J).IR.QUAL.POFS in XONS))   and then
                  (PW_ON)     then               --  first FIX/TRICK after regular
 --TEXT_IO.PUT(INTEGER'IMAGE(J)); TEXT_IO.PUT_LINE("  XONS/X  & PW_ON");
               FIX_ON := TRUE;
@@ -427,14 +446,14 @@ end loop;
               P_LAST  := 0;
 
 
-           elsif ((PA(J).D_K in ADDONS..YYY) or (PA(J).IR.QUAL.PART in XONS))  and then
+           elsif ((PA(J).D_K in ADDONS..YYY) or (PA(J).IR.QUAL.POFS in XONS))  and then
                  (FIX_ON)     then               --  another FIX
 --TEXT_IO.PUT(INTEGER'IMAGE(J)); TEXT_IO.PUT("  XONS else");
 --TEXT_IO.PUT_LINE("                 " & INTEGER'IMAGE(PA_LAST));
               null;
 
            elsif ((PA(J).D_K in ADDONS..YYY)  or
-                     (PA(J).IR.QUAL.PART = X))  and then  --  Kills TRICKS stuff
+                     (PA(J).IR.QUAL.POFS = X))  and then  --  Kills TRICKS stuff
               (not PW_ON)     then
 --TEXT_IO.PUT(INTEGER'IMAGE(J)); TEXT_IO.PUT_LINE("  XONS or X  and not PW_ON");
               PA(J..PA_LAST-1) := PA(J+1..PA_LAST);
@@ -469,9 +488,9 @@ end loop;
 --PARSE_RECORD_IO.PUT(PA(I)); TEXT_IO.NEW_LINE;
 --end loop;
 
-     OPR := NULL_PARSE_RECORD;
+     OPR := PA(1);
   --  Last chance to weed out duplicates
-     J := 1;
+     J := 2;
   COMPRESS_LOOP:
      loop
         exit when J > PA_LAST;
@@ -482,24 +501,43 @@ end loop;
               function "<=" (A, B : PARSE_RECORD) return BOOLEAN is
               begin                             --  !!!!!!!!!!!!!!!!!!!!!!!!!!
                  if A.IR.QUAL = B.IR.QUAL  and
-                 A.AAMNPC.MNPC    = B.AAMNPC.MNPC     then
+                    A.MNPC    = B.MNPC     then
                     return TRUE;
                  else
                     return FALSE;
                  end if;
               end "<=";
+              function "<" (A, B : PARSE_RECORD) return BOOLEAN is
+              begin                             --  !!!!!!!!!!!!!!!!!!!!!!!!!!
+                 if A.IR.QUAL = B.IR.QUAL  and
+                 A.MNPC   /= B.MNPC     then
+                    return TRUE;
+                 else
+                    return FALSE;
+                 end if;
+              end "<";
            begin
-              if ((PR.D_K /= XXX) and (PR.D_K /= YYY) and  (PR.D_K /= PPP)) and then
-              PR <= OPR  then       --  Get rid of duplicates, if ORDER is OK
-                 PA(J.. PA_LAST-1) := PA(J+1..PA_LAST);  --  Shift PA down 1
-                 PA_LAST := PA_LAST - 1;        --  because found key duplicate
+              if ((PR.D_K /= XXX) and (PR.D_K /= YYY) and  (PR.D_K /= PPP)) then
+                if PR <= OPR  then       --  Get rid of duplicates, if ORDER is OK
+--TEXT_IO.PUT_LINE("   1   ");
+                   PA(J.. PA_LAST-1) := PA(J+1..PA_LAST);  --  Shift PA down 1
+                   PA_LAST := PA_LAST - 1;        --  because found key duplicate
+--                elsif PR < OPR  then       --  Compress meanings   --  no longer applicable
+----TEXT_IO.PUT_LINE("   2   ");
+--                  PA(J.. PA_LAST-1) := PA(J+1..PA_LAST);  --  Shift PA down 1
+--                   PA_LAST := PA_LAST - 1;        --  because found  duplicate
+                end if;
               else
                  J := J + 1;
+--TEXT_IO.PUT_LINE("   3   ");
               end if;
            end SUPRESS_KEY_CHECK;
-        else
-           PA(J.. PA_LAST-1) := PA(J+1..PA_LAST);  --  Shift PA down 1
-           PA_LAST := PA_LAST - 1;            --  because found exact duplicate
+         else
+           J := J + 1;
+                  
+--TEXT_IO.PUT_LINE("   4   ");
+--           PA(J.. PA_LAST-1) := PA(J+1..PA_LAST);  --  Shift PA down 1
+--           PA_LAST := PA_LAST - 1;            --  because found exact duplicate
         end if;
         OPR := PR;
      end loop COMPRESS_LOOP;
@@ -508,20 +546,12 @@ end loop;
 
 --  Distroy the artificial VAR
 for I in 1..PA'LAST  loop
-  if PA(I).IR.QUAL.PART = PRON  and then
+  if PA(I).IR.QUAL.POFS = PRON  and then
      PA(I).IR.QUAL.PRON.DECL.WHICH =1  then
     PA(I).IR.QUAL.PRON.DECL.VAR := 0;
   end if;
 end loop;
 
------------------------------------------------------
-
---TEXT_IO.PUT_LINE("PA on leaving LIST_LIST");
---for I in 1..PA'LAST  loop
---PARSE_RECORD_IO.PUT(PA(I)); TEXT_IO.NEW_LINE;
---end loop;
---      
-  
 
 
 end LIST_LIST;

@@ -39,6 +39,9 @@ package DEVELOPER_PARAMETERS is
 
                       DO_ONLY_FIXES,         
                       DO_FIXES_ANYWAY,       
+                      USE_PREFIXES,          
+                      USE_SUFFIXES,       
+
                       DO_MEDIEVAL_TRICKS,    
                       DO_SYNCOPE,            
                       INCLUDE_UNKNOWN_CONTEXT,

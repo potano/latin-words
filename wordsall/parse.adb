@@ -28,8 +28,10 @@ procedure PARSE(COMMAND_LINE : STRING := "") is
 
   PA : PARSE_ARRAY(1..60 ) := (others => NULL_PARSE_RECORD);
   SYNCOPE_MAX : constant := 10;
+  TRICKS_MAX : constant := 40;
   SYPA : PARSE_ARRAY(1..SYNCOPE_MAX) := (others => NULL_PARSE_RECORD);
-  PA_LAST, SYPA_LAST : INTEGER := 0;
+  TRPA : PARSE_ARRAY(1..TRICKS_MAX) := (others => NULL_PARSE_RECORD);
+  PA_LAST, SYPA_LAST, TRPA_LAST : INTEGER := 0;
 
 
   procedure PARSE_LINE(INPUT_LINE : STRING) is
@@ -172,22 +174,25 @@ begin
         not (WORDS_MDEV(MINIMIZE_OUTPUT) or WORDS_MODE(DO_UNKNOWNS_ONLY))  then
         NEW_LINE;    --?????????????????
       end if;
-
-      if PA_LAST = 0  then    --  WORD failed, try to modify the word
+      
+      
+     
+--if (PA_LAST = 0) or DO_TRICKS_ANYWAY  then    --  WORD failed, try to modify the word
+      if (PA_LAST = 0)   then    --  WORD failed, try to modify the word
 --PUT_LINE("WORDS fail me");
         if WORDS_MODE(DO_TRICKS)  then
---PUT_LINE("DO_TRICKS    ");
+--PUT_LINE("DO_TRICKS      PA_LAST    TRPA_LAST  " & INTEGER'IMAGE(PA_LAST) & "   " & INTEGER'IMAGE(TRPA_LAST));
           WORDS_MODE(DO_TRICKS) := FALSE;  --  Turn it off so wont be circular
-          TRY_TRICKS(INPUT_WORD, PA, PA_LAST, LINE_NUMBER, WORD_NUMBER);
---PUT_LINE("DONE_TRICKS    ");
-          --if WORDS_MDEV(DO_MEDIEVAL_TRICKS)  then
-            --WORDS_MDEV(DO_MEDIEVAL_TRICKS) := FALSE;  --  Turn it off
-            TRY_MEDIEVAL_TRICKS(INPUT_WORD, PA, PA_LAST, LINE_NUMBER, WORD_NUMBER);
-            --WORDS_MDEV(DO_MEDIEVAL_TRICKS) := TRUE;   --  Turn it back on
-          --end if;
---PUT_LINE("DONE_MEDIEVAL_TRICKS    ");
+          TRY_TRICKS(INPUT_WORD, TRPA, TRPA_LAST, LINE_NUMBER, WORD_NUMBER);
+--PUT_LINE("DONE_TRICKS    PA_LAST    TRPA_LAST  " & INTEGER'IMAGE(PA_LAST) & "   " & INTEGER'IMAGE(TRPA_LAST));
           WORDS_MODE(DO_TRICKS) := TRUE;   --  Turn it back on
-         end if;
+        end if;
+        
+      PA_LAST := PA_LAST + TRPA_LAST;   --  Make TRICKS another array to avoid PA-LAST = 0 problems
+      PA(1..PA_LAST) := PA(1..PA_LAST-TRPA_LAST) & TRPA(1..TRPA_LAST);  --  Add SYPA to PA
+      TRPA(1..TRICKS_MAX) := (1..TRICKS_MAX => NULL_PARSE_RECORD);   --  Clean up so it does not repeat
+      TRPA_LAST := 0;
+
       end if;
 --PUT_LINE("All TRICKS fail me");
 
@@ -219,8 +224,7 @@ PASS(INPUT_WORD);
                        PA(ENTERING_PA_LAST+1..PA_LAST-1);
               PA(ENTERING_PA_LAST+1) := (TACKONS(I).TACK,
                       ((TACKON, NULL_TACKON_RECORD), 0, NULL_ENDING_RECORD, X, X),
-                        ADDONS,
-                        (X, X, X, X, X, TACKONS(I).MNPC));
+                        ADDONS, TACKONS(I).MNPC);
 end if;
           exit LOOP_OVER_TACKONS;
         end if;
@@ -241,8 +245,8 @@ end PASS_BLOCK;
 "Assume this is capitalized proper name/abbr, under MODE IGNORE_UNKNOWN_NAME ",
                                   MAX_MEANING_SIZE);
          PA(1) := (HEAD(INPUT_WORD, MAX_STEM_SIZE),
-                     ((N, ((0, 0), X, X, X, X)), 0, NULL_ENDING_RECORD, X, X),
-                      NNN, NULL_AAMNPC_RECORD);
+                     ((N, ((0, 0), X, X, X)), 0, NULL_ENDING_RECORD, X, X),
+                      NNN, NULL_MNPC);
             PA_LAST := 1;
 --TEXT_IO.PUT_LINE("PA_LAST SET TO 1");
         elsif  WORDS_MODE(IGNORE_UNKNOWN_CAPS)  and ALL_CAPS  then
@@ -251,8 +255,8 @@ end PASS_BLOCK;
 "Assume this is capitalized proper name/abbr, under MODE IGNORE_UNKNOWN_CAPS ",
                                   MAX_MEANING_SIZE);
             PA(1) := (HEAD(INPUT_WORD, MAX_STEM_SIZE),
-                     ((N, ((0, 0), X, X, X, X)), 0, NULL_ENDING_RECORD, X, X),
-                      NNN, NULL_AAMNPC_RECORD);
+                     ((N, ((0, 0), X, X, X)), 0, NULL_ENDING_RECORD, X, X),
+                      NNN, NULL_MNPC);
             PA_LAST := 1;
 --TEXT_IO.PUT_LINE("PA_LAST SET TO 1");
           --end if;
@@ -281,24 +285,20 @@ declare
   SUM_INFO : VERB_RECORD := ((5, 1),
                              (X, ACTIVE, X),
                               0,
-                              X,
-                              TO_BE);
+                              X);
 
   ESSE_INFO : VERB_RECORD := ((5, 1),
                               (PRES, ACTIVE, INF),
                                0,
-                               X,
-                               TO_BE);
+                               X);
 
   PPL_INFO : VPAR_RECORD := ((0, 0),
                               X,
                               X,
                               X,
-                             (X, X, X),
-                              X);
+                             (X, X, X));
 
   SUPINE_INFO : SUPINE_RECORD := ((0, 0),
-                                   X,
                                    X,
                                    X,
                                    X);
@@ -361,7 +361,7 @@ declare
         for J in NUMBER_TYPE range S..P  loop
           for I in PERSON_TYPE range 1..3  loop
             if TRIM(T) = TRIM(SA(L, K, J, I))  then
-              SUM_INFO := ((5, 1), (K, ACTIVE, L), I, J, TO_BE);
+              SUM_INFO := ((5, 1), (K, ACTIVE, L), I, J);
               return TRUE;     --  Only one of the forms can agree
             end if;
           end loop;
@@ -394,7 +394,7 @@ LOOK_AHEAD;
 if IS_SUM(NEXT_WORD)  then                 --  On NEXT_WORD = sum, esse, iri
 
     for I in 1..PA_LAST  loop    --  Check for PPL
-      if PA(I).IR.QUAL.PART = VPAR and then
+      if PA(I).IR.QUAL.POFS = VPAR and then
          PA(I).IR.QUAL.VPAR.CS = NOM  and then
          PA(I).IR.QUAL.VPAR.NUMBER = SUM_INFO.NUMBER  and then
       ( (PA(I).IR.QUAL.VPAR.TENSE_VOICE_MOOD = (PERF, PASSIVE, PPL)) or
@@ -413,16 +413,16 @@ if IS_SUM(NEXT_WORD)  then                 --  On NEXT_WORD = sum, esse, iri
         J : INTEGER := PA_LAST;
       begin
         while J >= 1  loop        --  Sweep backwards to kill empty suffixes
-          if ((PA(J).IR.QUAL.PART = PREFIX) and then (PPL_ON))  then
+          if ((PA(J).IR.QUAL.POFS = PREFIX) and then (PPL_ON))  then
             null;
-          elsif ((PA(J).IR.QUAL.PART = SUFFIX) and then (PPL_ON))  then
+          elsif ((PA(J).IR.QUAL.POFS = SUFFIX) and then (PPL_ON))  then
             null;
-          elsif ((PA(J).IR.QUAL.PART = TACKON) and then (PPL_ON))  then
+          elsif ((PA(J).IR.QUAL.POFS = TACKON) and then (PPL_ON))  then
             null;
 
 
 
-          elsif PA(J).IR.QUAL.PART = VPAR and then
+          elsif PA(J).IR.QUAL.POFS = VPAR and then
              PA(J).IR.QUAL.VPAR.CS = NOM  and then
              PA(J).IR.QUAL.VPAR.NUMBER = SUM_INFO.NUMBER  then
 
@@ -441,8 +441,7 @@ if IS_SUM(NEXT_WORD)  then                 --  On NEXT_WORD = sum, esse, iri
                         PA(J).IR.QUAL.VPAR.CS,    --  although several different
                         PA(J).IR.QUAL.VPAR.NUMBER,--  dictionary entries may fit
                         PA(J).IR.QUAL.VPAR.GENDER,--  all have same PPL_INFO
-                        PA(J).IR.QUAL.VPAR.TENSE_VOICE_MOOD,
-                        PA(J).IR.QUAL.VPAR.KIND);
+                        PA(J).IR.QUAL.VPAR.TENSE_VOICE_MOOD);
       PPP_MEANING :=
           HEAD("PERF PASSIVE PPL + verb TO_BE => PASSIVE perfect system",
                 MAX_MEANING_SIZE);
@@ -456,8 +455,7 @@ if IS_SUM(NEXT_WORD)  then                 --  On NEXT_WORD = sum, esse, iri
                         PA(J).IR.QUAL.VPAR.CS,    --  although several different
                         PA(J).IR.QUAL.VPAR.NUMBER,--  dictionary entries may fit
                         PA(J).IR.QUAL.VPAR.GENDER,--  all have same PPL_INFO
-                        PA(J).IR.QUAL.VPAR.TENSE_VOICE_MOOD,
-                        PA(J).IR.QUAL.VPAR.KIND);
+                        PA(J).IR.QUAL.VPAR.TENSE_VOICE_MOOD);
       PPP_MEANING := HEAD(
      "FUT ACTIVE PPL + verb TO_BE => ACTIVE Periphrastic - about to, going to",
                 MAX_MEANING_SIZE);
@@ -471,8 +469,7 @@ if IS_SUM(NEXT_WORD)  then                 --  On NEXT_WORD = sum, esse, iri
                         PA(J).IR.QUAL.VPAR.CS,    --  although several different
                         PA(J).IR.QUAL.VPAR.NUMBER,--  dictionary entries may fit
                         PA(J).IR.QUAL.VPAR.GENDER,--  all have same PPL_INFO
-                        PA(J).IR.QUAL.VPAR.TENSE_VOICE_MOOD,
-                        PA(J).IR.QUAL.VPAR.KIND);
+                        PA(J).IR.QUAL.VPAR.TENSE_VOICE_MOOD);
       PPP_MEANING := HEAD(
   "FUT PASSIVE PPL + verb TO_BE => PASSIVE Periphrastic - should/ought/had to",
                 MAX_MEANING_SIZE);
@@ -495,17 +492,16 @@ if IS_SUM(NEXT_WORD)  then                 --  On NEXT_WORD = sum, esse, iri
                     (PPL_INFO.CON,
                      COMPOUND_TVM,
                      SUM_INFO.PERSON,
-                     SUM_INFO.NUMBER,
-                     PPL_INFO.KIND)
+                     SUM_INFO.NUMBER)
                  ), 0, NULL_ENDING_RECORD, X, A),
-                    PPP, NULL_AAMNPC_RECORD);
+                    PPP, NULL_MNPC);
 
     end if;
 
 elsif IS_ESSE(NEXT_WORD) or IS_FUISSE(NEXT_WORD)  then     --  On NEXT_WORD
 
     for I in 1..PA_LAST  loop    --  Check for PPL
-      if PA(I).IR.QUAL.PART = VPAR and then
+      if PA(I).IR.QUAL.POFS = VPAR and then
       (((PA(I).IR.QUAL.VPAR.TENSE_VOICE_MOOD = (PERF, PASSIVE, PPL)) and
                                                    IS_ESSE(NEXT_WORD)) or
        ((PA(I).IR.QUAL.VPAR.TENSE_VOICE_MOOD = (FUT,  ACTIVE,  PPL)) or
@@ -523,16 +519,16 @@ elsif IS_ESSE(NEXT_WORD) or IS_FUISSE(NEXT_WORD)  then     --  On NEXT_WORD
         J : INTEGER := PA_LAST;
       begin
         while J >= 1  loop        --  Sweep backwards to kill empty suffixes
-          if ((PA(J).IR.QUAL.PART = PREFIX) and then (PPL_ON))  then
+          if ((PA(J).IR.QUAL.POFS = PREFIX) and then (PPL_ON))  then
             null;
-          elsif ((PA(J).IR.QUAL.PART = SUFFIX) and then (PPL_ON))  then
+          elsif ((PA(J).IR.QUAL.POFS = SUFFIX) and then (PPL_ON))  then
             null;
-          elsif ((PA(J).IR.QUAL.PART = TACKON) and then (PPL_ON))  then
+          elsif ((PA(J).IR.QUAL.POFS = TACKON) and then (PPL_ON))  then
             null;
 
 
 
-          elsif PA(J).IR.QUAL.PART = VPAR   then
+          elsif PA(J).IR.QUAL.POFS = VPAR   then
 
             if PA(J).IR.QUAL.VPAR.TENSE_VOICE_MOOD = (PERF, PASSIVE, PPL)  then
             PPL_ON := TRUE;
@@ -543,8 +539,7 @@ elsif IS_ESSE(NEXT_WORD) or IS_FUISSE(NEXT_WORD)  then     --  On NEXT_WORD
                         PA(J).IR.QUAL.VPAR.CS,    --  although several different
                         PA(J).IR.QUAL.VPAR.NUMBER,--  dictionary entries may fit
                         PA(J).IR.QUAL.VPAR.GENDER,--  all have same PPL_INFO
-                        PA(J).IR.QUAL.VPAR.TENSE_VOICE_MOOD,
-                        PA(J).IR.QUAL.VPAR.KIND);
+                        PA(J).IR.QUAL.VPAR.TENSE_VOICE_MOOD);
             PPP_MEANING :=
                 HEAD("PERF PASSIVE PPL + esse => PERF PASSIVE INF",
                       MAX_MEANING_SIZE);
@@ -555,8 +550,7 @@ elsif IS_ESSE(NEXT_WORD) or IS_FUISSE(NEXT_WORD)  then     --  On NEXT_WORD
                         PA(J).IR.QUAL.VPAR.CS,    --  although several different
                         PA(J).IR.QUAL.VPAR.NUMBER,--  dictionary entries may fit
                         PA(J).IR.QUAL.VPAR.GENDER,--  all have same PPL_INFO
-                        PA(J).IR.QUAL.VPAR.TENSE_VOICE_MOOD,
-                        PA(J).IR.QUAL.VPAR.KIND);
+                        PA(J).IR.QUAL.VPAR.TENSE_VOICE_MOOD);
             if IS_ESSE(NEXT_WORD)  then
               COMPOUND_TVM := (PRES, ACTIVE, INF);
       PPP_MEANING := HEAD(
@@ -578,8 +572,7 @@ elsif IS_ESSE(NEXT_WORD) or IS_FUISSE(NEXT_WORD)  then     --  On NEXT_WORD
                         PA(J).IR.QUAL.VPAR.CS,    --  although several different
                         PA(J).IR.QUAL.VPAR.NUMBER,--  dictionary entries may fit
                         PA(J).IR.QUAL.VPAR.GENDER,--  all have same PPL_INFO
-                        PA(J).IR.QUAL.VPAR.TENSE_VOICE_MOOD,
-                        PA(J).IR.QUAL.VPAR.KIND);
+                        PA(J).IR.QUAL.VPAR.TENSE_VOICE_MOOD);
             if IS_ESSE(NEXT_WORD)  then
               COMPOUND_TVM := (PRES, PASSIVE, INF);
       PPP_MEANING := HEAD(
@@ -612,10 +605,9 @@ elsif IS_ESSE(NEXT_WORD) or IS_FUISSE(NEXT_WORD)  then     --  On NEXT_WORD
                     (PPL_INFO.CON,
                      COMPOUND_TVM,
                      0,
-                     X,
-                     PPL_INFO.KIND)
+                     X)
                  ), 0, NULL_ENDING_RECORD, X, A),
-                    PPP, NULL_AAMNPC_RECORD);
+                    PPP, NULL_MNPC);
 
     end if;
 
@@ -623,7 +615,7 @@ elsif IS_IRI(NEXT_WORD)  then              --  On NEXT_WORD = sum, esse, iri
   --  Look ahead for sum                                           
 
     for J in 1..PA_LAST  loop    --  Check for SUPINE
-      if PA(J).IR.QUAL.PART = SUPINE   and then
+      if PA(J).IR.QUAL.POFS = SUPINE   and then
          PA(J).IR.QUAL.SUPINE.CS = ACC    then
          --  There is at least one hit, fix PA, and advance J over the iri
         K := NK;
@@ -637,24 +629,23 @@ elsif IS_IRI(NEXT_WORD)  then              --  On NEXT_WORD = sum, esse, iri
         J : INTEGER := PA_LAST;
       begin
         while J >= 1  loop        --  Sweep backwards to kill empty suffixes
-          if ((PA(J).IR.QUAL.PART = PREFIX) and then (PPL_ON))  then
+          if ((PA(J).IR.QUAL.POFS = PREFIX) and then (PPL_ON))  then
             null;
-          elsif ((PA(J).IR.QUAL.PART = SUFFIX) and then (PPL_ON))  then
+          elsif ((PA(J).IR.QUAL.POFS = SUFFIX) and then (PPL_ON))  then
             null;
-          elsif ((PA(J).IR.QUAL.PART = TACKON) and then (PPL_ON))  then
+          elsif ((PA(J).IR.QUAL.POFS = TACKON) and then (PPL_ON))  then
             null;
 
 
 
-          elsif PA(J).IR.QUAL.PART = SUPINE  and then
+          elsif PA(J).IR.QUAL.POFS = SUPINE  and then
                 PA(J).IR.QUAL.SUPINE.CS = ACC  then
 
             PPL_ON := TRUE;
          SUPINE_INFO := (PA(J).IR.QUAL.SUPINE.CON,
                          PA(J).IR.QUAL.SUPINE.CS,
                          PA(J).IR.QUAL.SUPINE.NUMBER,
-                         PA(J).IR.QUAL.SUPINE.GENDER,
-                         PA(J).IR.QUAL.SUPINE.KIND);
+                         PA(J).IR.QUAL.SUPINE.GENDER);
 
 
 
@@ -665,10 +656,9 @@ elsif IS_IRI(NEXT_WORD)  then              --  On NEXT_WORD = sum, esse, iri
                     (SUPINE_INFO.CON,
                      (FUT, PASSIVE, INF),
                      0,
-                     X,
-                     SUPINE_INFO.KIND)
+                     X)
                  ), 0, NULL_ENDING_RECORD, X, A),
-                    PPP, NULL_AAMNPC_RECORD);
+                    PPP, NULL_MNPC);
       PPP_MEANING := HEAD(
      "SUPINE + iri => FUT PASSIVE INF - to be about/going/ready to be ~",
                 MAX_MEANING_SIZE);
@@ -822,7 +812,7 @@ begin              --  PARSE
   else
 
   PREFACE.PUT_LINE(
-"Copyright (c) 1993-1999 - Free for your use - Version 1.95");
+"Copyright (c) 1993-2000 - Free for your use - Version 1.96");
   PREFACE.PUT_LINE(
 "Updates every few months at http://www.erols.com/whitaker/words.htm");
   PREFACE.PUT_LINE(
@@ -839,11 +829,7 @@ begin              --  PARSE
   PREFACE.PUT_LINE(
 "An empty line (just a RETURN or ENTER) from the keyboard exits the program");
 
-  if CONFIGURATION = MEANINGS  then
-    PREFACE.PUT_LINE(
-            "THIS VERSION IS HARDWIRED TO GIVE MEANINGS ONLY, NO INFLECTIONS");
-  end if;
-
+  
   loop
     begin                    --  Block to manipulate file of lines
       if (NAME(CURRENT_INPUT) = NAME(STANDARD_INPUT))  then

@@ -9,6 +9,7 @@ procedure MAKEDICT is
   use TEXT_IO;
   use DICTIONARY_ENTRY_IO;
   use PART_ENTRY_IO;
+  use KIND_ENTRY_IO;
   use TRANSLATION_RECORD_IO;
   use AGE_TYPE_IO;
   use AREA_TYPE_IO;
@@ -18,7 +19,9 @@ procedure MAKEDICT is
   use DICT_IO;
 
   PORTING : constant BOOLEAN := TRUE;
-
+  
+  BE_VE : VERB_ENTRY := (CON => (5, 1));
+  
   D_K : DICTIONARY_KIND := XXX;       --  ######################
 
 
@@ -51,7 +54,7 @@ procedure MAKEDICT is
 
 begin
   PUT_LINE(
-    "Takes a DICTLINE.D_K and produces a DICTFILE.D_K");
+    "Takes a DICTLINE.D_K and produces a STEMLIST.D_K and DICTFILE.D_K");
   PUT("What dictionary to list, GENERAL or SPECIAL  =>");
   GET_LINE(LINE, LAST);
   if LAST > 0  then
@@ -81,7 +84,7 @@ end if;
                              DICTIONARY_KIND'IMAGE(D_K)));
 
   if D_K = GENERAL  then
-    PUT_LINE("MAKEDICT reads DICTLINE.GEN and produces DICTFILE.GEN");
+    PUT_LINE("MAKEDICT reads DICTLINE.d_k and produces DICTFILE.d_k");
     PUT_LINE("This version inserts ESSE when d_k = GEN");
 
     J := J + 1;
@@ -91,8 +94,12 @@ end if;
     DE.STEMS(2) := "                  ";
     DE.STEMS(3) := "fu                ";
     DE.STEMS(4) := "fut               ";
-    DE.PART := ( V, ( (5, 1),  TO_BE));
-    DE.TRAN := (X, X, X, A, X, MEAN_TO_BE);
+    --DE.PART := (PART => V,  CON => (5, 10));
+    --DE.PART := (V, ((5, 1)));
+    DE.PART := (V, BE_VE);
+    DE.KIND := (V, TO_BE);
+    DE.TRAN := (X, X, X, A, X);
+    DE.MEAN := MEAN_TO_BE;
     
 
 if not PORTING  then
@@ -101,11 +108,11 @@ if not PORTING  then
       PUT(OUTPUT, DE.STEMS(I)); PUT(OUTPUT, ' ');
       PUT(OUTPUT, DE.PART); PUT(OUTPUT, ' ');
       INTEGER_IO.PUT(OUTPUT, I, 2); PUT(OUTPUT, ' ');
-      PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
-      PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
-      PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
-      PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
-      PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
+--      PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
+--      PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
+--      PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
+--      PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
+--      PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
       INTEGER_IO.PUT(OUTPUT, INTEGER(J), 6); NEW_LINE(OUTPUT);
     end loop;
 end if;
@@ -120,32 +127,38 @@ end if;
     S := BLANK_LINE;
     GET_LINE(INPUT, S, LAST);
     if TRIM(S(1..LAST)) /= ""  then
-  
+      L := 0;
+      
       FORM_DE:
       begin
 
         DE.STEMS(1) := S(START_STEM_1..MAX_STEM_SIZE);
+        --NEW_LINE; PUT(DE.STEMS(1));
         DE.STEMS(2) := S(START_STEM_2..START_STEM_2+MAX_STEM_SIZE-1);
         DE.STEMS(3) := S(START_STEM_3..START_STEM_3+MAX_STEM_SIZE-1);
         DE.STEMS(4) := S(START_STEM_4..START_STEM_4+MAX_STEM_SIZE-1);
+        --PUT('#'); PUT(INTEGER'IMAGE(L)); PUT(INTEGER'IMAGE(LAST));
+        --PUT('@'); 
         GET(S(START_PART..LAST), DE.PART, L);
+        --PUT('%'); PUT(INTEGER'IMAGE(L)); PUT(INTEGER'IMAGE(LAST));
+        --PUT('&'); PUT(S(L+1..LAST)); PUT('3'); 
+        GET(S(L+1..LAST), DE.PART.POFS, DE.KIND, L);
         GET(S(L+1..LAST), DE.TRAN.AGE, L);
         GET(S(L+1..LAST), DE.TRAN.AREA, L);
         GET(S(L+1..LAST), DE.TRAN.GEO, L);
         GET(S(L+1..LAST), DE.TRAN.FREQ, L);
         GET(S(L+1..LAST), DE.TRAN.SOURCE, L);
-        DE.TRAN.MEAN := HEAD(S(L+2..LAST), MAX_MEANING_SIZE);
+        DE.MEAN := HEAD(S(L+2..LAST), MAX_MEANING_SIZE);
       --  Note that this allows initial blanks
       --  L+2 skips over the SPACER, required because this is STRING, not ENUM
 
       exception
         when others =>
-if not PORTING  then
+          NEW_LINE;
           PUT_LINE("Exception");
           PUT_LINE(S(1..LAST));
           INTEGER_IO.PUT(INTEGER(J)); NEW_LINE;
           PUT(DE); NEW_LINE;
-end if;
       end FORM_DE;
 
       J := J + 1;
@@ -154,27 +167,27 @@ end if;
 
 if not PORTING  then
 
-      if DE.PART.PART = N    and then
+      if DE.PART.POFS = N    and then
          DE.STEMS(1) = DE.STEMS(2)     and then
          DE.STEMS(1) /= ZZZ_STEM       then
         PUT(OUTPUT, DE.STEMS(1)); PUT(OUTPUT, ' ');
         PUT(OUTPUT, DE.PART); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, 0, 2); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, INTEGER(J), 6); NEW_LINE(OUTPUT);
         if DE.STEMS(3) /= NULL_STEM_TYPE  and DE.STEMS(3) /= ZZZ_STEM  then
           PUT(OUTPUT, DE.STEMS(3)); PUT(OUTPUT, ' ');
           PUT(OUTPUT, DE.PART); PUT(OUTPUT, ' ');
           INTEGER_IO.PUT(OUTPUT, 3, 2); PUT(OUTPUT, ' ');
-          PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
-          PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
           INTEGER_IO.PUT(OUTPUT, INTEGER(J), 6); NEW_LINE(OUTPUT);
         end if;
         if DE.STEMS(4) /= NULL_STEM_TYPE  and DE.STEMS(4) /= ZZZ_STEM  then
@@ -188,163 +201,163 @@ if not PORTING  then
         PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
           INTEGER_IO.PUT(OUTPUT, INTEGER(J), 6); NEW_LINE(OUTPUT);
         end if;
-      elsif DE.PART.PART = ADJ  and then
+      elsif DE.PART.POFS = ADJ  and then
             DE.STEMS(1) = DE.STEMS(2)     and then
             DE.STEMS(1) /= ZZZ_STEM       then
         PUT(OUTPUT, DE.STEMS(1)); PUT(OUTPUT, ' ');
         PUT(OUTPUT, DE.PART); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, 0, 2); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, INTEGER(J), 6); NEW_LINE(OUTPUT);
         if DE.STEMS(3) /= NULL_STEM_TYPE  and DE.STEMS(3) /= ZZZ_STEM  then
           PUT(OUTPUT, DE.STEMS(3)); PUT(OUTPUT, ' ');
           PUT(OUTPUT, DE.PART); PUT(OUTPUT, ' ');
           INTEGER_IO.PUT(OUTPUT, 3, 2); PUT(OUTPUT, ' ');
-          PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
-          PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
           INTEGER_IO.PUT(OUTPUT, INTEGER(J), 6); NEW_LINE(OUTPUT);
         end if;
         if DE.STEMS(4) /= NULL_STEM_TYPE  and DE.STEMS(4) /= ZZZ_STEM  then
           PUT(OUTPUT, DE.STEMS(4)); PUT(OUTPUT, ' ');
           PUT(OUTPUT, DE.PART); PUT(OUTPUT, ' ');
           INTEGER_IO.PUT(OUTPUT, 4, 2); PUT(OUTPUT, ' ');
-          PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
-          PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
           INTEGER_IO.PUT(OUTPUT, INTEGER(J), 6); NEW_LINE(OUTPUT);
         end if;
-      elsif DE.PART.PART = ADJ  and then
+      elsif DE.PART.POFS = ADJ  and then
         --  POS taken care of by position
          DE.PART.ADJ.CO = COMP   then
         PUT(OUTPUT, DE.STEMS(1)); PUT(OUTPUT, ' ');
         PUT(OUTPUT, DE.PART); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, 3, 2); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, INTEGER(J), 6); NEW_LINE(OUTPUT);
-      elsif DE.PART.PART = ADJ  and then
+      elsif DE.PART.POFS = ADJ  and then
             DE.PART.ADJ.CO = SUPER  then
         PUT(OUTPUT, DE.STEMS(1)); PUT(OUTPUT, ' ');
         PUT(OUTPUT, DE.PART); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, 4, 2); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, INTEGER(J), 6); NEW_LINE(OUTPUT);
-      elsif DE.PART.PART = ADV  and then
+      elsif DE.PART.POFS = ADV  and then
         --  POS taken care of by position
             DE.PART.ADV.CO = COMP   then
         PUT(OUTPUT, DE.STEMS(1)); PUT(OUTPUT, ' ');
         PUT(OUTPUT, DE.PART); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, 2, 2); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, INTEGER(J), 6); NEW_LINE(OUTPUT);
-      elsif DE.PART.PART = ADV  and then
+      elsif DE.PART.POFS = ADV  and then
             DE.PART.ADV.CO = SUPER  then
         PUT(OUTPUT, DE.STEMS(1)); PUT(OUTPUT, ' ');
         PUT(OUTPUT, DE.PART); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, 3, 2); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, INTEGER(J), 6); NEW_LINE(OUTPUT);
-      elsif DE.PART.PART = V    and then
+      elsif DE.PART.POFS = V    and then
             DE.STEMS(1) = DE.STEMS(2)     and then
             DE.STEMS(1) /= ZZZ_STEM       then
         PUT(OUTPUT, DE.STEMS(1)); PUT(OUTPUT, ' ');
         PUT(OUTPUT, DE.PART); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, 0, 2); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, INTEGER(J), 6); NEW_LINE(OUTPUT);
         if DE.STEMS(3) /= NULL_STEM_TYPE  and DE.STEMS(3) /= ZZZ_STEM  then
           PUT(OUTPUT, DE.STEMS(3)); PUT(OUTPUT, ' ');
           PUT(OUTPUT, DE.PART); PUT(OUTPUT, ' ');
           INTEGER_IO.PUT(OUTPUT, 3, 2); PUT(OUTPUT, ' ');
-          PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
-          PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
           INTEGER_IO.PUT(OUTPUT, INTEGER(J), 6); NEW_LINE(OUTPUT);
         end if;
         if DE.STEMS(4) /= NULL_STEM_TYPE  and DE.STEMS(4) /= ZZZ_STEM  then
           PUT(OUTPUT, DE.STEMS(4)); PUT(OUTPUT, ' ');
           PUT(OUTPUT, DE.PART); PUT(OUTPUT, ' ');
           INTEGER_IO.PUT(OUTPUT, 4, 2); PUT(OUTPUT, ' ');
-          PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
-          PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
+--          PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
           INTEGER_IO.PUT(OUTPUT, INTEGER(J), 6); NEW_LINE(OUTPUT);
         end if;
-      elsif DE.PART.PART = NUM  and then
-            DE.PART.NUM.KIND = CARD   then
+      elsif DE.PART.POFS = NUM  and then
+            DE.PART.NUM.SORT = CARD   then
         PUT(OUTPUT, DE.STEMS(1)); PUT(OUTPUT, ' ');
         PUT(OUTPUT, DE.PART); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, 1, 2); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, INTEGER(J), 6); NEW_LINE(OUTPUT);
-      elsif DE.PART.PART = NUM  and then
-            DE.PART.NUM.KIND = ORD    then
+      elsif DE.PART.POFS = NUM  and then
+            DE.PART.NUM.SORT = ORD    then
         PUT(OUTPUT, DE.STEMS(1)); PUT(OUTPUT, ' ');
         PUT(OUTPUT, DE.PART); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, 2, 2); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, INTEGER(J), 6); NEW_LINE(OUTPUT);
-      elsif DE.PART.PART = NUM  and then
-            DE.PART.NUM.KIND = DIST   then
+      elsif DE.PART.POFS = NUM  and then
+            DE.PART.NUM.SORT = DIST   then
         PUT(OUTPUT, DE.STEMS(1)); PUT(OUTPUT, ' ');
         PUT(OUTPUT, DE.PART); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, 3, 2); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, INTEGER(J), 6); NEW_LINE(OUTPUT);
-      elsif DE.PART.PART = NUM  and then
-            DE.PART.NUM.KIND = ADVERB  then
+      elsif DE.PART.POFS = NUM  and then
+            DE.PART.NUM.SORT = ADVERB  then
         PUT(OUTPUT, DE.STEMS(1)); PUT(OUTPUT, ' ');
         PUT(OUTPUT, DE.PART); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, 4, 2); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
+--        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
         INTEGER_IO.PUT(OUTPUT, INTEGER(J), 6); NEW_LINE(OUTPUT);
       else
         for I in 1..4  loop
@@ -353,11 +366,11 @@ if not PORTING  then
             PUT(OUTPUT, DE.STEMS(I)); PUT(OUTPUT, ' ');
             PUT(OUTPUT, DE.PART); PUT(OUTPUT, ' ');
             INTEGER_IO.PUT(OUTPUT, I, 2); PUT(OUTPUT, ' ');
-            PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
-            PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
-        PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
+--            PUT(OUTPUT, DE.TRAN.AGE); PUT(OUTPUT, ' ');
+--            PUT(OUTPUT, DE.TRAN.AREA); PUT(OUTPUT, ' ');
+--            PUT(OUTPUT, DE.TRAN.GEO); PUT(OUTPUT, ' ');
+--            PUT(OUTPUT, DE.TRAN.FREQ); PUT(OUTPUT, ' ');
+--            PUT(OUTPUT, DE.TRAN.SOURCE); PUT(OUTPUT, ' ');
             INTEGER_IO.PUT(OUTPUT, INTEGER(J), 6); NEW_LINE(OUTPUT);
           end if;
         end loop;

@@ -1,3 +1,5 @@
+--  Need KIND_ENTRY and IO
+--  Need to modify TRANS
 with TEXT_IO; 
 with DIRECT_IO;
 with INFLECTIONS_PACKAGE; use INFLECTIONS_PACKAGE;
@@ -9,8 +11,12 @@ package DICTIONARY_PACKAGE is
   NULL_STEMS_TYPE : constant STEMS_TYPE := (others => NULL_STEM_TYPE);
 
 
-  type DICTIONARY_KIND is (ADDONS, XXX, YYY, 
-                           NNN, RRR, PPP, 
+  type DICTIONARY_KIND is (ADDONS,       --  For FIXES
+                           XXX,          --  TRICKS
+                           YYY,          --  Syncope
+                           NNN,          --  Unknown Name
+                           RRR,          --  Roman Numerals
+                           PPP,          --  Compounds
                            GENERAL, SPECIAL, LOCAL, UNIQUE);
 
   package DICTIONARY_KIND_IO is new TEXT_IO.ENUMERATION_IO(DICTIONARY_KIND);
@@ -70,10 +76,10 @@ package DICTIONARY_PACKAGE is
   type SOURCE_TYPE is (
        X,      --  General or unknown or too common to say
        A,      --  Allen + Greenough, New Latin Grammar, 1888 (A+G)
-       B,      --  C.H.Beeson, A Primer of Medieval Latin, 1925 
+       B,      --  C.H.Beeson, A Primer of Medieval Latin, 1925 (Bee)
        C,      --  Charles Beard, Cassell's Latin Dictionary 1892 (CAS)       
-       D,      --  J.N.Adams, Latin Sexual Vocabulary, 1982
-       E,      --  L.F.Stelten, Dictionary of Eccles. Latin, 1995
+       D,      --  J.N.Adams, Latin Sexual Vocabulary, 1982 (Sex)
+       E,      --  L.F.Stelten, Dictionary of Eccles. Latin, 1995 (Ecc)
        F,      --  Roy J. Deferrari, Dictionary of St. Thomas Aquinas, 1960 (DeF)
        G,      --  Gildersleeve + Lodge, Latin Grammar 1895 (G+L)
        H,      --  Harrington/Pucci/Elliott, Medieval Latin 2nd Ed 1997 
@@ -84,12 +90,13 @@ package DICTIONARY_PACKAGE is
        M,      --  Latham, Revised Medieval Word List, 1980
        N,      --  Lynn Nelson, Wordlist
        O,      --  Oxford Latin Dictionary, 1982 (OLD)
+       P,      --  Souter, A Glossary of Later Latin to 600 A.D., Oxford 1949
        Q,      --  Other, unspecified dictionaries
-       R,      --  Harkness, Albert; A Latin Grammar, 1881
+       R,      --  Plater & White, A Grammar of the Vulgate, Oxford 1926
        S,      --  Lewis and Short, A Latin Dictionary, 1879 (L+S)
        T,      --  Found in a translation  --  no dictionary reference
        U,      --  Du Cange            
-       V,      --  Vademecum in opus Saxonis - Franz Blatt
+       V,      --  Vademecum in opus Saxonis - Franz Blatt (Saxo)
        W,      --  My personal guess   
        Y,      --  Niermeyer, Mediae Latinitatis Lexicon Minus
        Z       --  Sent by user --  no dictionary reference
@@ -101,6 +108,49 @@ package DICTIONARY_PACKAGE is
   package SOURCE_TYPE_IO is new TEXT_IO.ENUMERATION_IO(SOURCE_TYPE);
 
 
+    type KIND_ENTRY(POFS : PART_OF_SPEECH_TYPE := X) is
+    record
+      case POFS is
+        when N =>
+          N_KIND : NOUN_KIND_TYPE;
+        when PRON =>
+          PRON_KIND : PRONOUN_KIND_TYPE;
+        when PACK =>
+          PACK_KIND : PRONOUN_KIND_TYPE;
+        when ADJ =>
+          null;
+        when NUM =>
+          NUM_VALUE : NUMERAL_VALUE_TYPE;
+        when V =>
+          V_KIND : VERB_KIND_TYPE;
+        when VPAR =>
+          VPAR_KIND : VERB_KIND_TYPE;
+        when SUPINE =>
+          SUPINE_KIND : VERB_KIND_TYPE;
+        when others =>
+          null;                              
+       end case;
+    end record;
+
+  package KIND_ENTRY_IO is
+    DEFAULT_WIDTH : NATURAL;
+    procedure GET(F : in FILE_TYPE; 
+                  PS : in PART_OF_SPEECH_TYPE; P : out KIND_ENTRY);
+    procedure GET(PS : in PART_OF_SPEECH_TYPE; P : out KIND_ENTRY);
+    procedure PUT(F : in FILE_TYPE; 
+                  PS : in PART_OF_SPEECH_TYPE; P : in KIND_ENTRY);
+    procedure PUT(PS : in PART_OF_SPEECH_TYPE; P : in KIND_ENTRY);
+    procedure GET(S : in STRING; PS : in PART_OF_SPEECH_TYPE; 
+                  P : out KIND_ENTRY; LAST : out INTEGER);
+    procedure PUT(S : out STRING;
+                  PS : in PART_OF_SPEECH_TYPE; P : in KIND_ENTRY);  
+  end KIND_ENTRY_IO;  
+  
+  NULL_KIND_ENTRY : KIND_ENTRY;
+  
+
+  
+  
   type TRANSLATION_RECORD is
     record
       AGE  : AGE_TYPE := X;
@@ -108,7 +158,6 @@ package DICTIONARY_PACKAGE is
       GEO  : GEO_TYPE := X;
       FREQ : FREQUENCY_TYPE := X;
       SOURCE : SOURCE_TYPE := X;
-      MEAN : MEANING_TYPE := NULL_MEANING_TYPE;
     end record;
   
   NULL_TRANSLATION_RECORD : TRANSLATION_RECORD;
@@ -130,7 +179,6 @@ package DICTIONARY_PACKAGE is
     record
       DECL   : DECN_RECORD := (0, 0);
       GENDER : GENDER_TYPE := X;
-      KIND   : NOUN_KIND_TYPE := X;
     end record;
  
   package NOUN_ENTRY_IO is
@@ -148,7 +196,6 @@ package DICTIONARY_PACKAGE is
  type PRONOUN_ENTRY is
    record
      DECL  : DECN_RECORD;
-     KIND  : PRONOUN_KIND_TYPE := X;
    end record;
  
  package PRONOUN_ENTRY_IO is
@@ -165,7 +212,6 @@ package DICTIONARY_PACKAGE is
  type PROPACK_ENTRY is
    record
      DECL  : DECN_RECORD;
-     KIND  : PRONOUN_KIND_TYPE := X;
    end record;
  
  package PROPACK_ENTRY_IO is
@@ -196,12 +242,32 @@ type ADJECTIVE_ENTRY is
    procedure PUT(S : out STRING; A : in ADJECTIVE_ENTRY);  
  end ADJECTIVE_ENTRY_IO;  
 
+ 
+type NUMERAL_ENTRY is
+  record
+    DECL  : DECN_RECORD;
+    SORT  : NUMERAL_SORT_TYPE := X;
+  end record;
 
+ package NUMERAL_ENTRY_IO is
+   DEFAULT_WIDTH : NATURAL;
+   procedure GET(F : in FILE_TYPE; NUM : out NUMERAL_ENTRY);
+   procedure GET(NUM : out NUMERAL_ENTRY);
+   procedure PUT(F : in FILE_TYPE; NUM : in NUMERAL_ENTRY);
+   procedure PUT(NUM : in NUMERAL_ENTRY);
+   procedure GET(S : in STRING; NUM : out NUMERAL_ENTRY; LAST : out INTEGER);
+   procedure PUT(S : out STRING; NUM : in NUMERAL_ENTRY);  
+ end NUMERAL_ENTRY_IO;  
+
+ 
+ 
 type ADVERB_ENTRY is
   record
     CO   : COMPARISON_TYPE := X;
   end record;
 
+  
+  
  package ADVERB_ENTRY_IO is
    DEFAULT_WIDTH : NATURAL;
    procedure GET(F : in FILE_TYPE; A : out ADVERB_ENTRY);
@@ -216,7 +282,6 @@ type ADVERB_ENTRY is
   type VERB_ENTRY is
     record
       CON         : DECN_RECORD;
-      KIND        : VERB_KIND_TYPE := X;
     end record;
 
  package VERB_ENTRY_IO is
@@ -278,26 +343,9 @@ type INTERJECTION_ENTRY is
  end INTERJECTION_ENTRY_IO;  
 
 
-type NUMERAL_ENTRY is
+type PART_ENTRY(POFS : PART_OF_SPEECH_TYPE := X) is
   record
-    DECL  : DECN_RECORD;
-    KIND  : NUMERAL_KIND_TYPE := X;
-    VALUE : NATURAL := 0;
-  end record;
-
- package NUMERAL_ENTRY_IO is
-   DEFAULT_WIDTH : NATURAL;
-   procedure GET(F : in FILE_TYPE; NUM : out NUMERAL_ENTRY);
-   procedure GET(NUM : out NUMERAL_ENTRY);
-   procedure PUT(F : in FILE_TYPE; NUM : in NUMERAL_ENTRY);
-   procedure PUT(NUM : in NUMERAL_ENTRY);
-   procedure GET(S : in STRING; NUM : out NUMERAL_ENTRY; LAST : out INTEGER);
-   procedure PUT(S : out STRING; NUM : in NUMERAL_ENTRY);  
- end NUMERAL_ENTRY_IO;  
-
-type PART_ENTRY(PART : PART_OF_SPEECH_TYPE := X) is
-  record
-    case PART is
+    case POFS is
       when N =>
         N : NOUN_ENTRY;
       when PRON =>
@@ -343,7 +391,9 @@ type PART_ENTRY(PART : PART_OF_SPEECH_TYPE := X) is
     record
       STEMS : STEMS_TYPE   := NULL_STEMS_TYPE;
       PART  : PART_ENTRY   := NULL_PART_ENTRY;
+      KIND  : KIND_ENTRY  := NULL_KIND_ENTRY;  
       TRAN  : TRANSLATION_RECORD := NULL_TRANSLATION_RECORD;
+      MEAN  : MEANING_TYPE := NULL_MEANING_TYPE;
     end record;
 
  package DICTIONARY_ENTRY_IO is
@@ -363,38 +413,18 @@ type PART_ENTRY(PART : PART_OF_SPEECH_TYPE := X) is
   
 
   package MNPC_IO is new TEXT_IO.INTEGER_IO(DICT_IO.COUNT); 
+  subtype MNPC_TYPE is DICT_IO.COUNT;
   NULL_MNPC : DICT_IO.COUNT := DICT_IO.COUNT'FIRST;
 
-  type AAMNPC_RECORD is 
-    record
-      AGE    : AGE_TYPE := X;
-      AREA   : AREA_TYPE := X;
-      GEO    : GEO_TYPE := X;
-      FREQ   : FREQUENCY_TYPE := X;
-      SOURCE : SOURCE_TYPE := X;
-      MNPC   : DICT_IO.COUNT;
-    end record;
 
-  package AAMNPC_RECORD_IO is
-    DEFAULT_WIDTH : TEXT_IO.FIELD;
-    procedure GET(F : in TEXT_IO.FILE_TYPE; AA : out AAMNPC_RECORD);
-    procedure GET(AA : out AAMNPC_RECORD);
-    procedure PUT(F : in TEXT_IO.FILE_TYPE; AA : in AAMNPC_RECORD);
-    procedure PUT(AA : in AAMNPC_RECORD);
-    procedure GET(S : in STRING; AA : out AAMNPC_RECORD; LAST : out INTEGER);
-    procedure PUT(S : out STRING; AA : in AAMNPC_RECORD);  
-  end AAMNPC_RECORD_IO;  
-
-NULL_AAMNPC_RECORD : AAMNPC_RECORD := (X, X, X, X, X, NULL_MNPC);  
-      
    type PARSE_RECORD is
     record
       STEM  : STEM_TYPE := NULL_STEM_TYPE;
       IR    : INFLECTION_RECORD := NULL_INFLECTION_RECORD;
       D_K   : DICTIONARY_KIND := DEFAULT_DICTIONARY_KIND;
-      AAMNPC  : AAMNPC_RECORD := NULL_AAMNPC_RECORD;
+      MNPC  : DICT_IO.COUNT := NULL_MNPC;
     end record;
- 
+       
   NULL_PARSE_RECORD : PARSE_RECORD;
 
   package PARSE_RECORD_IO is

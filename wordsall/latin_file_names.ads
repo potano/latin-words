@@ -23,11 +23,11 @@ package LATIN_FILE_NAMES is
   --  These files are input files and may have any name legal in your system
   --  and contain the ASCII information copied from the porting system
 
-  INFLECTIONS_FULL_NAME     : constant STRING := "INFLECTS.";
+  INFLECTIONS_FULL_NAME     : constant STRING := "INFLECTS.LAT";
   INFLECTIONS_SECTIONS_NAME : constant STRING := "INFLECTS.SEC";
 
-  UNIQUES_FULL_NAME      : constant STRING := "UNIQUES.";
-  ADDONS_FULL_NAME       : constant STRING := "ADDONS.";
+  UNIQUES_FULL_NAME      : constant STRING := "UNIQUES.LAT";
+  ADDONS_FULL_NAME       : constant STRING := "ADDONS.LAT";
 
   --  These files may be created and used by the program
   MODE_FULL_NAME         : constant STRING := "WORD.MOD";

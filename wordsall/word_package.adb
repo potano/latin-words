@@ -185,9 +185,16 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
          --  If there is a match, add to PA
          --TEXT_IO.PUT_LINE("UNIQUE =>" & UNQL.PR.STEM);
          --if ST = LOWER_CASE(UNQL.PR.STEM)  then
-            if EQU(ST, LOWER_CASE(UNQL.PR.STEM)) then
+            if EQU(ST, LOWER_CASE(UNQL.STEM)) then
                PA_LAST := PA_LAST + 1;
-               PA(PA_LAST) := (UNQL.PR);
+               PA(PA_LAST) := (UNQL.STEM, 
+                              (UNQL.QUAL, 
+                               0, 
+                               NULL_ENDING_RECORD,
+                               X,
+                               X), 
+                               UNIQUE,
+                               UNQL.MNPC);
 
             --TEXT_IO.PUT_LINE("UNIQUE    HIT     *********" & INTEGER'IMAGE(PA_LAST));
                UNIQUE_FOUND := TRUE;
@@ -228,7 +235,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
             (WORD'LENGTH <= MAX_STEM_SIZE)  then
             for I in BELF(0, ' ')..BELL(0, ' ')  loop
                PR := (WORD & NULL_STEM_TYPE(LENGTH_OF_WORD+1..STEM_TYPE'LENGTH),
-                        BEL(I), DEFAULT_DICTIONARY_KIND, NULL_AAMNPC_RECORD);
+                        BEL(I), DEFAULT_DICTIONARY_KIND, NULL_MNPC);
                SL(M) := PR;
                M := M + 1;
 
@@ -277,7 +284,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                      --  Check if LEL IR agrees with PDL IR  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         PR := (WORD(WORD'FIRST..STEM_LENGTH) &
                                  NULL_STEM_TYPE(STEM_LENGTH+1..MAX_STEM_SIZE),
-                                 LEL(I), DEFAULT_DICTIONARY_KIND, NULL_AAMNPC_RECORD);
+                                 LEL(I), DEFAULT_DICTIONARY_KIND, NULL_MNPC);
                         SL(M) := PR;
                         M := M + 1;
 
@@ -384,21 +391,21 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
          begin
             case RESTRICTION is
                when REGULAR    =>
-                  if not (DS.PART.PART = PACK  or
-                             (DS.PART.PART = PRON  and then
+                  if not (DS.PART.POFS = PACK  or
+                             (DS.PART.POFS = PRON  and then
                                  (DS.PART.PRON.DECL.WHICH = 1)))  then
                      PDL_INDEX := PDL_INDEX + 1;
                      PDL(PDL_INDEX) := PRUNED_DICTIONARY_ITEM'(DS, D_K);
                   end if;
 
                when PACK_ONLY  =>
-                  if DS.PART.PART = PACK  then
+                  if DS.PART.POFS = PACK  then
                      PDL_INDEX := PDL_INDEX + 1;
                      PDL(PDL_INDEX) := PRUNED_DICTIONARY_ITEM'(DS, D_K);
                   end if;
 
                when QU_PRON_ONLY  =>
-                  if DS.PART.PART = PRON  and then
+                  if DS.PART.POFS = PRON  and then
                      (DS.PART.PRON.DECL.WHICH = 1)  then
                      PDL_INDEX := PDL_INDEX + 1;
                      PDL(PDL_INDEX) := PRUNED_DICTIONARY_ITEM'(DS, D_K);
@@ -655,19 +662,19 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                INNER_LOOP:
                   for I in 1..SL_LAST-1  loop
                      if SL(I+1) /= NULL_PARSE_RECORD  then
-                        if (SL(I+1).AAMNPC.MNPC < SL(I).AAMNPC.MNPC)  or else
-                           (SL(I+1).AAMNPC.MNPC = SL(I).AAMNPC.MNPC   and then
+                        if (SL(I+1).MNPC < SL(I).MNPC)  or else
+                           (SL(I+1).MNPC = SL(I).MNPC   and then
                             SL(I+1).IR.ENDING.SIZE < SL(I).IR.ENDING.SIZE)  or else
-                           (SL(I+1).AAMNPC.MNPC = SL(I).AAMNPC.MNPC   and then
+                           (SL(I+1).MNPC = SL(I).MNPC   and then
                             SL(I+1).IR.ENDING.SIZE = SL(I).IR.ENDING.SIZE  and then
                             SL(I+1).IR.QUAL < SL(I).IR.QUAL)  or else
-                           (SL(I+1).AAMNPC.MNPC = SL(I).AAMNPC.MNPC   and then
+                           (SL(I+1).MNPC = SL(I).MNPC   and then
                             SL(I+1).IR.ENDING.SIZE = SL(I).IR.ENDING.SIZE  and then
                             SL(I+1).IR.QUAL = SL(I).IR.QUAL   and then
                             SL(I+1).D_K  < SL(I).D_K)   then
                         --PUT(SL(I+1).IR.QUAL); PUT("   <    "); PUT(SL(I).IR.QUAL); NEW_LINE;
                            SM := SL(I);
-                           SL(I) := SL(I+1);
+                           SL(I) := SL(I+1);                                                                            SL(I+1) := SM;
                            SL(I+1) := SM;
                            HITS := HITS + 1;
                         --else
@@ -698,7 +705,6 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
             SL : SAL := SX;
             OPR : PARSE_RECORD := NULL_PARSE_RECORD;
          begin
-         --PUT("Entering SAL ARRAY_STEMS with PA_LAST = "); PUT(PA_LAST); NEW_LINE;
 
             if SL(1) = NULL_PARSE_RECORD  then
                return;
@@ -716,7 +722,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                            use DICT_IO;
                         begin                             --  !!!!!!!!!!!!!!!!!!!!!!!!!!
                            if A.IR.QUAL = B.IR.QUAL        and then
-                           A.AAMNPC.MNPC = B.AAMNPC.MNPC  then
+                           A.MNPC = B.MNPC  then
                               return TRUE;
                            else
                               return FALSE;
@@ -743,7 +749,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
 
             end if;
 
-         --PUT_LINE("At the end of ARRAY_STEMS");
+--TEXT_IO.PUT_LINE("At the end of ARRAY_STEMS");
          --for I in 1..PA_LAST  loop
          --PUT(PA(I).STEM); PUT("  "); PUT(PA(I).IR); NEW_LINE;
          --PUT(PA(I).D_K); PUT("> "); PUT(PA(I).AAMNPC.MNPC); NEW_LINE;
@@ -757,10 +763,10 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                                     --procedure REDUCE_STEM_LIST(SL : in SAL; SXX : out SAL; 
                                     PREFIX : in PREFIX_ITEM := NULL_PREFIX_ITEM;
                                     SUFFIX : in SUFFIX_ITEM := NULL_SUFFIX_ITEM) is
-            AAMNPC_PART : AAMNPC_RECORD := NULL_AAMNPC_RECORD;
+            MNPC_PART : MNPC_TYPE := NULL_MNPC;
             PDL_PART : PART_ENTRY;
             COM : COMPARISON_TYPE := X;
-            NUM_KIND : NUMERAL_KIND_TYPE := X;
+            NUM_SORT : NUMERAL_SORT_TYPE := X;
             LS : INTEGER := 0;
             M : INTEGER := 0;
 
@@ -836,11 +842,11 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
 
                PDL_PART := PDL(J).DS.PART;
                PDL_KEY := PDL(J).DS.KEY;
-               AAMNPC_PART := PDL(J).DS.AAMNPC;
+               MNPC_PART := PDL(J).DS.MNPC;
 
 
             --  Is there any point in going through the process for this PDL
-               PDL_P  := PDL(J).DS.PART.PART;  --  Used only for FIX logic below
+               PDL_P  := PDL(J).DS.PART.POFS;  --  Used only for FIX logic below
 
             --  If there is no SUFFIX then carry on
                if (SUFFIX = NULL_SUFFIX_ITEM)  then  --  No suffix working, fall through
@@ -875,7 +881,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                            null;                  --  No others so far, except X = all
                      end case;
                      PDL_KEY := SUFFIX.ENTR.TARGET_KEY;
-                     PDL_P  := PDL_PART.PART;  --  Used only for FIX logic below
+                     PDL_P  := PDL_PART.POFS;  --  Used only for FIX logic below
                   --PUT("    Changed to    "); PUT(PDL_PART); PUT(PDL_KEY); NEW_LINE;
 
                   else
@@ -901,7 +907,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                --PUT("                  "); PUT(PDL_PART); PUT(" <= "); 
                --PUT(PREFIX.ENTR.ROOT); NEW_LINE;
                   if (PDL_P = PREFIX.ENTR.ROOT)  or    --  = ROOT 
-                     (PDL_PART.PART = PREFIX.ENTR.ROOT)  then  --  or part mod by suf
+                     (PDL_PART.POFS = PREFIX.ENTR.ROOT)  then  --  or part mod by suf
                   --PUT_LINE("PREFIX in REDUCE  PART HIT"); 
                      null;
                   elsif (PREFIX.ENTR.ROOT = X)  then  --   or ROOT = X
@@ -953,7 +959,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
 
 
                      SL_KEY := SL(I).IR.KEY;
-                     SL_P := SL(I).IR.QUAL.PART;
+                     SL_P := SL(I).IR.QUAL.POFS;
 
 
                      if (
@@ -962,12 +968,12 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                                (((PDL_P = N) or (PDL_P = ADJ) or (PDL_P = V)) and then
                                    ((SL(I).IR.KEY = 1) or (SL(I).IR.KEY = 2)) ))
                         )  and then   --  and KEY
-                        ( PDL_PART.PART  = EFF_PART(SL(I).IR.QUAL.PART) )  then
+                        ( PDL_PART.POFS  = EFF_PART(SL(I).IR.QUAL.POFS) )  then
 
                      --TEXT_IO.PUT_LINE("#######################   PDL - SL  MATCH   ############");
 
                         if
-                           (PDL_PART.PART = N                                and then
+                           (PDL_PART.POFS = N                                and then
                             PDL_PART.N.DECL <= SL(I).IR.QUAL.N.DECL            and then
                             PDL_PART.N.GENDER <= SL(I).IR.QUAL.N.GENDER)             then
                         --TEXT_IO.PUT_LINE(" HIT  N     ");
@@ -976,22 +982,21 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                            SXX(M) := (STEM => SUBTRACT_PREFIX(SL(I).STEM, PREFIX),
                                         IR => (
                                               QUAL => (
-                                                      PART => N,
+                                                      POFS => N,
                                                       N => (
                                                            PDL_PART.N.DECL,
                                                            SL(I).IR.QUAL.N.CS,
                                                            SL(I).IR.QUAL.N.NUMBER,
-                                                           PDL_PART.N.GENDER,
-                                                           PDL_PART.N.KIND  )  ),
+                                                           PDL_PART.N.GENDER  )  ),
                                               KEY => SL(I).IR.KEY,
                                               ENDING => SL(I).IR.ENDING,
                                               AGE => SL(I).IR.AGE,
                                               FREQ => SL(I).IR.FREQ),
                                         D_K => PDL(J).D_K,
-                                        AAMNPC => AAMNPC_PART);
+                                        MNPC => MNPC_PART);
 
                         elsif
-                           (PDL_PART.PART = PRON                             and then
+                           (PDL_PART.POFS = PRON                             and then
                             PDL_PART.PRON.DECL <= SL(I).IR.QUAL.PRON.DECL)          then
                         --PUT(" HIT  PRON  ");
                         --  Need to transfer the kind of the pronoun dictionary item
@@ -999,21 +1004,20 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                            SXX(M) := (STEM => SUBTRACT_PREFIX(SL(I).STEM, PREFIX),
                                         IR => (
                                               QUAL => (
-                                                      PART => PRON,
+                                                      POFS => PRON,
                                                       PRON => (
                                                               PDL_PART.PRON.DECL,
                                                               SL(I).IR.QUAL.PRON.CS,
                                                               SL(I).IR.QUAL.PRON.NUMBER,
-                                                              SL(I).IR.QUAL.PRON.GENDER,
-                                                              PDL_PART.PRON.KIND  )  ),
+                                                              SL(I).IR.QUAL.PRON.GENDER  )  ),
                                               KEY => SL(I).IR.KEY,
                                               ENDING => SL(I).IR.ENDING,
                                               AGE => SL(I).IR.AGE,
                                               FREQ => SL(I).IR.FREQ),
                                         D_K => PDL(J).D_K,
-                                        AAMNPC => AAMNPC_PART);
-
-                        elsif (PDL_PART.PART = ADJ)                          and then
+                                        MNPC => MNPC_PART);
+                                                        
+                        elsif (PDL_PART.POFS = ADJ)                          and then
                            (PDL_PART.ADJ.DECL <= SL(I).IR.QUAL.ADJ.DECL)     and then
                            ((SL(I).IR.QUAL.ADJ.CO   <= PDL_PART.ADJ.CO  ) or
                                ((SL(I).IR.QUAL.ADJ.CO = X)  or (PDL_PART.ADJ.CO = X)))    then
@@ -1032,7 +1036,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                            SXX(M) := (STEM => SUBTRACT_PREFIX(SL(I).STEM, PREFIX),
                                         IR => (
                                               QUAL => (
-                                                      PART => ADJ,
+                                                      POFS => ADJ,
                                                       ADJ => (
                                                              PDL_PART.ADJ.DECL,
                                                              SL(I).IR.QUAL.ADJ.CS,
@@ -1044,40 +1048,39 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                                               AGE => SL(I).IR.AGE,
                                               FREQ => SL(I).IR.FREQ),
                                         D_K => PDL(J).D_K,
-                                        AAMNPC => AAMNPC_PART);
+                                        MNPC => MNPC_PART);
 
-                        elsif (PDL_PART.PART = NUM)                          and then
+                        elsif (PDL_PART.POFS = NUM)                          and then
                            (PDL_PART.NUM.DECL <= SL(I).IR.QUAL.NUM.DECL)     and then
                            (PDL_KEY         = SL(I).IR.KEY)                   then
                         --PUT(" HIT  NUM    "); 
-                           if PDL_PART.NUM.KIND = X  then
+                           if PDL_PART.NUM.SORT = X  then
                            --  If the entry is X, generate a CO from KEY
-                              NUM_KIND:= NUM_KIND_FROM_KEY(PDL_KEY);
+                              NUM_SORT:= NUM_SORT_FROM_KEY(PDL_KEY);
                            else
                            --  Otherwise, the dictionary entry has a unique CO, use it
-                              NUM_KIND := PDL_PART.NUM.KIND;
+                              NUM_SORT := PDL_PART.NUM.SORT;
                            end if;
                            M := M + 1;
                            SXX(M) := (STEM => SUBTRACT_PREFIX(SL(I).STEM, PREFIX),
                                         IR => (
                                               QUAL => (
-                                                      PART => NUM,
+                                                      POFS => NUM,
                                                       NUM => (
                                                              PDL_PART.NUM.DECL,
                                                              SL(I).IR.QUAL.NUM.CS,
                                                              SL(I).IR.QUAL.NUM.NUMBER,
                                                              SL(I).IR.QUAL.NUM.GENDER,
-                                                             NUM_KIND,
-                                                             PDL_PART.NUM.VALUE )  ),
+                                                             PDL_PART.NUM.SORT )  ),
                                               KEY => SL(I).IR.KEY,
                                               ENDING => SL(I).IR.ENDING,
                                               AGE => SL(I).IR.AGE,
                                               FREQ => SL(I).IR.FREQ),
                                         D_K => PDL(J).D_K,
-                                        AAMNPC => AAMNPC_PART);
+                                        MNPC => MNPC_PART);
 
 
-                        elsif (PDL_PART.PART = ADV)                          and then
+                        elsif (PDL_PART.POFS = ADV)                          and then
                            ((PDL_PART.ADV.CO   <= SL(I).IR.QUAL.ADV.CO  ) or
                                ((SL(I).IR.QUAL.ADV.CO = X)  or (PDL_PART.ADV.CO = X)))    then
                         --PUT(" HIT  ADV   ");
@@ -1093,7 +1096,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                            SXX(M) := (STEM => SUBTRACT_PREFIX(SL(I).STEM, PREFIX),
                                         IR => (
                                               QUAL => (
-                                                      PART => ADV,
+                                                      POFS => ADV,
                                                       ADV => (
                                                              CO => COM)  ),
                                               KEY => SL(I).IR.KEY,
@@ -1101,96 +1104,93 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                                               AGE => SL(I).IR.AGE,
                                               FREQ => SL(I).IR.FREQ),
                                         D_K => PDL(J).D_K,
-                                        AAMNPC => AAMNPC_PART);
+                                        MNPC => MNPC_PART);
 
-                        elsif (PDL_PART.PART = V)                         then
+                        elsif (PDL_PART.POFS = V)                         then
                         --TEXT_IO.PUT_LINE("V found, now check CON");
-                           if SL(I).IR.QUAL.PART = V     and then
+                           if SL(I).IR.QUAL.POFS = V     and then
                               (PDL_PART.V.CON <= SL(I).IR.QUAL.V.CON) then
                            --TEXT_IO.PUT(" HIT  V     ");
                               M := M + 1;
                               SXX(M) := (STEM => SUBTRACT_PREFIX(SL(I).STEM, PREFIX),
                                            IR => (
                                                  QUAL => (
-                                                         PART => V,
+                                                         POFS => V,
                                                          V => (
                                                               PDL_PART.V.CON,
                                                               SL(I).IR.QUAL.V.TENSE_VOICE_MOOD,
                                                               SL(I).IR.QUAL.V.PERSON,
-                                                              SL(I).IR.QUAL.V.NUMBER,
-                                                              PDL_PART.V.KIND )  ),
+                                                              SL(I).IR.QUAL.V.NUMBER )  ),
                                                  KEY => SL(I).IR.KEY,
                                                  ENDING => SL(I).IR.ENDING,
                                                  AGE => SL(I).IR.AGE,
                                                  FREQ => SL(I).IR.FREQ),
                                            D_K => PDL(J).D_K,
-                                           AAMNPC => AAMNPC_PART);
+                                           MNPC => MNPC_PART);
 
-                           elsif SL(I).IR.QUAL.PART = VPAR   and then
+                           elsif SL(I).IR.QUAL.POFS = VPAR   and then
                               (PDL_PART.V.CON <= SL(I).IR.QUAL.VPAR.CON)   then
                            --PUT(" HIT  VPAR  ");
                               M := M + 1;
                               SXX(M) := (STEM => SUBTRACT_PREFIX(SL(I).STEM, PREFIX),
                                            IR => (
                                                  QUAL => (
-                                                         PART => VPAR,
+                                                         POFS => VPAR,
                                                          VPAR => (
                                                                  PDL_PART.V.CON,
                                                                  SL(I).IR.QUAL.VPAR.CS,
                                                                  SL(I).IR.QUAL.VPAR.NUMBER,
                                                                  SL(I).IR.QUAL.VPAR.GENDER,
-                                                                 SL(I).IR.QUAL.VPAR.TENSE_VOICE_MOOD,
-                                                                 PDL_PART.V.KIND )  ),
+                                                                 SL(I).IR.QUAL.VPAR.TENSE_VOICE_MOOD )  ),
                                                  KEY => SL(I).IR.KEY,
                                                  ENDING => SL(I).IR.ENDING,
                                                  AGE => SL(I).IR.AGE,
                                                  FREQ => SL(I).IR.FREQ),
                                            D_K => PDL(J).D_K,
-                                           AAMNPC => AAMNPC_PART);
+                                           MNPC => MNPC_PART);
 
 
-                           elsif SL(I).IR.QUAL.PART = SUPINE   and then
+                           elsif SL(I).IR.QUAL.POFS = SUPINE   and then
                               (PDL_PART.V.CON <= SL(I).IR.QUAL.SUPINE.CON)   then
                            --PUT(" HIT  SUPINE");
                               M := M + 1;
                               SXX(M) := (STEM => SUBTRACT_PREFIX(SL(I).STEM, PREFIX),
                                            IR => (
                                                  QUAL => (
-                                                         PART => SUPINE,
+                                                         POFS => SUPINE,
                                                          SUPINE => (
                                                                    PDL_PART.V.CON,
                                                                    SL(I).IR.QUAL.SUPINE.CS,
                                                                    SL(I).IR.QUAL.SUPINE.NUMBER,
-                                                                   SL(I).IR.QUAL.SUPINE.GENDER,
-                                                                   PDL_PART.V.KIND)  ),
+                                                                   SL(I).IR.QUAL.SUPINE.GENDER)  ),
                                                  KEY => SL(I).IR.KEY,
                                                  ENDING => SL(I).IR.ENDING,
                                                  AGE => SL(I).IR.AGE,
                                                  FREQ => SL(I).IR.FREQ),
                                            D_K => PDL(J).D_K,
-                                           AAMNPC => AAMNPC_PART);
+                                           MNPC => MNPC_PART);
 
 
                            end if;
 
-                        elsif PDL_PART.PART = PREP and then
+                        elsif PDL_PART.POFS = PREP and then
                         PDL_PART.PREP.OBJ = SL(I).IR.QUAL.PREP.OBJ           then
                         --PUT(" HIT  PREP  ");
                            M := M + 1;
                            SXX(M) := (SUBTRACT_PREFIX(SL(I).STEM, PREFIX), SL(I).IR,
-                                        PDL(J).D_K, AAMNPC_PART);
+                                        PDL(J).D_K, MNPC_PART);
 
-                        elsif PDL_PART.PART = CONJ                              then
+                        elsif PDL_PART.POFS = CONJ                              then
                         --PUT(" HIT  CONJ  ");
                            M := M + 1;
                            SXX(M) := (SUBTRACT_PREFIX(SL(I).STEM, PREFIX), SL(I).IR,
-                                        PDL(J).D_K, AAMNPC_PART);
+                                        PDL(J).D_K, MNPC_PART);
 
-                        elsif PDL_PART.PART = INTERJ                            then
+                        elsif PDL_PART.POFS = INTERJ                            then
                         --PUT(" HIT  INTERJ ");
                            M := M + 1;
                            SXX(M) := (SUBTRACT_PREFIX(SL(I).STEM, PREFIX), SL(I).IR,
-                                        PDL(J).D_K, AAMNPC_PART);
+                                        PDL(J).D_K, MNPC_PART);
 
 
                         end if;
@@ -1232,8 +1232,8 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
          --PUT(NUMBER_OF_PREFIXES); PUT(INTEGER(SA'LENGTH)); PUT(SA'LAST); NEW_LINE;
             for I in 1..NUMBER_OF_PREFIXES  loop       --  Loop through PREFIXES
                L :=  0;
-
                for J in SA'RANGE  loop                  --  Loop through stem array
+                  if (SA(J)(1) = PREFIXES(I).FIX(1))  then  --  Cuts down a little -- do better
                   if SUBTRACT_PREFIX(SA(J), PREFIXES(I)) /=
                   HEAD(SA(J), MAX_STEM_SIZE)  then
                   --PUT_LINE("Hit on prefix  " & PREFIXES(I).FIX);
@@ -1243,6 +1243,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                      SSA(L) := HEAD(SUBTRACT_PREFIX(SA(J), PREFIXES(I)),
                                     MAX_STEM_SIZE);  --  And that has prefix subtracted to match dict
                   --PUT("L = "); PUT(L); PUT("   "); PUT_LINE(SUBTRACT_PREFIX(SA(J), PREFIXES(I)));
+                  end if;                               --  with prefix subtracted stems
                   end if;
                end loop;
 
@@ -1262,14 +1263,14 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                         PA(PA_LAST).IR :=
                               ((PREFIX, NULL_PREFIX_RECORD), 0, NULL_ENDING_RECORD, X, X);
                         PA(PA_LAST).STEM := HEAD(PREFIXES(I).FIX, MAX_STEM_SIZE);
-                        PA(PA_LAST).AAMNPC.MNPC := PREFIXES(I).MNPC;
+                        PA(PA_LAST).MNPC := PREFIXES(I).MNPC;
                         PA(PA_LAST).D_K  := ADDONS;
                         exit;      --  Because we accept only one prefix                  
                      end if;
 
                   end if;
-               end if;                               --  with prefix subtracted stems
-            end loop;      --  Loop on I for PREFIXES
+               end if;
+             end loop;      --  Loop on I for PREFIXES
          end APPLY_PREFIX;
 
 
@@ -1320,7 +1321,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                         PA(PA_LAST).STEM := HEAD(
                                                 SUFFIXES(SUFFIX_HIT).FIX, MAX_STEM_SIZE);
                      --  Maybe it would better if suffix.fix was of stem size
-                        PA(PA_LAST).AAMNPC.MNPC := SUFFIXES(SUFFIX_HIT).MNPC;
+                        PA(PA_LAST).MNPC := SUFFIXES(SUFFIX_HIT).MNPC;
                      --PUT("SUFFIX MNPC  "); PUT(SUFFIXES(SUFFIX_HIT).MNPC); NEW_LINE;
                         PA(PA_LAST).D_K  := ADDONS;
                      ---
@@ -1347,7 +1348,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                               ((SUFFIX, NULL_SUFFIX_RECORD), 0, NULL_ENDING_RECORD, X, X);
                         PA(PA_LAST).STEM := HEAD(
                                                 SUFFIXES(SUFFIX_HIT).FIX, MAX_STEM_SIZE);
-                        PA(PA_LAST).AAMNPC.MNPC := SUFFIXES(SUFFIX_HIT).MNPC;
+                        PA(PA_LAST).MNPC := SUFFIXES(SUFFIX_HIT).MNPC;
                      --PUT("SUFFIX MNPC  "); PUT(SUFFIXES(SUFFIX_HIT).MNPC); NEW_LINE;
                         PA(PA_LAST).D_K  := ADDONS;
 
@@ -1409,10 +1410,11 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
 --TEXT_IO.PUT_LINE("PRUNE_STEMS   below  NOT DO_ONLY_FIXES  PA_LAST = " 
 --& INTEGER'IMAGE(PA_LAST));
 
-            if (PA_LAST = 0  and then      --  No Uniques or Syncope
-                PDL_INDEX = 0  and then    --  No dictionary match
-                WORDS_MODE(DO_FIXES))  then
-                --WORDS_MDEV(DO_FIXES_ANYWAY)  then 
+            if (((PA_LAST = 0)  and            --  No Uniques or Syncope
+                (PDL_INDEX = 0))  --)   and then    --  No dictionary match
+                  or WORDS_MDEV(DO_FIXES_ANYWAY))  and then 
+                WORDS_MODE(DO_FIXES)  then
+                
             --  So try prefixes and suffixes, Generate a new SAA array, search again
 --TEXT_IO.PUT_LINE(" PDL_INDEX = 0     after straight search   ------  So APPLY_SUFFIX");
                if SXX(1) = NULL_PARSE_RECORD  then        --  We could not find a match with suffix
@@ -1532,7 +1534,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                               --  Add to list of possible ending records
                                  STEM_LENGTH := WORD'LENGTH - Z;
                                  PR := (HEAD(WORD(WORD'FIRST..STEM_LENGTH), MAX_STEM_SIZE),
-                                          LEL(I), DEFAULT_DICTIONARY_KIND, NULL_AAMNPC_RECORD);
+                                          LEL(I), DEFAULT_DICTIONARY_KIND, NULL_MNPC);
                                  M := M + 1;
                                  SL(M) := PR;
                                  SSA(1) := HEAD(WORD(WORD'FIRST.. WORD'FIRST+STEM_LENGTH-1),
@@ -1562,9 +1564,9 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                         while SL(M) /= NULL_PARSE_RECORD  loop  --  Over all inflection hits
                           --  if this stem is possible  
                         --  call up the meaning to check for "(w/-"
-                           DICT_IO.SET_INDEX(DICT_FILE(PDL(J).D_K), PDL(J).DS.AAMNPC.MNPC);
+                           DICT_IO.SET_INDEX(DICT_FILE(PDL(J).D_K), PDL(J).DS.MNPC);
                            DICT_IO.READ(DICT_FILE(PDL(J).D_K), DE);
-                           MEAN := DE.TRAN.MEAN;
+                           MEAN := DE.MEAN;
 
                            if (TRIM(MEAN)(1..4) = "(w/-"  and then  --  Does attached PACKON agree
                                TRIM(MEAN)(5..4+PACKON_LENGTH) = TRIM(PACKONS(K).TACK))   then
@@ -1585,8 +1587,8 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                               --PUT(" <= ?   PDL_KIND    ");
                               --PUT(PDL(J).DS.PART.PACK.KIND); 
                               --NEW_LINE;
-                                 if (PACKONS(K).ENTR.BASE.PACK.KIND   <=
-                                     PDL(J).DS.PART.PACK.KIND)   then
+                                 --if (PACKONS(K).ENTR.BASE.PACK.KIND   <=
+                                 --    PDL(J).DS.PART.PACK.KIND)   then
                                  --  Then we have a hit and make a PA
                                  --PUT_LINE("KIND    Hit Hit Hit Hit Hit Hit Hit Hit Hit Hit Hit Hit Hit Hit Hit ");
 
@@ -1596,10 +1598,10 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                                                             ((TACKON, NULL_TACKON_RECORD), 0,
                                                               NULL_ENDING_RECORD, X, X),
                                                          ADDONS,
-                                                            (X, X, X, X, X, PACKONS(K).MNPC));
+                                                            (PACKONS(K).MNPC));
                                        PACKON_FIRST_HIT := FALSE;
 
-                                    end if;
+                                    end if;                          
                                     PA_LAST := PA_LAST + 1;
                                  --PUT_LINE("PACKON  PDL HIT    PA_LAST = " & INTEGER'IMAGE(PA_LAST));
                                  --PUT(PDL(J).DS.STEM); PUT(PDL(J).DS.PART); NEW_LINE;
@@ -1608,20 +1610,19 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                                     PA(PA_LAST) := (STEM => SL(M).STEM,
                                                       IR => (
                                                             QUAL => (
-                                                                    PART => PRON,
+                                                                    POFS => PRON,
                                                                     PRON => (
                                                                             PDL(J).DS.PART.PACK.DECL,
                                                                             SL(M).IR.QUAL.PRON.CS,
                                                                             SL(M).IR.QUAL.PRON.NUMBER,
-                                                                            SL(M).IR.QUAL.PRON.GENDER,
-                                                                            PACKONS(K).ENTR.BASE.PACK.KIND )),
+                                                                            SL(M).IR.QUAL.PRON.GENDER )),
                                                             KEY => SL(M).IR.KEY,
                                                             ENDING => SL(M).IR.ENDING,
                                                             AGE => SL(M).IR.AGE,
                                                             FREQ => SL(M).IR.FREQ),
                                                       D_K => PDL(J).D_K,
-                                                      AAMNPC => PDL(J).DS.AAMNPC);
-                                 end if;
+                                                      MNPC => PDL(J).DS.MNPC);
+                                 --end if;
                               end if;
                            end if;
                            M := M + 1;
@@ -1673,7 +1674,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                      --  Add to list of possible ending records
                         STEM_LENGTH := WORD'LENGTH - Z;
                         PR := (HEAD(WORD(WORD'FIRST..STEM_LENGTH), MAX_STEM_SIZE),
-                                 LEL(I), DEFAULT_DICTIONARY_KIND, NULL_AAMNPC_RECORD);
+                                 LEL(I), DEFAULT_DICTIONARY_KIND, NULL_MNPC);
                         M := M + 1;
                         SL(M) := PR;
                      --PUT("M = "); PUT(M); PUT("    "); PUT(SL(M)); NEW_LINE;
@@ -1713,19 +1714,18 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                      PA(PA_LAST) := (STEM => SL(M).STEM,
                                        IR => (
                                              QUAL => (
-                                                     PART => PRON,
+                                                     POFS => PRON,
                                                      PRON => (
                                                              PDL(J).DS.PART.PRON.DECL,
                                                              SL(M).IR.QUAL.PRON.CS,
                                                              SL(M).IR.QUAL.PRON.NUMBER,
-                                                             SL(M).IR.QUAL.PRON.GENDER,
-                                                             PDL(J).DS.PART.PRON.KIND )),
+                                                             SL(M).IR.QUAL.PRON.GENDER )),
                                              KEY => SL(M).IR.KEY,
                                              ENDING => SL(M).IR.ENDING,
                                              AGE => SL(M).IR.AGE,
                                              FREQ => SL(M).IR.FREQ),
                                        D_K => PDL(J).D_K,
-                                       AAMNPC => PDL(J).DS.AAMNPC);
+                                       MNPC => PDL(J).DS.MNPC);
                   end if;
                   M := M + 1;
 
@@ -1800,17 +1800,17 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                            --  Sweeping up inapplicable fixes, 
                            --  although we only have TACKONs for X or PRON - so far
                            --  and there are no fixes for PRON - so far
-                           --PUT("PA(J).IR.QUAL.PART = ");  PUT(PA(J).IR.QUAL.PART); NEW_LINE;
+                           --PUT("PA(J).IR.QUAL.POFS = ");  PUT(PA(J).IR.QUAL.POFS); NEW_LINE;
 
-                              if ((PA(J).IR.QUAL.PART = PREFIX) and then (TACKON_ON))  then
+                              if ((PA(J).IR.QUAL.POFS = PREFIX) and then (TACKON_ON))  then
                                  null;          --  check PART
                                  TACKON_ON  := FALSE;
-                              elsif ((PA(J).IR.QUAL.PART = SUFFIX) and then (TACKON_ON))  then --  check PART
+                              elsif ((PA(J).IR.QUAL.POFS = SUFFIX) and then (TACKON_ON))  then --  check PART
                                  null;
                                  TACKON_ON  := FALSE;
 
 
-                              elsif PA(J).IR.QUAL.PART = TACKONS(I).ENTR.BASE.PART  then
+                              elsif PA(J).IR.QUAL.POFS = TACKONS(I).ENTR.BASE.PART  then
                                                                  --  check PART
                                  case TACKONS(I).ENTR.BASE.PART is
                                  --when N       =>
@@ -1820,9 +1820,10 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                                     --PUT("TACK/PA KIND "); PUT(PA(J).IR.QUAL.PRON.KIND); PUT("  -  "); 
                                     --PUT(TACKONS(I).ENTR.BASE.PRON.KIND); NEW_LINE;
                                        if PA(J).IR.QUAL.PRON.DECL <=
-                                       TACKONS(I).ENTR.BASE.PRON.DECL  and then
-                                       PA(J).IR.QUAL.PRON.KIND <=
-                                       TACKONS(I).ENTR.BASE.PRON.KIND  then
+                                       TACKONS(I).ENTR.BASE.PRON.DECL  --and then
+                                       --PA(J).IR.QUAL.PRON.KIND <=
+                                       --TACKONS(I).ENTR.BASE.PRON.KIND  
+                                           then
                                        --PUT("TACKON PRON found HIT "); PUT( TACKONS(I).TACK); NEW_LINE;
                                           TACKON_HIT := TRUE;
                                           TACKON_ON  := TRUE;
@@ -1862,7 +1863,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                                                          ((TACKON, NULL_TACKON_RECORD), 0,
                                                           NULL_ENDING_RECORD, X, X),
                                                       ADDONS,
-                                                         (X, X, X, X, X, TACKONS(I).MNPC));
+                                                         (TACKONS(I).MNPC));
                         --PUT("PA_LAST = "); PUT(PA_LAST); PUT("  "); 
                         --PUT("I = "); PUT(I); PUT("  TACKONS(I).TACK = "); PUT(TACKONS(I).TACK);
                         --PUT_LINE("TACKON added");
@@ -1887,11 +1888,11 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
 
 
       begin                           --  WORD
+--TEXT_IO.PUT_LINE("Starting WORD  INPUT = " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
          if TRIM(INPUT_WORD) = ""  then
             return;
          end if;
 
-      --PUT_LINE("WORD CALLED WITH ->" & RAW_WORD & " -> " & INPUT_WORD);
 
          RUN_UNIQUES(INPUT_WORD, UNIQUE_FOUND, PA, PA_LAST);
 
@@ -1902,15 +1903,18 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
       --    end if;
 
       --if INPUT_WORD(INPUT_WORD'FIRST) in 'a'..'z'  then
+--TEXT_IO.PUT_LINE("After UNIQUES  INPUT = " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
 
       --==========================================================
          RUN_INFLECTIONS(INPUT_WORD, SS);
          PRUNE_STEMS(INPUT_WORD, SS, SSS);
+--TEXT_IO.PUT_LINE("After PRUNE  INPUT = " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
          if SSS(1) /= NULL_PARSE_RECORD   then
             ORDER_STEMS(SSS);
             ARRAY_STEMS(SSS, PA, PA_LAST);
             SSS(1) := NULL_PARSE_RECORD;
          end if;
+--TEXT_IO.PUT_LINE("After ARRAY  INPUT = " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
       --==========================================================
 
 
@@ -1942,7 +1946,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
                         PA(PA_LAST).STEM := HEAD(TICKONS(I).FIX, MAX_STEM_SIZE);
                         PA(PA_LAST).IR := ((PREFIX, NULL_PREFIX_RECORD), 0, NULL_ENDING_RECORD, X, X);
                         PA(PA_LAST).D_K  := ADDONS;
-                        PA(PA_LAST).AAMNPC.MNPC := TICKONS(I).MNPC;
+                        PA(PA_LAST).MNPC := TICKONS(I).MNPC;
                      end if;
 
 
@@ -2012,6 +2016,7 @@ with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
          end if;
 
 
+--TEXT_IO.PUT_LINE("Out WORD  INPUT = " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
 
          --TEXT_IO.SET_OUTPUT(TEXT_IO.STANDARD_OUTPUT);
 
