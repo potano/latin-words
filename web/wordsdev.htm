@@ -8,15 +8,217 @@
 <P>
 
 
-<H1>WORDS - Version 1.97 <BR>
-LATIN-to-ENGLISH DICTIONARY PROGRAM <BR>
+<H1>WORDS - Version 1.97E<BR>
+LATIN DICTIONARY PROGRAM <BR>
 DEVELOPERS/REHOSTERS PAGE</H1>
 <P>
 
 
-<H3>This page provides the Ada source code for a Latin-to-English dictionary
-program for the PC, and the dictionary material sufficient to re-host.  <BR>
-Instructions below.  </H3>
+<H3>This page provides the Ada source code for a Latin dictionary
+program for the PC, and the dictionary material sufficient to re-host
+to other systems.
+<BR>
+Instructions below:  </H3>
+
+
+
+<H3>
+The WORDS System</H3>
+<P>
+There is a <A HREF="wordsall.zip"><B>wordsall.zip</B></A>
+zip of all the Ada source files to port WORDS, and
+support programs and data to generate the necessary dictionaries and
+inflections for re-hosting the WORDS Latin dictionary
+parsing/translation system on any machine with an Ada 95 compiler.  (It
+can be made to work with Ada 83 also by replacing just tha short driver routine.)
+<P>
+This a console program (keyboard entry), without fancy Windows GUI, and has
+thereby been made system independent.
+<P>
+WORDSALL contains the Ada source files for WORDS
+
+<PRE>
+strings_package.ads
+strings_package.adb
+latin_file_names.ads
+latin_file_names.adb
+config.ads
+preface.ads
+word_parameters.ads
+developer_parameters.ads
+preface.adb
+put_stat.adb
+word_parameters.adb
+inflections_package.adb
+inflections_package.ads
+dictionary_package.ads
+dictionary_package.adb
+addons_package.ads
+addons_package.adb
+uniques_package.ads
+word_support_package.ads
+word_support_package.adb
+english_support package.ads
+english_support package.adb
+word_package.ads
+line_stuff.ads
+line_stuff.adb
+developer_parameters.adb
+tricks_package.ads
+word_package.adb
+tricks_package.adb
+list_package.ads
+list_sweep.adb
+dictionary_form.adb
+search_english.adb
+put_example_line.adb
+list_package.adb
+parse.adb
+words.adb
+</PRE>
+
+<P>
+four supporting programs
+
+<PRE>
+makedict.adb
+makestem.adb
+makeinfl.adb
+makeefil.adb
+</PRE>
+
+<P>
+and DOS ASCII data files for them to act upon to produce WORDS data files
+
+<PRE>
+DICTLINE.GEN
+STEMLIST.GEN
+EWDSLIST.GEN
+INFLECTS.LAT
+</PRE>
+
+<P>
+the other WORDS DOS ASCII supporting files
+
+<PRE>
+ADDONS.LAT
+UNIQUES.LAT
+</PRE>
+
+<P>
+<P>
+The process is to download the 197ESALL.ZIP (case sensitive) and unzip into a
+subdirectory.  (If the zip form is unsuitable for your system, I can
+provide the files in an uncompressed form.) The wordy file names are for
+compliance with the restrictions of the GNAT system.  They may be renamed,
+and I can provide an alternative.  However, the long file names demand an
+UNZIP that preserves them, if GNAT is to be used.
+
+<P>For example, in a GNAT
+environment (one would maximally optimize the main program):
+
+<PRE>
+gnatmake -O3 words
+gnatmake makedict
+gnatmake makestem
+gnatmake ewdsefil
+gnatmake makeinfl
+</PRE>
+
+<P>
+This produces executables for WORDS, MAKEDICT, MAKESTEM, MAKEEFIL, and MAKEINFL.
+Executing the latter four against the input respectively of
+
+<PRE>
+DICTLINE.GEN
+STEMLIST.GEN
+EWDSLIST.GEN
+INFLECTS.LAT
+</PRE>
+
+<P>
+(when they ask for DICTIONARY say G) producing
+
+<PRE>
+DICTFILE.GEN
+STEMFILE.GEN
+INDXFILE.GEN
+EWDSFILE.GEN
+INFLECTS.SEC
+</PRE>
+
+<P>
+Along with ADDONS.LAT and UNIQUES.LAT, this is the set of data for WORDS.
+<P>
+The only problem that has appeared on porting so far is that one must be
+careful of file names.  Problems sometimes turn up but have been easily
+rectified by inspection.  All of my systems are case-independent on file
+names.  If one is running in a case-dependent system (UNIX), this is a
+point to check.  Note that the data files are capitalized, source files
+are not.
+
+
+
+<P>The source is in Ada and therefore very readable, which is not claimed for the
+logic which is my. not Ada's, fault.  The source and data are freely available
+for anyone to use for any purpose.  It may be converted to other
+languages, used in pieces, or modified in any way without further permission
+or notification.
+
+<P>There is one oddity that the reader may remark upon.  The code is loaded
+with PUT/print statements which are now commented out.   These were used at
+some time for debug purposes and were just left in.  They (mostly) are left
+justified and may fairly easily be removed for a cleaner presentation.
+Further there are many blocks of code which during development have been
+moved or removed, but have in their previous place been left commented.
+This is also messy.  I cannot really justify not having fixed this, but there it is.
+
+
+<P>
+For comments mail to <A HREF="mailto:whitaker@erols.com"> <B>whitaker@erols.com</B></A><BR>
+
+
+
+
+
+
+<H3>Recent Versions</H3>
+
+<P><B>December 2004 - Version 1.97E release.</B>
+New version has increased dictionary to 37000 entries,
+including more ecclesiastical, medieval, and modern Latin.
+Most of the increase was supplied by John White.
+There is now a primitive English-to-Latin capability.
+Changes in parameters and defaults will require users to reset mode files.
+
+<P><B>Feburary 2004 - Over one million total hits on this site.</B>
+
+<HR>
+<P>
+31 August 2001 - Version 1.97 - Update concentrates on improving
+presentation of results to the user.  There are no significant
+improvements to the algorithms, which seem to be quite stable now.  The
+dictionary is now over 30000 entries, with some increase in late and
+medieval Latin.
+<P>
+The main thrust of this version is to simplify the presentation for the
+average student.  Trimming has been greatly expanded so as to hide
+possible parses which are unlikely in popular classical texts and student
+exercises.  The full parse (archaic, medieval, rare, etc.) is still
+available by switching the TRIM paramenter, and that operation has been
+made more convenient by siting that first in the # parameter list.
+<P>
+15 October 2000 - Version 1.96 still - Some small changes as a result of
+user feedback.  A few errors that crept into the latest version causing
+words previously handled to raise exception were fixed.  There is no
+change in the dictionary.  The changes are corrections and do not amount
+to a new version, even a subversion.  The new code may be recognized by
+successful handling of the word <B>quempiam</B>. (Thanks DiLaura)
+<P>
+10 September 2000 - Version 1.96 - a small change to the user.  <BR>
+Somewhat larger dictionary - additions in medieval and ecclesiastical - I
+hope for additional in the near future.  One reading the Vulgate will not
+be disappointed.
 <P>
 13 July 2002 - Version 1.97 still - This very slight update of the code
 and a very few more entries in the dictionary.  It now takes two
@@ -24,8 +226,6 @@ RETURN/ENTERs to quit the program.  The only significant improvement is an
 attempt to regularize the dictionary.  Most a/an/the articles have been
 removed, especialy from the begining of a meaning.  Round () and square []
 brackets are now uniform in application.  <BR>
-() are for general explainations in meanings.  <BR>
-[] give special case translations, and are [Latin =&gt; English].
 <P>
 1 Janurary 2002 - Version 1.97 still - This very slight update of the code
 is to correct a few horrible mistakes, which apparently have no real
@@ -76,136 +276,11 @@ introduced.  Check the defaults for youe particular application.  <BR>
 Some output (qui) may be a bit better.  <BR>
 One procedure (LIST_LIST) has been added.  It is used by LIST_PACKAGE.
 
-<H3>
-The WORDS System</H3>
-<P>
-There is a <A HREF="wordsall.zip"><B>WORDSALL.ZIP</B></A> zip of all the Ada source files for WORDS, and
-support programs and data to generate the necessary dictionaries and
-inflections for re-hosting the WORDS Latin-to-English word
-parsing/translation system on any machine with an Ada 95 compiler.  (It
-can be made to work with Ada 83 also by replacing the driver routine.)
-<P>
-This a console program (keyboard entry), without fancy Windows GUI, and is
-thereby system independent.
-<P>
-WORDSALL contains the Ada source files for WORDS
 
-<PRE>
-strings_package.ads
-strings_package.adb
-latin_file_names.ads
-latin_file_names.adb
-config.ads
-preface.ads
-word_parameters.ads
-developer_parameters.ads
-preface.adb
-put_stat.adb
-word_parameters.adb
-inflections_package.adb
-inflections_package.ads
-dictionary_package.ads
-dictionary_package.adb
-addons_package.ads
-addons_package.adb
-uniques_package.ads
-word_support_package.ads
-latin_debug.ads
-word_support_package.adb
-latin_debug.adb
-word_package.ads
-line_stuff.ads
-line_stuff.adb
-developer_parameters.adb
-tricks_package.ads
-word_package.adb
-tricks_package.adb
-list_package.ads
-list_sweep.adb
-dictionary_form.adb
-put_example_line.adb
-list_package.adb
-parse.adb
-words.adb
-</PRE>
 
-<P>
-three supporting programs
 
-<PRE>
-makedict.adb
-makestem.adb
-makeinfl.adb
-</PRE>
 
-<P>
-and DOS ASCII data files for them to act upon to produce WORDS data files
 
-<PRE>
-DICTLINE.GEN
-STEMDICT.GEN
-INFLECTS.LAT
-</PRE>
-
-<P>
-the other WORDS DOS ASCII supporting files
-
-<PRE>
-ADDONS.LAT
-UNIQUES.LAT
-</PRE>
-
-<P>
-<B>(Please note that the data files now with extension .LAT used to have just
-a final period in these filenemes.  Some systems had trouble dropping the
-final period when copying, so the names were changes.)</B>
-<P>
-The process is to download the WORDSALL.ZIP and unzip into a suitable
-subdirectory.  (If the zip form is unsuitable for your system, I can
-provide the files in an uncompressed form.) The wordy file names are for
-compliance with the restrictions of the GNAT system.  They may be renamed,
-and I can provide an alternative.  However, the long file names demand an
-UNZIP that preserves them, if GNAT is to be used.  For example, in a GNAT
-environment (one would maximally optimize the main program):
-
-<PRE>
-gnatmake -O3 words
-gnatmake makedict
-gnatmake makestem
-gnatmake makeinfl
-</PRE>
-
-<P>
-This produces executables for WORDS, MAKEDICT, MAKESTEM, and MAKEINFL.
-Executing the latter three against the input respectively of
-
-<PRE>
-DICTLINE.GEN
-STEMLIST.GEN
-INFLECTS.LAT
-</PRE>
-
-<P>
-(when they ask for DICTIONARY say G) produces
-
-<PRE>
-DICTFILE.GEN
-STEMFILE.GEN
-INDXFILE.GEN
-INFLECTS.SEC
-</PRE>
-
-<P>
-Along with ADDONS.LAT and UNIQUES.LAT, this is the set of data for WORDS.
-<P>
-The only problem that has appeared on porting so far is that one must be
-careful of file names.  Problems sometimes turn up but have been easily
-rectified by inspection.  All of my systems are case-independent on file
-names.  If one is running in a case-dependent system (UNIX), this is a
-point to check.  Note that the data files are capitalized, source files
-are not.
-<P>
-For comments mail to <A HREF="mailto:whitaker@erols.com"> <B>whitaker@erols.com</B></A><BR>
 
 <P>
 <BR>

@@ -22,6 +22,7 @@
 <A HREF="#OPERATIONAL DESCRIPTION"><B>OPERATIONAL DESCRIPTION</B></A><BR>
 <A HREF="#Program Operation">Program Operation</A><BR>
 <A HREF="#Modes of Operation">Modes of Operation</A><BR>
+<A HREF="#Command Line Operation">Command Line Operation</A><BR>
 <A HREF="#Latin-to-English Examples">Latin-to-English Examples</A><BR>
 <A HREF="#English-to-Latin Examples">English-to-Latin Examples</A><BR>
 <A HREF="#Signs and Abbreviations in Meaning">Signs and Abbreviations in Meaning</A><BR>
@@ -395,7 +396,7 @@ more than a computer screen, the output is halted until the user responds
 to the 'MORE' message with a return.  A file containing a text, a series
 of lines, can be input by keying in the character '@', followed (with no
 spaces) by the DOS name of the file of text.  This input file need not be
-in the program subdirectory, just use the full DOS path and name of the
+in the program subdirectory, just use the full path and name of the
 file.  This is usually accompanied with the setting of the parameter
 switches to create and write to an output file, WORD.OUT.
 <P>
@@ -405,35 +406,24 @@ found, an indication that it may have been miscopied, etc.  A comment
 begins with a double dash [--] and continues to the end of the line.  The
 '--' and everything after on that line is ignored by the program.
 <P>
-A '#' character input will permit the user to set modes to prevent the
+A simple # character input at the start of a line (that is, a line
+containing only #) will permit the user to set modes to prevent the
 process from trying prefixes and suffixes to get a match on an item
 unknown to the dictionary, put output to a file, etc.  Going into the
 CHANGE_PARAMETERS, the '?' character calls help for each entry.
 <P>
+Another set of parameters is invoked by the character !.  These developer parameters
+are fairly specialized and are probably not required by the average user,
+nevertheless they are available for special applications.
+<P>
 Two successive returns with no text will terminate the program (except in
 text being read from an @ disk file.)
-<P>
-One can also call WORDS with the input on the command line
-
-<PRE>WORDS amo amas amat</PRE>
-which will cause it to execute for that input and then terminate.  This is
-for a quick word or two.
-<P>
-Another mode of operation is to provide an input and an output file.
-
-<PRE>WORDS INFILE OUTFILE</PRE>
-with names of your choice (full path names if not operating all in the
-same subdirectory).  The program will read as input the INFILE and write
-the output to the OUTFILE (as though it were WORD.OUT).  It will then
-await further input from the user.  It terminates with a return.  If the
-parameters are not legal file names, the program will assume they are
-Latin words to be processed as command line input.
-<BR>
-
 
 <A NAME="Modes of Operation">
 <H4>Modes of Operation</H4></A>
 
+<P>The mode of operation of WORDS can be specialized by setting some combination
+of available parameters.  Here are a couple of example situations.
 
 <P>If you want only meanings to show up, set the # parameter
 <BR>
@@ -445,7 +435,7 @@ DO_ONLY_MEANINGS => Yes
 DO_DICTIONARY_FORM => No
 <BR>
 <P>If you want to accept only the dictionary entry (amo, but not amas), set
-the ! parameter (this is the tricky one)
+the ! parameter (this is the tricky one, requiring two parameters set)
 <BR>
 DO_ONLY_INITIAL_WORD => Yes
 <BR>
@@ -455,13 +445,92 @@ another, otherwise unavailable, option
 <BR>
 FOR_WORD_LIST_CHECK => Yes
 <BR>
-<P>All this seemed reasonable at the time, but I may want to reconsider
-because of its complexity for the user.
+<P>There are a large number of other options.  The user is invited
+to consider all the options if needing anything more than the basic parse.
 
 <P>Of course, for both sets of parameters, you will want to go to the end
 of the parameter setting menu and save this set so you can restart with
 the same situation.
 
+
+
+<A NAME="Command Line Operation">
+<H4>Command Line Operation</H4></A>
+
+
+The main mode of usage for WORDS is a simple call, followed by screen interaction.
+<P>
+But there are other, command line, options.
+WORDS may be called with arguments on the same line, in a number of different modes.
+The program will execute with these argumants as inpu.
+Remember that the saved parameter settings (in WORD.MOD and WORD.MDV)
+are controlling, even for command line input.
+
+<P>
+Single argument, either a simple Latin word or an input file.
+
+<P>
+WORDS amo
+<BR>which will cause it to execute for that input and then terminate.  This is
+for a quick word.
+
+<P>
+WORDS infile
+<BR>causes WORDS to execute with the contents of the inflie.
+The infile may be from any folder if the full path name is given.
+
+<P>
+With two arguments the options are: inputfile and outputfile,
+two Latin words, or a language shift to English (Latin being the startup default)
+and an English  word (with no part of speech).
+
+<P>
+WORDS infile outfile
+<BR>The program will read as input the INFILE and write
+the output to the OUTFILE (as though it were WORD.OUT).  It will then
+await further input from the user.  It terminates with a return.  If the
+parameters are not legal file names, the program will assume they are
+Latin words to be processed as command line input.
+
+<P>
+WORDS amo amas
+
+<P>
+WORDS ^e  love
+<BR>switches to English input fron the default Latin and searches foe love.
+
+<P>
+With three arguments there could be three Latin words or a language shift
+and and English word and part of speech.
+
+<P>
+WORDS amo amas amat
+
+<P>
+WORDS ^e love v
+
+<P>
+More than three arguments must all be Latin words.
+
+<P>
+WORDS amo amas amat amamus amatis amant
+
+<P>
+There cannot be more than one English word in the argument list,
+since there can only be one English word per line for WORDS input.
+
+
+<P>
+An input file (either from interactive with @ or from command line)
+can have changes of language, but the ^E or ^L must be on a seperate line.
+Note that this capability can create confusing situations.
+An input file that starts off Latin then switches to English will be
+correctly processed.  But if it is followed by a similiar input file, the
+second file will start off English (from the setting in the earlier file) and fail
+on the Latin input.  Thus even submitting the same file twice in a run
+will give different results.  Ithis problem can be alleviated by starting each
+input file with an explicit language instruction, but this will not normally be
+the situation.
 
 
 
@@ -1006,6 +1075,17 @@ excidium, excidi(i)  N     2 4  N   [XXXCX]
 ruin, destruction, military destruction; overthrow;
 *
 </TT></PRE>
+
+
+<P>While six prioritized translations may seem like enough,
+and they will likely cover the needs of a student, the full set
+(setting # parameter to not TRIM) contains much valuable information
+for the advanced translator.  For instance for the verb live vivo
+usually works, but there are other options associated with specific
+situations: cohabito meand live together, ruror means live in the country,
+adjaceo means live near, judaizo means live in the Jewish manner keeping the law.
+These sorts of meanings are often conveyed in Latin by a single word,
+while in English one might just use live and a modifing word or phrase.
 
 <A NAME="Design of the Meaning Line">
 <H4>Design of the Meaning Line</H4></A>
@@ -2519,7 +2599,7 @@ I/J.
 <P>
 While the letter W does not exist in classical Latin,
 there are examples of W in medieval Latin.  I have not directly
-faced this, and have no words in the dictionary yet with W.   The W
+faced this, and have few words in the dictionary yet with W.   The W
 problem is not analogous to U/V.  While W sometimes could correspond to V
 or UU, in most cases it is a valid letter, reflecting a Germanic origin of
 the word.  It will be treated as a real letter, and tricks employed as useful.
@@ -2555,7 +2635,8 @@ There is some measure of period and frequency that can be used to
 discriminate between identical forms, but if there is only one possible
 match to an input word, it will be displayed no matter its era or rarity.
 The user can choose to display age and frequency warnings associated with
-stems and meanings, but the present default is not to.
+stems and meanings, but the present default is not to, although inflectios
+are so identified by default.
 <P>
 So far these codes have not been of much use, especially since the only
 significant exercises have been with classical Latin.  Other situations
