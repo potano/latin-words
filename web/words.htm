@@ -3,7 +3,7 @@
 <META NAME="RESOURCE_TYPE" CONTENT="DOCUMENT">
 <META NAME="DESCRIPTION"
 CONTENT="A free program to download for the PC -
-28000 dictionary entries - Version 1.96 - Updated October 2000
+30000 dictionary entries - Version 1.97 - Updated August 2001
 Inputing any Latin word returns the morphology, dictionary form, and meaning.
 Large classical dictionary, growing medieval.">
 <META NAME="KEYWORDS"
@@ -18,16 +18,20 @@ latin tools, free software, shareware">
 <P>
 
 <H1>LATIN-to-ENGLISH DICTIONARY PROGRAM
-<BR>"WORDS" - Version 1.96</H1>
-<H3><FONT COLOR="#FF0000">15 October Update/Correction
-- and this page fixed (was badly upset by a missing ")</FONT></H3>
+<BR>"WORDS" - Version 1.97</H1>
 <P>
 <H3>Download a free
 Latin-English dictionary program for the PC.</H3>
 
+<P><FONT COLOR="FF0000">
+Yes, WORDS does work on Windows ME and 2000.  See download page.<FONT COLOR="000000">
+
+
+
+
 
 <P>This Latin dictionary program,
-(WORDS for the PC - DOS, Windows 95 or LINUX console versions),
+(WORDS for the PC - DOS, Windows 95/98/NT/ME or LINUX console versions),
 takes keyboard input or a file of Latin text lines and provides
 an analysis/morphology (declension, conjugation, case, tense, etc.)
 of each word individually, the dictionary form, and the translation (meaning).
@@ -38,7 +42,7 @@ love, like; fall in love with; be fond of; have a tendency to;
 </TT></B></PRE>
 
 
-<P>The dictionary contains over 28000 entries and,
+<P>The dictionary contains over 30000 entries and,
 through additional word construction with hundreds of prefixes and suffixes,
 may generate more, leading to many hundreds of thousands of 'words' that
 can be formed by declension and conjugation.
@@ -52,22 +56,48 @@ student and a memory jog for researchers.
 <P>A Net interactive version of WORDS is at
 <A HREF="http://lysy2.archives.nd.edu/cgi-bin/words"><B>Notre Dame</B></A>.
 
+<HR>
+Recent related products - for others see links at end of this page
+
+<P>John White has produced a commercial PC program,
+<A HREF="http://www.software-partners.co.uk/"><B>Blitz Latin</B></A>,
+using the WORDS dictionary but goes further and translates sentences, not
+just separate words.
+
+<P>Roger Pearse has a commercial Windows program
+<A HREF="http://www.quicklatin.com/"><B>QuickLatin</B></A>
+that also uses the Words dictionary and algorithms and includes logic to
+help with understanding clauses and sentences.
+
+<P>Perry Rapp is developing
+<A HREF="http://www.geocities.com/getverba/verba.html"><B>Verba</B></A>,
+a local dictionary program to translate
+single words from Latin to English, from Spanish to English,
+or from English to Spanish, and also markup texts in html.
+It uses the WORDS data files for the Latin option.
+
+
+
+
+
 
 
 <HR>
- <P>There are pointers
+<P>There are pointers
 to separate download and information pages for each operating system.
 <P>See the particular page for each specific system.
 <BR>
 Intel PC Systems
 <BR>
-<A HREF="wordsdos.htm"><B>DOS</B></A> - Updated to 1.96
+<A HREF="wordsdos.htm"><B>DOS</B></A> - Updated to 1.97
+
 <BR>
-<A HREF="wordsw95.htm"><B>Windows 95/NT/98</B></A>
-- Updated to 1.96
+<A HREF="wordsw95.htm"><B>Windows 95/NT/98/ME/2000</B></A>
+- Updated to 1.97
 <BR>
 <A HREF="wordslux.htm"><B>Linux</B></A> - and FreeBSD 3.2 and 3.4-STABLE,
-and 4.0 and 4.1 - Still as 1.95a.
+and 4.0 and 4.1 - Updated to 1.97
+
 
 <P>The documentation is included with download and is also
 directly accessible on this site as
@@ -82,13 +112,34 @@ from the address at the end of this page.
 <A HREF="dictpage.txt"><B>DICTPAGE.TXT</B></A> text file of the dictionary
 that my be downloaded and searched locally, without the parsing
 provided by the program.  It looks much like a paper Latin dictionary,
-except that the Latin principle parts are capitalized to be used in
-a case-sensitive search.
+except that the Latin principal parts are capitalized to be used in
+a case-sensitive search.  For 1.97, the order is that of the WORDS
+DICTLINE, alphabetic on stems, but not always exactly alphabetic
+on expanded entry.  If you do not find your word. look around a bit.
 
+<BR>There are a couple of MAC programs using the dictionary.  See the LINKS
+at the end of this page.
 
 
 <HR>
 <H3>Recent Versions</H3>
+
+<P>15 September 2001 - Linux and DOS versions upgrades to WORDS 1.97.
+
+
+<P>31 August 2001 - Version 1.97 - Update concentrates on improving
+presentation of results to the user.  There are no significant improvements
+to the algorithms, which seem to be quite stable now.  The dictionary is
+now over 30000 entries, with some increase in late and medieval Latin.
+
+<P>The main thrust of this version is to simplify the presentation
+for the average student.  Trimming has been greatly expanded so as to
+hide possible parses which are unlikely in popular classical texts and
+student exercises.  The full parse (archaic, medieval, rare, etc.)
+is still available by switching the TRIM paramenter,
+and that operation has been made more convenient by
+siting that first in the # parameter list.
+
 
 <P>15 October 2000 - Version 1.96 still - Some small changes as a result
 of user feedback.  A few errors that crept into the latest version
@@ -102,52 +153,8 @@ by successful handling of the word "<B>quempiam</B>".  (Thanks DiLaura)
 I hope for additional in the near future.
 One reading the Vulgate will not be disappointed.
 
-<BR>There is little algorithmic change, but considerable altering and
-renaming or date structures.  This is completely invisible to the user,
-and essentially invisible to developers,
-but it makes it important that there be a new version number.
-
-<P>25 April 2000 - Version 1.95a - a small improvement over 1.95.
-<BR>Somewhat larger dictionary
-<BR>Improved looking output for entries with several lines of meaning
-<BR>There is no significant algorithmic change
-There are insufficient changes to call this with a new number, so the 'a'
-has been added.
-
-<P>19 October 1999 - Version 1.95 released
 
 
-
-<HR>
-<H3>Version 1.96</H3>
-
-<P>There was a massive restructuring of internal data forms for this version.
-This is completely invisible to the user, but requires a new version nmumber
-for configuration control.  No one cares but me.
-
-
-
-<P>The dictionary reexamination has gotten no further (through DEM).
-There are now 28367 entries.
-
-<P>Small enhancement of the dictionary has taken place in the area of medieval
-and ecclesiastical Latin.  This should improve in the near future.
-
-<P>Begining with 1.95, trimming means something.
-If TRIM_OUTPUT parameter is set,
-and specific parameters set in the MDEV, the program will disparage
-those possible forms which come from archaic or medieval (non-classical)
-stems or inflections, also stems or inflections which are relatively uncommon.
-It will report such if no classical/common solutions are found.
-The default is set for this, expecting that most users are students and
-unlikely to encounter rare forms.  Other users can set the parameters
-appropriately for their situation.
-
-<P>This capability is preliminary.  It
-is just becoming useful in that the factors are set
-for about half the dictionary entries.  There are still a large number
-of entries and inflections that are not set and will continue to
-be reported until determination of rarity is made.
 
 <P>
 <HR>
@@ -206,8 +213,8 @@ love, like; fall in love with; be fond of; have a tendency to;</TT></B></PRE>
 
 
 <P>The codes for inflections are in the documentation, however it is expected
-that the user will have had at least a few weeks of introductory Latin in order
-to be able to interpret the results beyond the simple meaning.
+that the user will have had at least a few weeks of introductory Latin
+in order to be able to interpret the results beyond the simple meaning.
 
 
 <H4>MEANINGS ONLY</H4>
@@ -247,22 +254,38 @@ should allow this.  It has been put on SUN and SGI systems, at least.
 <P>The Net interactive version of WORDS is at
 <A HREF="http://lysy2.archives.nd.edu/cgi-bin/words.exe"><B>Notre Dame</B></A>.
 
-<P>A Windows 95 graphical interface has been generated by
-<A HREF="http://www.quicklatin.com/">
-<B>Roger Pearse</B></A>.
+<P>John White has produced a commercial PC program,
+<A HREF="http://www.software-partners.co.uk/"><B>Blitz Latin</B></A>,
+using the WORDS dictionary but goes further and translates sentences, not
+just separate words.
 
-<P>Some WORDS output was used for Latin fables by
-<A HREF="http://www.iclub.lv/dainis/"><B>Dainis Zeps</B></A>.
+
+<P>Roger Pearse has written a commercial Windows program
+<A HREF="http://www.quicklatin.com/"><B>QuickLatin</B></A>.
+This also uses the Words dictionary and algorithms and includes logic to
+help with understanding clauses and sentences, and not just individual
+words.
+
+<P>Perry Rapp is developing
+<A HREF="http://www.geocities.com/getverba/verba.html"><B>Verba</B></A>,
+a local dictionary program to translate
+single words from Latin to English, from Spanish to English,
+or from English to Spanish, and also markup texts in html.
+It uses the WORDS data files for the Latin option.
+
+
 
 <P>Mike Polis has a Tcl/Tk program called
 <A HREF="http://members.xoom.com/mpolis/glossator.html"><B>Glossator</B></A>
 using the WORDS dictionary, but not the program.  This should work
 on the MAC, as well as Windows 95 and Linux.
 
-<P>Perseus has a net look-up for
-<A HREF="http://www.perseus.tufts.edu/cgi-bin/enggreek?">
-<B>English-to-Latin</B></A> based on Lewis and Short's Latin Dictionary,
-as well as Latin-to-English.
+
+<P>Michael Cumming has used WORDS output in constructing his
+<A HREF="http://www.geocities.com/paris/rue/9963/"> <B>Caesar Machine</B></A>.
+
+<P>Some WORDS output was used for Latin fables by
+<A HREF="http://www.iclub.lv/dainis/"><B>Dainis Zeps</B></A>.
 
 <P>An entirely independent downloadable program with similiar goals to WORDS,
 but translating to French, can be found at
@@ -273,9 +296,18 @@ but translating to French, can be found at
 <B>Matt Neuburg</B></A>
 using Peter N Lewis' ObiWan, based on 15600 entry Cassell's dictionary.
 
+<P>Another MAC program, including several languages, is available from
+<A HREF="http://homepages.kcbbs.gen.nz/~apl//wordlookup/">
+<B>Andrew Lindesay</B></A> in New Zealand.
+
 <P>An almost impossible problem is covered admirably in
 <A HREF="http://asgle.classics.unc.edu/abbrev/latin/">
 <B>Abbreviations in Latin Inscriptions</B></A> by Tom Elliott.
+
+<P>Perseus has a net look-up for
+<A HREF="http://www.perseus.tufts.edu/cgi-bin/enggreek?">
+<B>English-to-Latin</B></A> based on Lewis and Short's Latin Dictionary,
+as well as Latin-to-English.
 
 <HR>
 <BR>
@@ -290,14 +322,18 @@ Contact
 <A HREF="mailto:whitaker@erols.com"> <B>whitaker@erols.com</B></A>,
 <BR>or William Whitaker, PO Box 3036, McLean VA 22103 USA.
 <BR>
-<P>I am not a Latin scholar, only a dictionary hacker.  While I
+<P><B>I am not a Latin scholar, only a dictionary hacker.</B>  While I
 try to reply to all messages and do the best I can, do not expect
 much in the way of translations from me,
 not anything that I (and you) cannot get from the program.
+And I am not qualified at all to even try English-to-Latin.
 
 <P>
+If you have some questions about the program,
+or a word that it does not find, I will do what I can.
 I try to answer promptly (24 hours).  If you do not get an answer,
-please check the return address on your message.
+feel free to pulse me.
+Please check the return address on your message.
 I seem to get an unusual number of messages
 in which the return is not set properly and the answer bounces back with
 "No Such Address".
