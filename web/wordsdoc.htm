@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<TITLE>WORDS (LATIN) DOCUMENTATION 1.94</TITLE>
+<TITLE>WORDS (LATIN) DOCUMENTATION 1.95a</TITLE>
 </HEAD>
 <BODY>
 
 
-<H1>WORDS 1.94 -
+<H1>WORDS 1.95 -
 <BR>LATIN-to-ENGLISH DICTIONARY PROGRAM</H1>
 
 
 <HR>
 
 
-                 <H2><CENTER>WORDS (Latin) Version 1.94</CENTER></H2>
+                 <H2><CENTER>WORDS (Latin) Version 1.95</CENTER></H2>
 
 <BR><A HREF="#INSTALLATION">INSTALLATION</A>
 <BR><A HREF="#SUMMARY">SUMMARY</A>
@@ -40,6 +40,13 @@ for Parameters</A>
 <BR>&nbsp;&nbsp;&nbsp;<A HREF="#Proper Names">Proper Names</A>
 <BR>&nbsp;&nbsp;&nbsp;<A HREF="#Letter Conventions">Letter Conventions</A>
 <BR>&nbsp;&nbsp;&nbsp;<A HREF="#Dictionary Codes">Dictionary Codes</A>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#AGE">AGE</A>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#AREA">AREA</A>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#GEO">GEO</A>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#FREQ">FREQ</A>
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#SOURCE">SOURCE</A>
+<BR>&nbsp;&nbsp;&nbsp;<A HREF="#Dictionary Conventions">
+Dictionary Conventions</A>
 <BR>&nbsp;&nbsp;&nbsp;<A HREF="#Evolution of the Dictionary">Evolution
 of the Dictionary</A>
 <BR>&nbsp;&nbsp;&nbsp;<A HREF="#Testing">Testing</A>
@@ -48,8 +55,7 @@ Status and Future Plans</A>
 <BR><A HREF="#WRITING DICT.LOC AND UNIQUES">WRITING DICT.LOC AND UNIQUES</A>
 <BR>&nbsp;&nbsp;&nbsp;<A HREF="#DICT.LOC">DICT.LOC</A>
 <BR>&nbsp;&nbsp;&nbsp;<A HREF="#UNIQUES">UNIQUES</A>
-<BR>&nbsp;&nbsp;&nbsp;<A HREF="#DEVELOPERS AND REHOSTING">
-DEVELOPERS AND REHOSTING</A>
+<BR><A HREF="#DEVELOPERS AND REHOSTING">DEVELOPERS AND REHOSTING</A>
 <HR>
 
 <A NAME="INSTALLATION"><H3><CENTER>INSTALLATION</CENTER></H3></A>
@@ -57,7 +63,7 @@ DEVELOPERS AND REHOSTING</A>
 
 <P>The WORDS program, with it's accompanying data files
 should run on any machine for which it is adapted, any monitor.
-Simply download the self-extracting EXE file or the compressed file
+Simply download the self-extracting EXE files or the compressed file
 for the appropriate system and execute/decompress it in your
 chosen subdirectory on the hard disk, creating the necessary files.
 Then call/run WORDS.
@@ -78,33 +84,30 @@ Intel PC Systems
 <A NAME="SUMMARY"><H3><CENTER>SUMMARY</CENTER></H3></A>
 <BR>
 
-<P>This program, (WORDS.EXE for the PC DOS and Windows 95 console versions),
+<P>This program, (WORDS.EXE for the PC - DOS, Windows 95 or LINUX
+console versions),
 takes keyboard input or a file of Latin text lines and provides
 an analysis of each word individually.
 It uses an INFLECT.SEC, UNIQUES., ADDONS., STEMFILE.GEN,
 INDXFILE.GEN, and DICTFILE.GEN, and possibly .SPE and DICT.LOC.
 
-<P>The dictionary contains over 21000 entries, as would be counted
+<P>The dictionary contains over 27000 entries, as would be counted
 in an ordinary dictionary.  This expands to almost twice that number
 of individual stems (the count that the program may display at startup),
-and may generate many hundreds of thousands of 'words' that one can
-construct over all the declensions and conjugations.
-This is still a modest dictionary in absolute size.
+and, through additional word construction with hundreds of prefixes and
+suffixes,
+may generate more, leading to many hundreds of thousands of 'words' that
+can be formed by declension and conjugation.
+This is still an average dictionary in absolute size.
 Kidd's Collins Latin Gem, a breast-pocket (8 by 11 cm.) edition
-(which even has English_to_Latin) contains about 17,000 Latin entries.
+(and further has English-to-Latin) contains about 17,000 Latin entries.
 The ultimate 2100 page Oxford Latin Dictionary has about 35,000 entries,
 excluding proper names (and it has lots of those).
 This version of WORDS provides a tool to help in translations for the Latin
-student, but the dictionary is very slowly growing, and A through B can
-match any dictionary.
+student, but the dictionary is very slowly growing, and the entries
+for A through C exceed any other dictionary.
 
 
-<P>
-A few hundred prefixes and suffixes further enlarge the range.
-These can generate additional words - some of which are recognized
-Latin words, some are perfectly reasonable words which may never
-have been used by Cicero or Caesar but might have been used by
-Augustine or a monk of Jarrow, and some are nonsense.
 
 <BR>
 
@@ -165,30 +168,38 @@ interpretations.  The present system has such a mechanism,
 but it is not yet exploited.
 
 <P>
-The Version 1.94 dictionary may be found to be of fairly
+The Version 1.95 dictionary may be found to be of fairly
 general use for the student; it has the easy
 words that every text uses.  It also has a goodly number of
 adverbs, prepositions, and conjunctions, which are not as
 sensitive to application as are the nouns and verbs.  The
-system also tests a number of prefixes and suffixes, if the
+system also tests a few hundred prefixes and suffixes, if the
 raw word cannot be found.  This allows an interpretation of
-many of the words otherwise unknown.  The result of
-this analysis is fairly straightforward in most cases, is
-accurate but esoteric in some, and for about 1 in 10 constructed words it
-gives an answer that has no relation to the normal
-dictionary meaning.
+many words which would otherwise be marked unknown.
+The result of this analysis is fairly straightforward in most cases,
+accurate but esoteric in some others.
+Some constructions are recognized
+Latin words, and some are perfectly reasonable words which may never
+have been used by Cicero or Caesar but might have been used by
+Augustine or a monk of Jarrow.
+For about 1 in 10 constructed words the result has no relation to
+the normal dictionary meaning.
+
+
+
+
 
 <P>
 BE WARNED!  The program will go to great lengths if all tricks are invoked.
-If you get a word formed with an enclitic, prefix, suffix, syncope,
-and a spelling modification trick, be very suspicious!
+If you get a word formed with an enclitic, prefix, suffix, and syncope,
+be very suspicious!
 It could be right, but do not bet on it.
 
 <P>
-With this facility, and a 21000 word dictionary, trials
+With this facility, and a 27000 word dictionary, trials
 on some tested classical texts  give hit rates of 97-99%,
 excluding proper names (there are very few proper
-names in the dictionary).  (I am an old soldier and seem to have in
+names in this dictionary).  (I am an old soldier and seem to have in
 the dictionary every possible word for attack or destroy.  The
 system is near perfect for Caesar.)  The question arises, what hit rate
 can be expected for a general dictionary.  Classical
@@ -202,12 +213,14 @@ is a large part of the effort.
 <P>
 The development system allows the inclusion of
 specialized vocabulary (for instance a SPEcial dictionary
-for specialized words not wanted in most dictionaries), and the opportunity
+for specialized words not wanted in most dictionaries),
+and the opportunity
 for the user to add additional words 'on the fly' to a DICT.LOC.
 
-<P>It started off that there would be special dictionaries for special
+<P>It was initially expected that there would be special dictionaries for
+special
 applications.  That is why there is the possibility of a SPECIAL dictionary.
-It has  now gone to a system whereby the dictionary is coded by AGE and
+Now the general dictionary is coded by AGE and
 application AREA.  Thus special words used initially/only by St Thomas
 Aquinas would be Medieval (AGE code F) and Ecclesiastical (AREA code E).
 Eventually there needs to be a filter that allows one, upon setting
@@ -215,8 +228,8 @@ parameters for Medieval and Ecclesiastical, to push those words over
 others.  Right now there are not have enough non-classical vocabulary to
 support such a scheme.  The problem is that one needs a
 really complete classical dictionary before one can assure that new
-entries are really Medieval, that they are not just classical words that
-appear in a Medieval text.  And the updated is only into the C's.
+entries are uniquely Medieval, that they are not just classical words that
+appear in a Medieval text.  And the updated is only into the D's.
 So the situation is that the mechanism is there, but not sufficient data.
 Nevertheless that is exactly the application I had in mind when I set
 out to do the program.
@@ -679,7 +692,7 @@ a space saving shorthand or abbreviation.
 
 <BR><BR>abb.  abbreviation.
 
-<BR><BR>Dif - [Diferrari] is used to indicate an additional meaning
+<BR><BR>(Dif) - [Diferrari] is used to indicate an additional meaning
 taken from A Latin-English Dictionary of
 St. Thomas Aquinas by Roy J. Diferrari.
 This is singled out because of the importance of Aquinas.
@@ -687,7 +700,7 @@ The reference is to be applied from the last semicolon before the mark.
 It is likely that the meaning diverges from the base by being medieval
 and ecclesiastical, but not so overwhelming as to deserve a separate entry.
 
-<BR><BR>eccl. ecclesiastical - designating a special church meaning in
+<BR><BR>(eccl.) ecclesiastical - designating a special church meaning in
 a list of conventional meanings, an additional meaning not sufficient
 to justify a separate entry with an ecclesiastical code.
 
@@ -735,10 +748,12 @@ honor of source is thereto given.
 passive form of the verb, not easily associated with the active meaning.
 
 <BR><BR>perh. [perhaps] - denotes an additional uncertainty,
-but not a strong as (?).
+but not as strong as (?).
 
-<BR><BR>pl. [plural] means that the Latin word is believed by scholars to be
-used always in the plural.  If it appears in the beginning of the meaning,
+<BR><BR>(pl.) [plural] means that the Latin word is believed by scholars to be
+used (almost) always in the plural form, with the meaning stated, even though
+that meaning in English may be singular.
+If it appears in the beginning of the meaning,
 before the first comma, it applies to all the meanings.  If it
 appears later, it applies only to that and later meanings.
 For the purpose of this program, this is only advisory.
@@ -748,10 +763,13 @@ it may be true that in good, classical Latin it is never used in
 the singular, this does not mean that some text somewhere might not
 use the singular, nor that it is uncommon in later Latin.
 
+<BR><BR>prob. [probably] - denotes an some uncertainty,
+but not as much as (perh.).
+
 <BR><BR>pure Latin ... indicates a pure Latin term for a word which
 is derived from another language (almost certainly Greek).
 
-<BR><BR>rude - indicates that this meaning was used in a rude, vulgar,
+<BR><BR>(rude) - indicates that this meaning was used in a rude, vulgar,
 coarse, or obscene manner, not what one should hear in polite company.
 Such use is likely from graffiti or epigrams, or
 in plays in which the dialogue is to indicate that the characters are
@@ -759,7 +777,7 @@ low or crude.  Meanings given by the program for these words are more
 polite, and the user is invited to substitute the current street language
 or obscenity of his choice to get the flavor of text.
 
-<BR><BR>sg. [singular] means that the Latin word is believed by scholars to be used
+<BR><BR>(sg.) [singular] means that the Latin word is believed by scholars to be used
 always in the singular.  If it appears in the beginning of the meaning,
 before the first comma, it applies to all the meanings.  If it
 appears later, it applies only to that and later meanings.
@@ -1162,9 +1180,16 @@ on the part of the program, but the user should examine the results,
 especially when several tricks are involved.
 
 <P>
-At the state of the 1.94 dictionary there are so few words that both
-fail the main program and are caught by tricks that this option
-is defaulted to No.
+There is a basic conflict here.  At the state of the 1.95 dictionary
+there are so few words that both fail the main program and are caught by
+tricks that this option has been defaulted to No.  However, one could
+argue that there will be very few occasions for trying TRICKS, so that
+the cost is minimal.  Unfortunately the degree of completeness of the
+dictionary for classical latin does not carry over to medieval Latin.
+With the hope that the program will become more useful in that area,
+the default has been changed back to Yes, reflecting the philosophy
+early in the development for classical Latin.
+
 
 <BR><BR>
 
@@ -1175,7 +1200,7 @@ For completeness, the enumeration codes used in the output are listed
 here as Ada statements.  Simple numbers are used for person, declension,
 conjugations, and their variants.  Not all the facilities implied
 by these values are developed or used in the program or the
-dictionary.  This list is only for Version 1.94.   Other
+dictionary.  This list is only for Version 1.95.   Other
 versions may be somewhat different.  This may
 make their dictionaries incompatible with the present program.
 
@@ -1833,23 +1858,25 @@ This is a translation dictionary.  Mostly it provides individual words
 in English that correspond to, and might be used in a translation of,
 words in Latin test.  The program assumes a fair command of English.
 This is in contrast to a conventional same-language desktop dictionary
-which would try to explain the meanings in the same language.
-The distinction may be obvious but is important.  A Latin dictionary
+which would explain the meanings of words in the same language.
+The distinction may be obvious but it is important.  A Latin dictionary
 in medieval times would have explanations in Latin of Latin words.
 
 <P>
 There are various approaches to the preparation of a dictionary.
 The most scholarly might be to select only proper and correct entries,
 only correct derivations, grammar, and spelling.  This would be a
-dictionary for one who wished to write 'correct' Latin.  The current
+dictionary for one who wished to write 'correct' Latin.  (Correct being
+defined as the way Cicero, or whatever is your favorite writer or grammarian,
+used it.)  The current
 project has a different goal.  This program is successful if any
 word found in text is given an appropriate meaning, whether or not
-that word is spelled in the approved way, or is 'good Latin'.  Thus
+that word is spelled in the generally approved way, or is 'good Latin'.  Thus
 the program includes various words and forms that may have been
 rejected by recent scholars, but still appear in some texts.
 Philosophically, thus program deals with Latin as it was, not as
-it should have been.  I make no corrections to Cicero, which I
-might have been tempted to do if I were producing an academic
+it should have been.  I make no corrections to Cicero, which some
+might have been tempted to do if producing an academic
 dictionary instead of a program.
 
 <P>A philosophical difference from many dictionary projects is that this
@@ -1884,7 +1911,7 @@ regular spelling variations (or tricks) common in classical and
 medieval Latin.
 
 <P>
-A choice was made that the base was classical Latin as defined by OLD.
+A choice was made that the base was classical Latin as defined by the OLD.
 Arbitrary/roughly (-200 +100)
 
 <P>
@@ -1896,7 +1923,7 @@ stems.  It could be done the other way, but the present situation
 seems to be much easier.
 There are some consequences of this approach.  For instance, it
 is easy to remove an 'h' from an input word to match with a stem.
-It is prohibitively difficult (but not impossible) to add 'h'
+It is much more difficult (but not impossible) to add 'h'
 in all possible positions to check against stems.
 
 <P>
@@ -1915,7 +1942,7 @@ Further, in about 10% of constructions, the result is just wrong.
 In normal usage, if the program finds
 a simple match, it does not go further and consider what
 constructed words might also be valid.  (One can override and force
-prefix/suffix construction with a switch, but one would not want to force
+prefix/suffix construction with a switch, but one might not want to force
 all possible tricks.)
 
 <P>
@@ -2091,6 +2118,15 @@ the computer checking.)  All my programs speak US English, so I can
 count on it.  Only some are available in UK English, and I do not
 have all of those versions.
 
+<P>Latin dictionaries seem to be locked into the early 19th century.
+The English terms seem stilted, even by current British usage.
+This is probably because much work in translation was
+started then and later work tended to copy from the previous dictionaries.
+While this dictionary has done some modernization, some of
+the previous obscurities have been preserved.  This was done in order that
+certain machine processes could compare the results of automatic translation
+with existing published work.
+
 <P>
 In addition, I have given US meanings to some terms that seem to be
 literally translated from the Latin (or German!) (a person who
@@ -2214,7 +2250,7 @@ there is only one interpretation for a word, that is given.
 Rare and age specific inflection forms are also displayed,
 but there is a warning associated with each such.
 
-<H5>AGE</H5>
+<A NAME="AGE"><H5>AGE</H5>
 
 
 <P>
@@ -2265,7 +2301,7 @@ versions of early French or Italian.
                              );</TT></PRE>
 
 
-<H5>AREA</H5>
+<A NAME="AREA"><H5>AREA</H5>
 
 <P>
 While the reader can make his own interpretation of the area of application
@@ -2297,7 +2333,7 @@ to that area and so is called out.
                       );</TT></PRE>
 
 
-<H5>GEO</H5>
+<A NAME="GEO"><H5>GEO</H5>
 
 <P>
 This code was included to enable the program to distinguish between
@@ -2328,7 +2364,7 @@ This is a dual usage, origin or subject.
                      );</TT></PRE>
 
 
-<H5>FREQUENCY</H5>
+<A NAME="FREQ"><H5>FREQ</H5>
 
 <P>
 There is an indication of relative frequency for each entry.  These
@@ -2450,14 +2486,14 @@ The present dictionary, in blessed innocence, records all forms without bias.
     N     --              --  Presently not used
 </TT></PRE>
 
-<H5>SOURCE</H5>
+<A NAME="SOURCE"><H5>SOURCE</H5>
 
 <P>
 Source is the dictionary or grammar which is the source of the information,
 not the Cicero or Caesar text in which it is found.
 
 <P>
-For a number of entries, X is given as Source.  This is primarily
+For a number of entries, X is now given as Source.  This is primarily
 for the vocabulary (about 13000 words) which was in place before the
 Source parameter was put in, and which has not been updated.
 In fact, they are from no particular Source,
@@ -2474,9 +2510,13 @@ that I read the OLD entry with great respect and put down what I did anyway.
 Newer entries, added in this process, and those checked later in the process,
 if found in the OLD, have the O code.
 Words added from Lewis and Short, but not in OLD, have the S code, etc.
-All entries for which there is a Source will be found in that Source,
+All entries for which there is a Source will be found in some form
+in that Source,
 but the details of the interpretation of declension and meaning is mine.
-
+They may not necessarily be found as primary entries, or even directly
+referrenced, but they will have been constructed from information in
+that source.  (For instance, "adp see app" may generate more adp words
+than are directly mentioned in the bulk of the dictionary.)
 
 <P>
 There should be no expectation, nor is there any claim, that the result
@@ -2498,33 +2538,36 @@ extensively used.  Others have only been used for an occasional check
 
 <PRE><TT>  type SOURCE_TYPE is (
        X,      --  General or unknown or too common to say
-       A,      --  Allen + Greenough, New Latin Grammar, 1888
-       B,      --  J.T.Bretzke, Consecrated Phrases: Theolog Dict
-       C,      --  Cassell's Latin Dictionary 1968
+       A,      --  Allen + Greenough, New Latin Grammar, 1888 (A+G)
+       B,      --  C.H.Beeson, A Primer of Medieval Latin, 1925
+       C,      --  Charles Beard, Cassell's Latin Dictionary 1892 (CAS)
        D,      --  J.N.Adams, Latin Sexual Vocabulary, 1982
        E,      --  L.F.Stelten, Dictionary of Eccles. Latin, 1995
-       F,      --  Roy J. Deferrari, Dictionary of St. Thomas Aquinas, 1960
-       G,      --  Gildersleeve + Lodge, Latin Grammar 1895
+       F,      --  Roy J. Deferrari, Dictionary of St. Thomas Aquinas, 1960 (DeF)
+       G,      --  Gildersleeve + Lodge, Latin Grammar 1895 (G+L)
        H,      --  Harrington/Pucci/Elliott, Medieval Latin 2nd Ed 1997
        I,      --  Leverett, F.P., Lexicon of the Latin Language, Boston 1845
+       J,      --  C.C./C.L. Scanlon Latin Grammar/Second Latin, TAN 1976
        K,      --  W. M. Lindsay, Short Historical Latin Grammar, 1895
        L,      --  Lewis, C.S., Elementary Latin Dictionary 1891
        M,      --  Latham, Revised Medieval Word List, 1980
        N,      --  Lynn Nelson, Wordlist
-       O,      --  Oxford Latin Dictionary, 1982
+       O,      --  Oxford Latin Dictionary, 1982 (OLD)
        Q,      --  Other, unspecified dictionaries
-       S,      --  Lewis and Short, A Latin Dictionary, 1879
+       R,      --  Harkness, Albert; A Latin Grammar, 1881
+       S,      --  Lewis and Short, A Latin Dictionary, 1879 (L+S)
        T,      --  Found in a translation  --  no dictionary reference
        U,      --  Du Cange
        V,      --  Vademecum in opus Saxonis - Franz Blatt
        W,      --  My personal guess
-       Y       --  Niermeyer, Mediae Latinitatis Lexicon Minus
+       Y,      --  Niermeyer, Mediae Latinitatis Lexicon Minus
        Z       --  Sent by user --  no dictionary reference
-               --  also used but no code
+
+               --  Consulted but used only indirectly
                --  Liddell + Scott Greek-English Lexicon
                        );</TT></PRE>
 
-<H5>SPECIAL CONVENTIONS</H5>
+<A NAME="Dictionary Codes"><H4>Dictionary Codes</H4></A>
 
 <P>
 There are a few special conventions in setting codes.
@@ -2545,6 +2588,16 @@ he was a god.  But even gods are not eternal (X)
 in language, and an initial place is found for them.
 Place names are likewise coded, although with less confidence.
 
+<P>Vertical Bar
+
+<P>While not visible to the user, the dictionary contains certain
+meanings starting with a vertical bar (|).  This is a code used to
+identify meanigs that run beyond the conventional 80 characters.
+One or more vertical bars leading the meaning allows tools to
+recognize that they are additional meanings to an entry already encountered,
+usually the entry immediately before when the sort is for that reason.
+This is only of concern to those dealing with the raw dictionary who
+have asked.
 
 <A NAME="Evolution of the Dictionary">
 <H4>Evolution of the Dictionary</H4></A>
@@ -3194,6 +3247,7 @@ tricks_package.ads
 word_package.adb
 tricks_package.adb
 list_package.ads
+list_list.adb
 dictionary_form.adb
 put_example_line.adb
 list_package.adb
