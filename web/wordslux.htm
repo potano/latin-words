@@ -13,9 +13,12 @@
 <H3>This page provides instructions for downloading the WORDS
 Latin-to-English dictionary program
 for the PC running Linux. </H3>
-<P>The same program also runs under FreeBSD 3.2 with the adjustments cited below.
-(Note the libraries have been changed in FreeBSD 3.4 and it will not work.
-We will try to get and independent compilation for this.)
+<P>The same program also runs under FreeBSD 3.2
+with the adjustments cited below.
+Note while initially the library changes in FreeBSD 3.4 gave trouble,
+the program now runs without problem under FreeBDC-3.4-STABLE
+and FreeBSD 4.0 and 4.1 .
+
 
 <HR>
 
@@ -76,15 +79,16 @@ after <B><I>words</I></B> has exited.
 <H3>Running under FreeBSD</H3>
 
 <P>The only modification is how one can setup Linux mode on a FreeBSD machine.
-This will presently only work with FreeBSD 3.2.
+This will work with FreeBSD-3.2 and FreeBSD-3.4-STABLE.
 
 <P>1) Install linux_lib-2.6.1 in /usr/ports/emulators/linux_lib : make
 install
 <P>2) Edit /etc/rc.conf line: linux_enable=YES
 
+Matt Heckaman reports that it runs great on FreeBSD 4.0 and 4.1 with
+linux_base-6.1 port installed (/usr/ports/emulators/linux_base).
 
 
 <BR>
 </BODY>
 </HTML>
-
