@@ -14,13 +14,19 @@ latin tools, free software, shareware">
 </HEAD>
 <BODY BGCOLOR="FFF060">
 <P>
-<H1>LATIN-ENGLISH DICTIONARY PROGRAM <BR>WORDS - Version 1.97E</H1>
+<H1>LATIN-ENGLISH DICTIONARY PROGRAM <BR>WORDS - Version 1.97Ec</H1>
 
 <P>
 <H3>Download a free Latin dictionary program for your PC or MAC.</H3>
 
 <P>
 <B>Now with English-to-Latin also</B>
+<P><FONT COLOR="FF0000">
+<P><B>March 2005 - Version 1.97Ec release.</B>
+This is just 1.97E with some corrections prompted by user feedback.
+There is no significant algorithm or vocabulary growth, but the
+changes are worth the reload.
+<FONT COLOR="000000">
 <P>
 This Latin dictionary program, (WORDS for the PC - DOS, Windows
 95/98/NT/ME/2000/XP, OS/2, LINUX - and Mac OS X - console version), takes
@@ -35,6 +41,18 @@ love, like; fall in love with; be fond of; have a tendency to;
 </TT></B></PRE>
 
 <P>
+There is an English-to-Latin phase, invoked by ~E or ~e.
+<PRE><B><TT>
+love v
+
+amo, amare, amavi, amatus  V     1 1 [XXXAO]
+love, like; fall in love with; be fond of; have a tendency to;
+
+diligo, diligere, dilexi, dilectus  V     3 1 [XXXAX]
+select, pick, single out; love, value, esteem; approve, aspire to, appreciate;
+</TT></B></PRE>
+
+<P>
 The dictionary contains over 37000 entries and, through additional word
 construction with hundreds of prefixes and suffixes, may generate more,
 leading to many hundreds of thousands of 'words' that can be formed by
@@ -42,6 +60,11 @@ declension and conjugation.  Present emphisis is on classical Latin and
 late Latin, but medieval Latin entries are increasing.  WORDS provides a
 tool to help in translations for the Latin student and a memory jog for
 researchers.
+
+<P>
+This version has been considerably enhanced in neo/modern Latin,
+by including, with his kind permission,
+the Melissa Calepinus Novus dictionary of Guy Licoppe.
 <P>
 The program source (in Ada) and dictionary are freely available for
 rehosting.
@@ -54,10 +77,10 @@ A Net interactive version of WORDS is at
 There are pointers to separate download and information pages for each
 operating system.
 <P>
-See the particular page for each specific system.  Not all are current version.<BR>
+See the particular page for each specific system.  Not all upgraded yet.<BR>
 Intel PC Systems <BR>
 <A HREF="wordsdos.htm"><B>DOS</B></A><BR>
-<A HREF="wordswin.htm"><B>Windows 95/NT/98/ME/2000/XP</B></A> - 1.97E<BR>
+<A HREF="wordswin.htm"><B>Windows 95/NT/98/ME/2000/XP</B></A> - 1.97Ec<BR>
 <A HREF="wordslux.htm"><B>Linux and FreeBSD</B></A>.  <BR>
 <A HREF="wordsos2.htm"><B>OS/2</B></A><BR><BR>
 <A HREF="wordsmac.htm"><B>Mac OS X</B></A>
@@ -66,25 +89,17 @@ The documentation is included with download and is also directly
 accessible on this site as <A HREF="wordsdoc.htm"><B>WORDSDOC.HTM</B></A>.
 <BR>
 <BR>
-<P>In addition to the program, there are some
-<A HREF="wordsoth.htm">subsidiary presentations</A> and files,
-including a paper-dictionary-like display of the dictionary data,
-a list of all combinations of the dictionary data with appropriate inflections,
-and a classic study of Latin word frequency.
-
-<BR>
-<P>I regret that there is no program for the Palm.  However, there is a
-<A HREF="dictpage.htm"><B>
-dictpage.htm</B></A> file of the dictionary (as mentinoed above)
-that my be downloaded and
-searched locally, without the parsing provided by the program.  It looks
-much like a paper Latin dictionary.
-<BR>
-
 <BR>
 Anyone not having a download capability can request a CD ROM or floppy from the
 address at the end of this page.  <BR>
 <BR>
+<BR>
+I regret that there is no program for the Palm and other such.  However, there is a
+<A HREF="dictpage.htm"><B>
+DICTPAGE.HTM</B></A> HTML file of the dictionary that my be downloaded and
+searched locally, without the parsing provided by the program.
+<BR>
+
 
 
 <H3>The WORDS Program</H3>
@@ -173,8 +188,10 @@ The source program is in Ada and very system independent.  While I just
 have compiled executables for the PC, it should be possible to rehost the program
 on any machine with an Ada compiler.  Some have requested the Ada source
 code for this purpose and there is now a fairly simple set of files that
-should allow this.  It has been put on DEC, SUN and SGI systems, at least.
-<A HREF="wordsdev.htm"><B>Look here</B></A>.
+should allow this.  Beside PCs, it has been put on DEC, SUN and SGI systems, at least.
+For developers and for porting, or anyone interested in using parts of WORDS, copy the
+<A HREF="wordsdev.htm"><B>WORDS system source</B></A>, code, data, and tools.
+This is freely available without restriction.
 <BR>
 <BR>
 
@@ -183,17 +200,20 @@ should allow this.  It has been put on DEC, SUN and SGI systems, at least.
 <P>
 The Net interactive version of WORDS is at
 <A HREF="http://lysy2.archives.nd.edu/cgi-bin/words.exe"><B>Notre Dame</B></A>.
+
 <P>
 John White has produced a commercial PC program,
 <A HREF=http://www.software-partners.co.uk/index.php?sitesig=SP&page=SP_03_latin_translation>
 <B>Blitz Latin</B></A>, using the
 WORDS dictionary but goes further and translates sentences, not just
 separate words.
+
 <P>
 Roger Pearse has written a commercial Windows program
 <A HREF="http://www.quicklatin.com/"><B>QuickLatin</B></A>.
 This also uses the Words dictionary and algorithms and includes logic to help
 with understanding clauses and sentences, and not just individual words.
+
 <P>
 Perry Rapp is developing
 <A HREF="http://www.geocities.com/getverba/verba.html"><B>Verba</B></A>,
@@ -201,15 +221,18 @@ a local dictionary program to translate
 single words from Latin to English, from Spanish to English, or from
 English to Spanish, and also markup texts in html.  It uses the WORDS data
 files for the Latin option.
+
 <P>
 Mike Polis has a Tcl/Tk program called
 <A HREF="http://www.geocities.com/mfp_99/glossator.html"><B>Glossator</B></A>
 using the WORDS dictionary, but not the program.
 This should work on the MAC, as well as Windows 95 and Linux.
+
 <P>
 Michael Cumming has used WORDS output in constructing his
 <A HREF="http://www.geocities.com/paris/rue/9963/"> <B>
 Caesar Machine</B></A>.
+
 <P>
 There is a
 <A HREF="http://douay.mrklingon.org"> <B>Bible site</B></A>
@@ -217,25 +240,29 @@ developed by Joel Peter Anderson using WORDS to
 process the Vulgate.  At this website you can call up a Vulgate passage.
 When it comes up, each line of text is a link to the words.exe at Notre
 Dame.  Clicking the link brings up your output in a new window.
+
 <P>
 Some WORDS output was used for Latin fables by <A HREF="http://www.iclub.lv/dainis/"><B>Dainis Zeps</B></A>.
-<P>
-There is a <A HREF="http://douay.mrklingon.org"> <B>Bible site</B></A> developed by Joel Peter Anderson using WORDS to
-process the Vulgate.  At this website you can call up a Vulgate passage.
-When it comes up, each line of text is a link to the words.exe at Notre
-Dame.  Clicking the link brings up your output in a new window.
+
 <P>
 An entirely independent downloadable program with similiar goals to WORDS,
-but translating to French, can be found at <A HREF="http://www.collatinus.org/"><B>Collatinus</B></A>
+but translating to French, can be found at
+<A HREF="http://www.collatinus.org/"><B>Collatinus</B></A>
+
 <P>
-A downloadable MAC lexicon (no forms) by <A HREF="http://king.tidbits.com/matt/LatinDictReadMe.html"><B>Matt Neuburg</B></A> using Peter N Lewis'
+A downloadable MAC lexicon (no forms) by
+<A HREF="http://king.tidbits.com/matt/LatinDictReadMe.html"><B>Matt Neuburg</B></A> using Peter N Lewis'
 ObiWan, based on 15600 entry Cassell's dictionary.
+
 <P>
-Another MAC program, including several languages, is available from <A HREF="http://www.lindesay.co.nz/"><B>Andrew
+Another MAC program, including several languages, is available from
+<A HREF="http://www.lindesay.co.nz/page_wordlookup.shtml"><B>Andrew
 Lindesay</B></A> in New Zealand.
+
 <P>
 An almost impossible problem is covered admirably in <A HREF="http://asgle.classics.unc.edu/abbrev/latin/"><B>Abbreviations in
 Latin Inscriptions</B></A> by Tom Elliott.
+
 <P>
 The competition to WORDS is the
 <A HREF="http://www.perseus.tufts.edu/cgi-bin/enggreek?"><B>Perseus</B></A>
@@ -274,12 +301,10 @@ Please check the return address on your message.
 I seem to get an unusual number of messages in which the return is
 not set properly and the answer bounces back with No Such Address.
 
+<P><B>March 2005 - Version 1.97Ec release.</B>
 <P><B>December 2004 - WORDS Version 1.97E released.</B>
 <P><B>12 Feburary 2004 - Over one million hits on this site.</B>
 <P>
-<IMG SRC=http://cgibin.erols.com/cgi-bin/Count.cgi?df=latin.cnt&ft=1&tr=N&dd=C&md=5&pad=N&st=1 align=absmiddle>
-
-
 
 </BODY>
 </HTML>
