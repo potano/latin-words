@@ -1,74 +1,75 @@
 <HTML>
+
 <HEAD>
 <TITLE>WORDS - Version 1.97 for OS/2 (i386)</TITLE>
 </HEAD>
 <BODY>
-<P>
-
-<H1>WORDS - Version 1.97 for OS/2 (i386)
-<BR>LATIN-to-ENGLISH DICTIONARY PROGRAM</H1>
-
 
 <P>
-<H3>This page provides instructions for downloading the WORDS
-Latin-to-English dictionary program
-for the PC running OS/2. </H3>
-<P>Ported to OS/2 by Fr. Mike Thompson (mbt@gator.net)
-The latest version, 1.97, was released on August 30, 2001.  W.W. slipped in a
-bug fix on January 1, 2002 which did not result in a change in the version
-number.
 
 
+<H1>WORDS - Version 1.97 for OS/2 (i386) <BR>
+LATIN-to-ENGLISH DICTIONARY PROGRAM</H1>
+<P>
 
 
-<HR>
-<H3>Downloading </H3>
+<H3>This page provides instructions for downloading the WORDS Latin-to-English
+dictionary program for the PC running OS/2.  </H3>
+<P>
+Ported to OS/2 by Fr.  Mike Thompson (mbt@gator.net) The latest version,
+1.97, was released on August 30, 2001.  W.W.  slipped in a bug fix on
+January 1, 2002 which did not result in a change in the version number.
 
-<P>A .zip file for the program and data is located at the
+<H3>
+Downloading </H3>
+<P>
+A .zip file for the program and data is located at the
 <A HREF="http://hobbes.nmsu.edu/cgi-bin/h-viewer?sh=1&fname=/pub/os2/apps/misc/words-1.97-os2.zip">
-Hobbes OS/2 archive</A>.  Go there and download the file words-1.97-os2.zip.
+Hobbes OS/2 archive
+</A>.  Go there and download the file words-1.97-os2.zip.
+<P>
+All you need to do to install the package is make a directory for it,
+extract the distribution ZIP file into the directory, and make a desktop
+program object that executes WORDS.EXE.  (Anssi Blomqvist's Program
+Creator works fine for this.) Just be sure to set the program object's
+startup directory to the directory you're using.
+<P>
+At the minimum, the following files must all live in the same directory:
 
-
-<P>All you need to do to install the package is make a directory for it, extract
-the distribution ZIP file into the directory, and make a desktop program
-object that executes WORDS.EXE.  (Anssi Blomqvist's Program Creator works fine
-for this.)  Just be sure to set the program object's startup directory to the
-directory you're using.
-
-<P>At the minimum, the following files must all live in the same directory:
-<PRE>  WORDS.EXE
+<PRE>
+  WORDS.EXE
   ADDONS.LAT
   DICTFILE.GEN
   INDXFILE.GEN
   INFLECTS.SEC
   STEMFILE.GEN
-  UNIQUES.LAT</PRE>
+  UNIQUES.LAT
+</PRE>
+<P>
+Since Words uses the standard I/O streams rather than the OS/2 VIO API,
+you can redirect the input and/or output as you wish.  The only
+restriction is that the current directory must contain all the supporting
+files.
 
-<P>Since Words uses the standard I/O streams rather than the OS/2 VIO API, you
-can redirect the input and/or output as you wish.  The only restriction is
-that the current directory must contain all the supporting files.
-
-
-<HR>
 <H3>Output</H3>
-
-<P>Words is a text-mode dictionary program which translates and analyzes Latin
-words entered from the keyboard or a text file.
-
-<P>For each word entered, the program identifies all the possible interpretations
-of the word, then, for each interpretation, makes an analysis of the word
-(part of speech, declension, conjugation, case, tense, voice, etc.) and gives
-the usual meaning of the root form.  As an example, given the word "amas,"
-Words produces the following output:
+<P>
+Words is a text-mode dictionary program which translates and analyzes
+Latin words entered from the keyboard or a text file.
+<P>
+For each word entered, the program identifies all the possible
+interpretations of the word, then, for each interpretation, makes an
+analysis of the word (part of speech, declension, conjugation, case,
+tense, voice, etc.) and gives the usual meaning of the root form.  As an
+example, given the word &quot;amas,&quot; Words produces the following output:
 
 <PRE>
 am.as                N      1 1 ACC P F
 ama, amae  N  F    lesser
 bucket; water bucket; (esp. fireman's bucket);
+
 am.as                V      1 1 PRES ACTIVE  IND 2 S
 amo, amare, amavi, amatus  V
 love, like; fall in love with; be fond of; have a tendency to;
-
 
 This shows that "amas" can be interpreted in two different ways:
   1. as a noun (ama=bucket; first declension; feminine accusative plural; stem
@@ -76,45 +77,43 @@ This shows that "amas" can be interpreted in two different ways:
   2. as a verb (amare=to love; first conjugation; second-person singular
     present active indicative; stem "am", ending "as"; principal parts
     amo, amare, amavi, amatus).
-
 </PRE>
 
 
-<HR>
 <H3>The Port</H3>
-
-<P>This port of the program to OS/2 involved *no* programming effort.  Don't
-look for OS/2 patches to the source code:  there aren't any.  It all worked
-the first try.  The only "hard" thing I did was write the file you are
+<P>
+This port of the program to OS/2 involved *no* programming effort.  Don't
+look for OS/2 patches to the source code: there aren't any.  It all worked
+the first try.  The only &quot;hard&quot; thing I did was write the file you are
 reading.
+<P>
+I used EMX 0.9d fix-level 4, GCC 2.8.1, and Gnat 3.13p to compile Words.
+This Gnat version is available from
+<A HREF="ftp://cs.nyu.edu/pub/gnat/3.13p/contrib/os2/">NYU ftp</A>.  The write-up for the
+roll-your-own compilation of Words is at
+<A HREF="http://users.erols.com/whitaker/wordsdev.htm">WORDSDEV</A> and includes the source
+archive.  It's all frightfully easy.
 
-<P>I used EMX 0.9d fix-level 4, GCC 2.8.1, and Gnat 3.13p to compile Words.  This
-Gnat version is available from an
-<A HREF="ftp://cs.nyu.edu/pub/gnat/3.13p/contrib/os2/">NYU ftp</A>.
-The write-up for the roll-your-own compilation of Words is at
-<A HREF="http://users.erols.com/whitaker/wordsdev.htm">WORDSDEV</A>
-and includes the source archive.
-It's all frightfully easy.
-
-
-<HR>
 <H3>Contacts</H3>
-
-<P>If you have a WORDS problem, contact
-<A HREF=:mailtowhitaker@erols.com">Whitaker</A>.
-
-<P>If, on the other hand, your problem is an OS/2 issue,
+<P>
+If you have a WORDS problem, contact <A HREF=:mailtowhitaker@erols.com">Whitaker</A>.
+<P>
+If, on the other hand, your problem is an OS/2 issue,
 <A HREF=:mailto:mbt@gator.net">contact me</A> instead.
-<PRE>    Fr. Mike Thompson            mbt@gator.net
+
+<PRE>
+    Fr. Mike Thompson            mbt@gator.net
     Resurrection Catholic Church
     3383 University Blvd. N.
     Jacksonville, FL  32277
     USA
 </PRE>
-
-
 <BR>
+<BR>
+<A HREF="http://users.erols.com/whitaker/words.htm">
+<B>Return to WORDS home<B></A>
+
+</BODY>
+
 </BODY>
 </HTML>
-
-

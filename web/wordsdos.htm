@@ -1,76 +1,79 @@
 <HTML>
+
 <HEAD>
 <TITLE>WORDS (LATIN) for DOS</TITLE>
 </HEAD>
 <BODY>
-<P>
-
-<H1>WORDS - Version 1.97 - DOS
-<BR>LATIN-to-ENGLISH DICTIONARY PROGRAM</H1>
-
 
 <P>
-<H3>This page provides a downloadable Latin-to-English dictionary program
-for a DOS PC.  For regular users, the files to download are:
-<BR><BR><A HREF="dk1dos.exe"><B>DK2DOS.EXE</B></A>
-<BR><A HREF="dk2dos.exe"><B>DK2DOS.EXE</B></A>
-<BR><BR>Full instructions below.</H3>
 
 
-<HR>
-<H3><I>Recent Additions</I></H3><P>
+<H1>WORDS - Version 1.97 - DOS <BR>
+LATIN-to-ENGLISH DICTIONARY PROGRAM</H1>
+<P>
+
+
+<H3>This page provides a downloadable Latin-to-English dictionary program for
+a DOS PC.  For regular users, the files to download are: <BR>
+<BR>
+<A HREF="dk1dos.exe"><B>DK2DOS.EXE</B></A><BR>
+<A HREF="dk2dos.exe"><B>DK2DOS.EXE</B></A><BR>
+<BR>
+Full instructions below.  </H3>
+
+<H3><I>Recent Additions</I></H3>
+<P>
+
 
 <H4>15 September 2001- Version 1.97</H4>
-
-<P>The DOS WORDS code has been reduced slightly from the Windows version
-in order that it might operate within the 640KB DOS limitation
-without extensions.  There is, as before, modification of the
-parameter input and the help.  This has no affect on operation or capability.
-It does carry an extra help file, rather than having the help coded in.
-
-<P>It is, however, a reduction in facilities by eliminating the DO_COMPOUNDS,
+<P>
+The DOS WORDS code has been reduced slightly from the Windows version in
+order that it might operate within the 640KB DOS limitation without
+extensions.  There is, as before, modification of the parameter input and
+the help.  This has no affect on operation or capability.  It does carry
+an extra help file, rather than having the help coded in.
+<P>
+It is, however, a reduction in facilities by eliminating the DO_COMPOUNDS,
 DO_EXAMPLES, DO_STEMS_FOR_UNKNOWNS, and some TRICKS so it will run in
-regular DOS situations.
-The full version will generate too many STORAGE_ERRORs.
-However it contains the full dictionary and word construction.
-The change from the previous (also reduced) version is that
+regular DOS situations.  The full version will generate too many
+STORAGE_ERRORs.  However it contains the full dictionary and word
+construction.  The change from the previous (also reduced) version is that
 TRICKS have been eliminated.  This is not as much of a problem as it once
 might have been.  The dictionary is getting to be quite extensive and
-should take care of all but the most demanding user.
-There is some possibility that offloading to preprocessing might allow
-recovery of some deleted facilities in a future version.
-This reduction allows the program to run in DOS systems having about
-600KB of more FREE MEMORY.  Check your system by running CHKDSK.
-Memory may be occupied by still resident programs (initiated at startup,
-probably in AUTOEXEC.ABT) you are not using at the time.
-Eliminate any that you can, if sufficient memory is not free.
-
-
-<P>If free memory in insufficient to run without excessive STORAGE_ERROR,
-a MINWORDS version, further crippled by eliminating dictionary forms and
-the output cleanup that was the major algorithmic change in 1.97.
-The full dictionary is still active.
-
-<P>There are two files to be downloaded that the viewer can download
-as binary files if his browser allows.
-The program and the data are in two self-extracting files.
-<BR><A HREF="dk1dos.exe"><B>DK1DOS.EXE</B></A>
-<BR><A HREF="dk2dos.exe"><B>DK2DOS.EXE</B></A>
-
-<P>The purpose of having two files is
-is that individually they are less than the capacity of a 3 1/2" floppy,
-so that you can copy them and pass them on to a friend who might not
-have net capability.
-
+should take care of all but the most demanding user.  There is some
+possibility that offloading to preprocessing might allow recovery of some
+deleted facilities in a future version.  This reduction allows the program
+to run in DOS systems having about 600KB of more FREE MEMORY.  Check your
+system by running CHKDSK.  Memory may be occupied by still resident
+programs (initiated at startup, probably in AUTOEXEC.ABT) you are not
+using at the time.  Eliminate any that you can, if sufficient memory is
+not free.
 <P>
-These .EXE files, executed on your machine will produce about 12 MB
-of program and data files (and then may be discarded).
+If free memory in insufficient to run without excessive STORAGE_ERROR, a
+MINWORDS version, further crippled by eliminating dictionary forms and the
+output cleanup that was the major algorithmic change in 1.97.  The full
+dictionary is still active.
 <P>
-It is usually good practice to make a subdirectory (to keep things together)
-and copy the .EXE into it, then run them in that subdirectory.
+There are two files to be downloaded that the viewer can download as
+binary files if his browser allows.  The program and the data are in two
+self-extracting files.  <BR>
+<A HREF="dk1dos.exe"><B>DK1DOS.EXE</B></A> <BR>
+<A HREF="dk2dos.exe"><B>DK2DOS.EXE</B></A>
+<P>
+The purpose of having two files is is that individually they are less than
+the capacity of a 3 1/2&quot; floppy, so that you can copy them and pass them
+on to a friend who might not have net capability.
+<P>
+ These .EXE files, executed on your machine will produce about 12 MB of
+program and data files (and then may be discarded).
+<P>
+ It is usually good practice to make a subdirectory (to keep things
+together) and copy the .EXE into it, then run them in that subdirectory.
+<P>
+The files created are:
 
-<P>The files created are:
-<PRE>WORDS.EXE
+<PRE>
+WORDS.EXE
 MEANINGS.EXE
 MINWORDS.EXE
 
@@ -84,67 +87,66 @@ DICTFILE.GEN
 INDXFILE.GEN
 STEMFILE.GEN
 </PRE>
-
-The main program created is WORDS.EXE.  Run thats
-to do Latin-to-English word translations.  The output looks like this:
+The main program created is WORDS.EXE.  Run thats to do Latin-to-English
+word translations.  The output looks like this:
 
 <PRE><TT>=>amo
+
 am.o             V      1 1 PRES ACTIVE  IND 1 S X
 amo, amare, amavi, amatus
 love, like; fall in love with; be fond of; have a tendency to
+
 </TT></PRE>
 
-<P>There is a WORDSDOC.TXT ASCII text file of the net HTML documentation
-in <A HREF="wordsdoc.htm"><B>WORDSDOC.HTM</B></A>,
-since it is expected that those running on DOS
-systems might not have an intenet browser installed, but can have
-the program copied off the net on a friend's machine.
-This is stand-alone, it is not callable from the WORDS program.
-
-<P>MEANINGS.EXE, giving only the dictionary form and meaning, is also
+<P>
+There is a WORDSDOC.TXT ASCII text file of the net HTML documentation in <A HREF="wordsdoc.htm"><B>
+WORDSDOC.HTM</B></A>, since it is expected that those running on DOS systems
+might not have an intenet browser installed, but can have the program
+copied off the net on a friend's machine.  This is stand-alone, it is not
+callable from the WORDS program.
+<P>
+MEANINGS.EXE, giving only the dictionary form and meaning, is also
 minimized.
-
-
-<P>WORDS for DOS executes on a IBM-compatible PC, 386 or better, running DOS.
-WORDS is disk oriented, so a fast disk, a RAMDISK, or caching helps.
-It requires as much memory as possible, or it will raise (somewhat
+<P>
+WORDS for DOS executes on a IBM-compatible PC, 386 or better, running DOS.
+WORDS is disk oriented, so a fast disk, a RAMDISK, or caching helps.  It
+requires as much memory as possible, or it will raise (somewhat
 recoverable) STORAGE_ERROR.
-
-<P>The present version is 1.97 and replaces a previous version.
-The main user difference is mostly in an improved dictionary and
-somewhat cleaner TRIMmed output.
-
+<P>
+The present version is 1.97 and replaces a previous version.  The main
+user difference is mostly in an improved dictionary and somewhat cleaner
+TRIMmed output.
 
 <H4>MEANINGS ONLY</H4>
-
-<P>There are academic situations in which it would be inappropriate
-for the student to have access to the parsed forms information, but
-for which the professor might allow simple meanings.  For this
-situation a modification has been made producing a program called
-MEANINGS, as found in the MORE195D.EXE selfextractor.
-<BR><BR>This is a version that is crippled to output <B>ONLY MEANINGS</B>, no
-parsing of the word.  It is hard-coded so
-there is no way to output the case/tense, as opposed to the option in WORDS
-that allows the temporary suppression of this information.
-It does allow the display of the dictionary form, which seems to be
-appropriate and allowed for the intended use.  If anyone requires a version
-that supresses the dictionary form, let me know.
-
+<P>
+There are academic situations in which it would be inappropriate for the
+student to have access to the parsed forms information, but for which the
+professor might allow simple meanings.  For this situation a modification
+has been made producing a program called MEANINGS, as found in the
+MORE195D.EXE selfextractor.  <BR>
+<BR>
+This is a version that is crippled to output <B>ONLY MEANINGS</B>, no parsing of
+the word.  It is hard-coded so there is no way to output the case/tense,
+as opposed to the option in WORDS that allows the temporary suppression of
+this information.  It does allow the display of the dictionary form, which
+seems to be appropriate and allowed for the intended use.  If anyone
+requires a version that supresses the dictionary form, let me know.  <BR>
 <BR>
 <BR>
-
-<HR>
-<BR>
-
-Feedback is invited.  If there is a problem in installing or operating,
-in the results or their display, or if your favorite word is omitted
-from the dictionary, let me know.
+Feedback is invited.  If there is a problem in installing or operating, in
+the results or their display, or if your favorite word is omitted from the
+dictionary, let me know.
+<P>
+Contact <A HREF="mailto:whitaker@erols.com"> <B>whitaker@erols.com</B></A>, <BR>
+or William Whitaker, PO Box 3036, McLean VA 22103 USA.  <BR>
 
 <P>
-Contact
-<A HREF="mailto:whitaker@erols.com"> <B>whitaker@erols.com</B></A>,
-<BR>or William Whitaker, PO Box 3036, McLean VA 22103 USA.
 <BR>
-<P>
+<A HREF="http://users.erols.com/whitaker/words.htm">
+<B>Return to WORDS home<B></A>
+
+
+</BODY>
+
 </BODY>
 </HTML>
