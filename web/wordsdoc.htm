@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<TITLE>WORDS (LATIN) DOCUMENTATION 1.95a</TITLE>
+<TITLE>WORDS (LATIN) DOCUMENTATION 1.96</TITLE>
 </HEAD>
 <BODY>
 
 
-<H1>WORDS 1.95 -
+<H1>WORDS 1.96 -
 <BR>LATIN-to-ENGLISH DICTIONARY PROGRAM</H1>
 
 
 <HR>
 
 
-                 <H2><CENTER>WORDS (Latin) Version 1.95</CENTER></H2>
+                 <H2><CENTER>WORDS (Latin) Version 1.96</CENTER></H2>
 
 <BR><A HREF="#INSTALLATION">INSTALLATION</A>
 <BR><A HREF="#SUMMARY">SUMMARY</A>
@@ -88,10 +88,10 @@ Intel PC Systems
 console versions),
 takes keyboard input or a file of Latin text lines and provides
 an analysis of each word individually.
-It uses an INFLECT.SEC, UNIQUES., ADDONS., STEMFILE.GEN,
+It uses an INFLECT.SEC, UNIQUES.LAT, ADDONS.LAT, STEMFILE.GEN,
 INDXFILE.GEN, and DICTFILE.GEN, and possibly .SPE and DICT.LOC.
 
-<P>The dictionary contains over 27000 entries, as would be counted
+<P>The dictionary contains over 28000 entries, as would be counted
 in an ordinary dictionary.  This expands to almost twice that number
 of individual stems (the count that the program may display at startup),
 and, through additional word construction with hundreds of prefixes and
@@ -688,7 +688,7 @@ does not have an ending affixed, as is the convention in other dictionaries,
 but represents the word with whatever ending is proper.  It is just
 a space saving shorthand or abbreviation.
 
-<BR><BR>=> in meaning this indicates a translation.
+<BR><BR>=> in meaning this indicates a translation example.
 
 <BR><BR>abb.  abbreviation.
 
@@ -700,6 +700,10 @@ The reference is to be applied from the last semicolon before the mark.
 It is likely that the meaning diverges from the base by being medieval
 and ecclesiastical, but not so overwhelming as to deserve a separate entry.
 
+<BR><BR>(Douay) is used to designate those words for which the meaning
+has been derived or modified by examination of the Douay translation
+of the Latin Vulgate Bible of St Jerome.
+
 <BR><BR>(eccl.) ecclesiastical - designating a special church meaning in
 a list of conventional meanings, an additional meaning not sufficient
 to justify a separate entry with an ecclesiastical code.
@@ -707,7 +711,11 @@ to justify a separate entry with an ecclesiastical code.
 <BR><BR>esp. [especially] - indicates a significant association,
 but is only advisory.
 
-<BR><BR>KLUDGE  This indicates that the particular form is distorted
+<BR><BR>(King James) or (KJames) is used to designate those words for
+which the meaning has been derived or modified by examination of the
+King James Bible in connection with the Latin Vulgate Bible of St Jerome.
+
+<BR><BR>(KLUDGE)  This indicates that the particular form is distorted
 in order to make it come out correctly.  This usually takes the form
 of a special conjugational form applied to a few words, not applicable
 to other words of the same conjugation or declension.  The user can
@@ -715,7 +723,7 @@ expect the form and meaning to be correct, but the numerical coding
 will be odd.
 
 
-<BR><BR>L+S [Lewis and Short] is used to indicate that the meaning
+<BR><BR>(L+S) [Lewis and Short] is used to indicate that the meaning
 starting from the previous semicolon is information from Lewis and Short
 'A Latin Dictionary' that differs from, or significantly expands on, the
 meaning in the 'Oxford Latin Dictionary' (OLD) which is the baseline for
@@ -734,7 +742,7 @@ dictionaries point to the same citation).  In these cases a combination
 of meanings are given for both entries with the (L+S) code distinction
 and the entries of different spelling or declension have the SOURCE coded.
 
-<BR><BR>OLD [Oxford Latin Dictionary] is used to indicate an additional
+<BR><BR>(OLD) [Oxford Latin Dictionary] is used to indicate an additional
 meaning taken from the Oxford Latin Dictionary in an entry that is
 otherwise attributed.
 While it is usually true that if a classical word has other than OLD
@@ -744,7 +752,7 @@ much better or more complete and understandable definition and the
 honor of source is thereto given.
 
 
-<BR><BR>PASS [passive] - indicates a special, unexpected meaning for the
+<BR><BR>(PASS) [passive] - indicates a special, unexpected meaning for the
 passive form of the verb, not easily associated with the active meaning.
 
 <BR><BR>perh. [perhaps] - denotes an additional uncertainty,
@@ -783,8 +791,8 @@ before the first comma, it applies to all the meanings.  If it
 appears later, it applies only to that and later meanings.
 For the purpose of this program, this is only advisory.
 
-<BR><BR>usu. [usually] is weakly advisory (usu. pl.) is even weaker than pl.
-and may imply that the pl. tendency occurred only during certain periods).
+<BR><BR>usu. [usually] is weakly advisory.  (usu. pl.) is even weaker than pl.
+and may imply that the pl. tendency occurred only during certain periods.
 
 <BR><BR>w/  means 'with'.
 
@@ -1867,17 +1875,20 @@ There are various approaches to the preparation of a dictionary.
 The most scholarly might be to select only proper and correct entries,
 only correct derivations, grammar, and spelling.  This would be a
 dictionary for one who wished to write 'correct' Latin.  (Correct being
-defined as the way Cicero, or whatever is your favorite writer or grammarian,
+defined as the way Cicero, or your favorite writer or grammarian,
 used it.)  The current
-project has a different goal.  This program is successful if any
+project has a different goal.  This program is successful if
 word found in text is given an appropriate meaning, whether or not
-that word is spelled in the generally approved way, or is 'good Latin'.  Thus
-the program includes various words and forms that may have been
+that word is spelled in the generally approved way, or is 'good Latin'.
+Thus the program includes various words and forms that may have been
 rejected by recent scholars, but still appear in some texts.
 Philosophically, thus program deals with Latin as it was, not as
 it should have been.  I make no corrections to Cicero, which some
 might have been tempted to do if producing an academic
-dictionary instead of a program.
+dictionary instead of a program.  Moreover I make no corrections of
+St Jerome.  If (my copy of) the Vulgate has a particular spelling,
+that will be recognized by the program, either through a TRICK or
+as a dictionary entry that I have generated.
 
 <P>A philosophical difference from many dictionary projects is that this
 one has no firm model of the user or application.  It is not limited
@@ -1911,8 +1922,8 @@ regular spelling variations (or tricks) common in classical and
 medieval Latin.
 
 <P>
-A choice was made that the base was classical Latin as defined by the OLD.
-Arbitrary/roughly (-200 +100)
+A choice was made that the base was classical Latin as defined by the OLD,
+arbitrary/roughly (-200 +100)
 
 <P>
 The classical form of words is taken as the base.  All modifications
@@ -1960,8 +1971,8 @@ further deviations are problematical.  The better populated the stem list,
 the better the chance of a result.
 
 <P>
-The stem list is also overpopulated with variants suggested by different
-sources.  The problem is that what we have of classical Latin has
+The stem list is also populated with variants suggested by different
+sources.  The problem is that the remains of classical Latin have
 gone through many monks along the way.  These copyists may have made
 simple mistakes (typos!), or have made what they thought were proper
 corrections (spell checkers!).  And twenty centuries later scholars
@@ -1970,7 +1981,7 @@ But a particular document in the form presented to the reader may have
 have a variety of spellings for exactly the same word in the same
 referenced passage (Pliny's Natural History is often subject to this problem).
 (It may even be that modern texts and dictionaries have misprints!)
-So all forms found in various dictionaries can be included, with the
+All forms found in various dictionaries can be included, with the
 exception of those explicitly labeled 'misread' (and the argument
 probably could mandate their inclusion also).
 However, a single example of a variant in one case will not be included
@@ -1979,17 +1990,29 @@ it is used frequently or by several authors, it will be entered as a
 UNIQUE.
 
 <P>
-Lewis and Short seem to be more willing then the more recent Oxford
+Lewis and Short seem to be more willing thxa the more recent Oxford
 Latin Dictionary to raise a few examples of
 variation to an entry (at least an alternate).  Generally, I make an
 entry if some dictionary does so.  But within an entry I generate additional
 possible stems not noted elsewhere, e.g., I expand first declension
 verbs with '-av' perfect stems, even though no example exists in classical
-Latin.
-
+Latin.  This is often the practice in other dictionaries also.
 
 <P>
-An argument against a large stem list is that it increases the disk storage
+It is often the practice in paper dictionaries to double up on an
+entry that may be either adjective or noun, usually by leading with
+the adjective and mentioning its use as a noun.  A much larger set
+of adjective/noun pairs is favored with separate entries.
+It is the philosophy of this program to make separate entries whenever
+there is an example in any reference dictionary.  This might faciliate
+the task of a larger translation program which would handle phrases
+or sentences.  However there has been no effort to explicitly
+generate such pair expansion if there is no precedent, and the user
+must still recognize the possibility of unexpanded multiple possibilities
+for substantives.
+
+<P>
+An argument against a large stem list is that it increases the storage
 required (but this is extremely modest by current standards) and
 increases processing time for search of the stems (this is far
 offset by the processing which would be required to construct or analyze
@@ -1998,10 +2021,10 @@ words working from a smaller stem list).
 <P>
 Additional parts of verbs are included (first conjugation is easily filled
 out, even eccentric verbs if they are compounds of known parts),
-although they may not have been found in any known documents.
+although they may not have been found in any well known texts.
 Cases can be logically constructed that are 'missing' in classical Latin.
 Verbs with prefix can be expanded when the base is known.
-That a form has not been found in surviving (copies of) classical documents
+That a form has not been found in surviving copies of classical documents
 does not mean that it was not on the lips of every centurion and his
 girl friend, or that it might not find its way into medieval texts.
 
@@ -2553,8 +2576,9 @@ extensively used.  Others have only been used for an occasional check
        M,      --  Latham, Revised Medieval Word List, 1980
        N,      --  Lynn Nelson, Wordlist
        O,      --  Oxford Latin Dictionary, 1982 (OLD)
+       P,      --  Souter, A Glossary of Later Latin to 600 A.D., Oxford 1949
        Q,      --  Other, unspecified dictionaries
-       R,      --  Harkness, Albert; A Latin Grammar, 1881
+       R,      --  Plater and White, A Grammar of the Vulgate, Oxford 1926
        S,      --  Lewis and Short, A Latin Dictionary, 1879 (L+S)
        T,      --  Found in a translation  --  no dictionary reference
        U,      --  Du Cange
@@ -2674,14 +2698,15 @@ more so because of its medieval content.
 
 <P>
 The present phase of refinement has incorporated the Oxford Latin
-Dictionary and Lewis and Short entries through <B>C</B> (about a fourth).
+Dictionary and Lewis and Short entries into <B>D</B> (about a fourth).
 Periodically,
 when I need a change of task, I run a major author (primarily from the
 Packard Humanities Institute CD ROM) to check the effectiveness of
 the code.  I may then include some words which turn up frequently
 as unknowns, but this is done as the spirit moves me.
 Smaller sections of later authors may also be processed, giving
-some growth in medieval Latin entries.
+some growth in medieval Latin entries.  Recently I have been working
+the Vulgate of St. Jerome.
 
 <P>
 I will continue to refine the dictionary and the program.  The major
@@ -2698,8 +2723,8 @@ Until then, I and other individuals will make available our programs.
 <BR>
 <BR>
 
-<A NAME="WRITING DICT.LOC AND UNIQUES">
-<H3><CENTER>WRITING DICT.LOC AND UNIQUES</CENTER></H3></A>
+<A NAME="WRITING DICT.LOC AND UNIQUES.LAT">
+<H3><CENTER>WRITING DICT.LOC AND UNIQUES.LAT</CENTER></H3></A>
 
 <P>
 To make the dictionary files used by the program is not difficult, but
@@ -2973,7 +2998,7 @@ as it might be.
 
 
 
-<P>All the inflections are in a file called INFLECTS.
+<P>All the inflections are in a file called INFLECTS.LAT
 
 <BR>
 http://www.erols.com/whitaker/inflects.
@@ -3161,7 +3186,7 @@ with all the other safeguards that that implies!) as a consequence
 is unforgiving.  The exact form is required.
 If you want to be sloppy you have to deliberately program that in.
 
-<P>The following examples, and an examination of the UNIQUES file,
+<P>The following examples, and an examination of the UNIQUES.LAT file,
 should allow the user to insert any unique necessary.
 
 
@@ -3266,7 +3291,7 @@ and DOS ASCII data files for them to act upon to produce WORDS data files
 <PRE>
 DICTLINE.GEN
 STEMDICT.GEN
-INFLECTS.
+INFLECTS.LAT
 </PRE>
 <P>
 the other WORDS DOS ASCII supporting files
@@ -3307,7 +3332,7 @@ Executing the latter three against the input respectively of
 <PRE>
 DICTLINE.GEN
 STEMLIST.GEN
-INFLECTS.
+INFLECTS.LAT
 </PRE>
 <P>
 (when they ask for DICTIONARY say G) produces
@@ -3318,7 +3343,7 @@ INDXFILE.GEN
 INFLECTS.SEC
 </PRE>
 <P>
-Along with ADDONS. and UNIQUES., this is the set of data for WORDS.
+Along with ADDONS.LAT and UNIQUES.LAT, this is the set of data for WORDS.
 
 <P>
 The only major problem that has appeared on porting so far is that one must
