@@ -1,0 +1,174 @@
+
+This is words, a Latin-to English dictionary program, by William
+Whitaker (whitaker@erols.com). It takes keyboard input or a file of
+Latin text lines and provides an analysis of each word individually.
+It uses the following files: INFLECT.SEC, UNIQUES., ADDONS.,
+STEMFILE.GEN, INDXFILE.GEN, and DICTFILE.GEN.
+
+
+This program was written originally in Ada, and designed for
+DOS/Windows PCs.  It was first ported to Linux in early 1999 using
+gnat 3.10p (Ada compiler) on a Pentium-II PC running RedHat Linux 5.2.
+(Linux Kernel 2.0.36), and re-compiled in May 2000 using gnat 3.12p on a
+similar PC running RedHat 6.0 (Linux Kernel 2.2.5).
+
+In June 1999 it was found that the port of version 1.93 did not
+run on a Slackware 3.6 distribution (libc5 rather than glibc).  The
+`words' executable was re-compiled and run on the same Slackware 3.6 box,
+under kernel 2.0.36.  That fix can be downloaded separately if you
+need to run words 1.94 or previous on a libc5-based distribution.  Details
+on this fix can be found at the end of this document.
+
+However, all ports after version 1.95, completed in January 2000, have the
+libraries compiled statically into the executable, and should therefore
+run on any Linux installation.  Please let me know if this is untrue.
+
+FreeBSD note:  Words will run on a FreeBSD 3.2 box under linux
+emulation.  However, it is known not to work on FreeBSD-3.4 due to
+the fact that the linux rt_sigaction() system call is either not supported
+or ignored.
+
+Please report to me any additional successes and failures running `words'
+on another Linux distribution or platform (or even other Unices), and I
+will post the information here.
+
+
+====  
+
+The latest release as of May 1, 2000 is words-1.95a-linux.tar.gz.
+
+All versions of words for Linux are available from:
+
+    ftp://petrus.thomasaquinas.edu/pub/linux/
+
+
+Information about the program, current releases, and the words program
+on other platforms can be found at:
+
+    http://www.erols.com/whitaker/words.htm
+
+
+The online interactive version of words can be found at:
+
+    http://lysy2.archives.nd.edu
+
+
+For complete documentation, read the included file wordsdoc.htm (in
+HTML) or wordsdoc.txt (in ASCII); or find it on the web at:
+
+    http://www.erols.com/whitaker/wordsdoc.htm
+
+
+====
+
+Untarring/ungzipping the file `words-1.xx-linux.tar.gz' will create a
+subdirectory `words' in your current directory. If you want to make
+words available to all users on your system, you should do something
+like this:  move the tar.gz file to a directory (e.g. /usr/local/) then
+execute the following command:
+
+    tar zxvf words-1.xx-linux.tar.gz
+
+This results in a directory (/usr/local/words) with about 8 MB of files
+which contains the following: 
+
+    README
+    INFLECT.SEC
+    UNIQUES.
+    ADDONS.
+    STEMFILE.GEN
+    INDXFILE.GEN
+    DICTFILE.GEN
+    latin
+    words
+    wordsdoc.html
+    wordsdoc.txt
+
+After untarring, you may of course remove the file 
+`words-1.xx-linux.tar.gz' from the directory /usr/local.
+
+====
+
+The simplest way to run the words program is to change to the directory
+that has these zipped files (e.g. /usr/local/words), and execute the
+command:
+
+    ./words
+
+However, since you probably don't want to cd into this directory every
+time you run words, I've included a simple shell script (suggested to me 
+by Johannes Tevessen <johannes.tevessen@xlink.net>) that changes into the
+words directory (e.g., /usr/local/words), then runs the words
+binary from there as a subtask.  On my system, I call the script `latin',
+so that it's easy for my students to remember, but you can rename it
+whatever you'd like.  It is as follows:
+
+        #! /bin/bash
+        WORDSPATH=/usr/local/words
+        ( cd $WORDSPATH ; ./words $* )
+
+You should put this shell script in one of your bin directories in
+your path (mine is in /usr/local/bin). Then to run words, all you do is
+type `latin' at any prompt, and it will execute words for you, and exit
+gracefully.
+
+
+I had to include this script because the program needs to be in its own
+directory to know where to find its supporting files.  Creating a link
+(ln) to the words program doesn't quite work.  Neither does putting
+the whole `words' directory in your path. Remember, this program was
+ported from DOS without any change in the source code, so it has some
+DOS quirkyness.  Perhaps someone would like to write an install
+script so that you don't have to do all of this stuff manually.  If so,
+email it to me, and I will include it with the program.
+
+====
+
+
+
+For libc5 users only:  some users on libc5 systems had difficulties
+executing the port of words 1.94, since it was compiled on a RedHat 5.2
+glibc system.  The newer port of words 1.95, however was compiled
+statically (i.e., library-independent). 
+
+If you are still using words 1.94, please check your own system by
+looking for the file /lib/ld-linux.so.2. If you have /lib/ld-linux.so.1
+instead, you may need a different version of the `words' 1.94 executable.
+You can get the libc5 verson of the `words' file by downloading the
+following file from the same location: 
+
+
+        words-1.94-libc5.tgz
+
+This file will untar/ungzip to a single executable file `words'.  You
+should use this file to replace the file `words' that came with the
+original download.  This should allow you to run words on a libc5 system.
+
+You should be able to circumvent this whole problem simply by upgrading to
+any port after 1.95.  Try version 1.95 first, and let me know if it solves
+the problem.
+
+====
+
+
+DISCLAIMER: I had nothing to do with the writing of this program.  I
+only ported it from DOS to Linux.  Email me (bdragoo@thomasaquinas.edu)
+with any Linux-related questions; email Whitaker (whitaker@erols.com) with
+any program-related questions.
+
+
+
+                       Pax Domini,
+
+                       Brian Dragoo
+                       Thomas Aquinas College
+                       Santa Paula, CA
+                       May 2000
+
+                       bdragoo@thomasaquinas.edu
+
+
+
+
+
+

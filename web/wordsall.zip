@@ -1,0 +1,56 @@
+Placeholder for version 1.96 of wordsall.zip
+Only the first 1048323 bytes are available; the reported size is 1308056 bytes.
+These are the files which could be recovered:
+
+   Date      Time           Size  Name
+------------------- ------------  ------------------------
+2000-08-18 01:23:44        31845  ADDONS.LAT
+2000-08-04 02:08:40         9267  UNIQUES.LAT
+1999-05-04 22:49:52          848  strings_package.ads
+1999-05-04 22:49:58         3943  strings_package.adb
+2000-06-11 12:24:14         2866  latin_file_names.ads
+1999-10-08 17:36:20          773  latin_file_names.adb
+1999-04-16 01:22:46          418  config.ads
+1999-04-25 03:01:10          300  preface.ads
+1999-02-24 18:01:38          212  put_stat.adb
+1999-08-29 19:34:20         1980  word_parameters.ads
+2000-03-02 22:27:48         2604  developer_parameters.ads
+1999-04-25 03:00:26         1048  preface.adb
+2000-04-23 16:36:48        20923  word_parameters.adb
+2000-08-06 21:44:06        66895  inflections_package.adb
+2000-08-06 21:38:36        25122  inflections_package.ads
+2000-08-06 23:30:50        35697  parse.adb
+2000-09-11 23:45:28        15956  dictionary_package.ads
+2000-08-06 21:54:28        41160  dictionary_package.adb
+2000-08-02 22:04:58         5646  addons_package.ads
+2000-08-03 00:17:56        23347  addons_package.adb
+2000-08-04 01:38:24          681  uniques_package.ads
+2000-06-17 21:21:00         2831  word_support_package.ads
+1999-02-24 18:01:48         1104  latin_debug.ads
+2000-06-17 21:20:56         9093  word_support_package.adb
+1999-02-24 18:01:48         4441  latin_debug.adb
+1999-10-08 21:54:40         2032  word_package.ads
+2000-08-03 21:27:00         3854  line_stuff.ads
+2000-08-06 22:13:54        32562  line_stuff.adb
+2000-05-10 22:17:06        35162  developer_parameters.adb
+1999-10-08 22:15:56         1807  words.adb
+2000-04-22 00:41:48          744  tricks_package.ads
+2000-08-11 22:28:50        99242  word_package.adb
+2000-08-30 00:12:46        40917  tricks_package.adb
+1999-10-08 21:49:06          439  list_package.ads
+2000-08-06 21:57:28        20277  dictionary_form.adb
+2000-08-06 22:17:30        27669  list_package.adb
+2000-08-06 22:20:54        16966  makedict.adb
+2000-07-24 18:30:52         9590  makestem.adb
+2000-08-06 22:23:16         9351  makeinfl.adb
+2000-08-06 22:04:52        10418  put_example_line.adb
+2000-08-11 00:44:12        19740  list_list.adb
+2000-09-04 22:49:58      4446080  DICTLINE.GEN
+2000-08-06 23:31:26       115722  INFLECTS.LAT
+2000-09-05 00:23:46      2176128  STEMLIST.GEN (incomplete)
+------------------- ------------  ------------------------
+2000-09-11 23:45:28      7377700  44 files
+
+This files are available at the commit tagged v1.96.0
+Due to the incomplete download, this version will not build.
+
