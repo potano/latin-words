@@ -23,6 +23,8 @@
 <BR>&nbsp;&nbsp;&nbsp;<A HREF="#Signs and Abbreviations in Meaning">Signs
 and Abbreviations in Meaning</A>
 <BR><A HREF="#BRIEF PROGRAM DESCRIPTION">BRIEF PROGRAM DESCRIPTION</A>
+<BR>&nbsp;&nbsp;&nbsp;<A HREF="#Trimming of uncommon results">
+Trimming of uncommon results</A>
 <BR>&nbsp;&nbsp;&nbsp;<A HREF="#Special Cases">Special Cases</A>
 <BR>&nbsp;&nbsp;&nbsp;<A HREF="#Uniques">Uniques</A>
 <BR>&nbsp;&nbsp;&nbsp;<A HREF="#Tricks">Tricks</A>
@@ -30,6 +32,7 @@ and Abbreviations in Meaning</A>
 in Inflection Line</A>
 <BR>&nbsp;&nbsp;&nbsp;<A HREF="#Help for Parameters">Help
 for Parameters</A>
+<BR>&nbsp;&nbsp;&nbsp;<A HREF="#Program source code">Program source code</A>
 <BR><A HREF="#GUIDING PHILOSOPHY">GUIDING PHILOSOPHY</A>
 <BR>&nbsp;&nbsp;&nbsp;<A HREF="#Purpose">Purpose</A>
 <BR>&nbsp;&nbsp;&nbsp;<A HREF="#Method">Method</A>
@@ -39,6 +42,7 @@ for Parameters</A>
 <BR>&nbsp;&nbsp;&nbsp;<A HREF="#Dictionary Codes">Dictionary Codes</A>
 <BR>&nbsp;&nbsp;&nbsp;<A HREF="#Evolution of the Dictionary">Evolution
 of the Dictionary</A>
+<BR>&nbsp;&nbsp;&nbsp;<A HREF="#Testing">Testing</A>
 <BR>&nbsp;&nbsp;&nbsp;<A HREF="#Current Status and Future Plans">Current
 Status and Future Plans</A>
 <BR><A HREF="#WRITING DICT.LOC AND UNIQUES">WRITING DICT.LOC AND UNIQUES</A>
@@ -101,7 +105,6 @@ These can generate additional words - some of which are recognized
 Latin words, some are perfectly reasonable words which may never
 have been used by Cicero or Caesar but might have been used by
 Augustine or a monk of Jarrow, and some are nonsense.
-
 
 <BR>
 
@@ -252,7 +255,7 @@ This write up is rudimentary and assumes that the
 user is experienced with computers.
 
 <P>
-The WORDS program, Version 1.94, with it's accompanying data files
+The WORDS program, Version 1.95, with it's accompanying data files
 should run on PC in DOS/Windows 95, any monitor.  Simply download
 the self-extracting EXE file and execute it in your chosen subdirectory
 to UNZIP the files into a subdirectory of a hard disk.  Then call WORDS.
@@ -396,7 +399,11 @@ This is for a quick word or two.
 <P>Another mode of operation is to provide an input and an output file.
 <PRE>WORDS INFILE OUTFILE</PRE>
 with names of your choice (full path names if not operating all in
-the same subdirectory).
+the same subdirectory).  The program will read as input the INFILE
+and write the output to the OUTFILE (as though it were WORD.OUT).
+It will then await further input from the user.  It terminates with
+a return.  If the parameters are not legal file names, the program
+will assume they are Latin words to be processed as command line input.
 
 <A NAME="Examples"><H4>Examples</H4>
 
@@ -557,7 +564,8 @@ Here is the SUPINE of the verb in the ABLative Singular.
 
 <PRE><TT>=>orietur
 ori.etur           V       3  4 FUT  PASSIVE IND  3 S DEP
-rise, arise; spring from, appear; be descended; begin, proceed, originate</TT>
+rise, arise; spring from, appear; be descended; begin, proceed, originate
+</TT></PRE>
 
 <P>
 For DEPondent verbs the passive form is to be translated as if it
@@ -694,23 +702,23 @@ expect the form and meaning to be correct, but the numerical coding
 will be odd.
 
 
-<BR><BR>L&amp;S [Lewis and Short] is used to indicate that the meaning
+<BR><BR>L+S [Lewis and Short] is used to indicate that the meaning
 starting from the previous semicolon is information from Lewis and Short
 'A Latin Dictionary' that differs from, or significantly expands on, the
 meaning in the 'Oxford Latin Dictionary' (OLD) which is the baseline for
 this program.  This is not to imply that the meaning listed is otherwise
 taken directly from the OLD, just that it is not inconsistent with OLD,
-but the L&amp;S information either inconsistent (likely OLD knows better)
+but the L+S information either inconsistent (likely OLD knows better)
 or Lewis and Short has included meanings appropriate for late Latin
 writers beyond the scope of OLD.  The program is
 just warning the reader that there may be some difference.
 There are cases in which this indication occurs in entries that have
 Lewis and Short as the source.  In those cases, the basic word is in
 OLD but the entry is a variant form or spelling not cited there.
-There are cases where OLD and L&amp;S give somewhat different spellings
+There are cases where OLD and L+S give somewhat different spellings
 and meanings for the 'same' word (same in the sense that both
 dictionaries point to the same citation).  In these cases a combination
-of meanings are given for both entries with the (L&amp;S) code distinction
+of meanings are given for both entries with the (L+S) code distinction
 and the entries of different spelling or declension have the SOURCE coded.
 
 <BR><BR>OLD [Oxford Latin Dictionary] is used to indicate an additional
@@ -861,17 +869,17 @@ As an example, a verb ending record has the structure:
 
 <LI>VAR a variant identifier, on WHICH - range 0..9
 
-<LI>TENSE an enumeration type - range PRES..FUTP & X
+<LI>TENSE an enumeration type - range PRES..FUTP + X
 
-<LI>VOICE an enumeration type - range ACTIVE..PASSIVE & X
+<LI>VOICE an enumeration type - range ACTIVE..PASSIVE + X
 
-<LI>MOOD an enumeration type - range IND..PPL & X
+<LI>MOOD an enumeration type - range IND..PPL + X
 
-<LI>PERSON person, first to third - range 1..3 & 0
+<LI>PERSON person, first to third - range 1..3 + 0
 
-<LI>NUMBER an enumeration type - range S..P & X
+<LI>NUMBER an enumeration type - range S..P + X
 
-<LI>KIND enumeration type of verb - range TO_BE..PERFDEF & X
+<LI>KIND enumeration type of verb - range TO_BE..PERFDEF + X
 
 <LI>KEY which stem to be used - range 1..4
 
@@ -906,11 +914,11 @@ A verb dictionary record has the structure:
 
 <LI>PART the part code for a verb = V
 
-<LI>WHICH a conjugation identifier - range 0..6  (actually 1..6 &amp; 0)
+<LI>WHICH a conjugation identifier - range 0..9
 
-<LI>VAR a variant identifier - range 0..9  (actually 1..5 &amp; 0)
+<LI>VAR a variant identifier - range 0..9
 
-<LI>KIND enumeration type of verb - range TO_BE..PERFDEF &amp; X
+<LI>KIND enumeration type of verb - range TO_BE..PERFDEF + X
 
 <LI>MEANING text for English translations (up to 80 characters)
 </UL>
@@ -1035,9 +1043,24 @@ meaning.  If all else fails, a portion of the possible dictionary
 stem can be listed, from which the user can
 draw in making a guess.
 
-<P>
-The program is written in Ada, and is machine independent.
-Ada source code is available for compiling onto other machines.
+<BR>
+<A NAME="Trimming of uncommon results"><H4>Trimming of uncommon results</H4></A>
+
+
+<P>Trimming now means someting.  If TRIM_OUTPUT parameter is set,
+and specific parameters set in the MDEV, the program will disparage
+those possible forms which come from archaic or medieval (non-classical)
+stems or inflections, also stems or inflections which are relatively uncommon.
+It will report such if no classical/common solutions are found.
+The default is set for this, expecting that most users are students and
+unlikely to encounter rare forms.  Other users can set the parameters
+appropriately for their situation.
+
+<P>This capability is preliminary.  It
+is just becoming useful in that the factors are set
+for about half the dictionary entries.  There are still a large number
+of entries and inflections that are not set and will continue to
+be reported until determination of rarity is made.
 
 
 <BR>
@@ -1304,7 +1327,7 @@ A DEP flag allows the example to reflect active meaning for passive form.
 It also allows the dictionary form to be constructed properly from stems.
 TRANS/INTRANS were included to allow a further program a hint as to
 what kind of object it should expect.  This flag is only now being
-fixed during the update.  There are sme verbs which, although mostly used
+fixed during the update.  There are some verbs which, although mostly used
 in one way, might be either.  These are assigned X rather than breaking
 into two entries.  This would be of no particular use at this point since
 it would not allow the object to be determined.  GEN/DAT/ABL flags have
@@ -1333,33 +1356,36 @@ previous versions in which '?' was used.)  Each parameter is listed
 and the user is offered the opportunity to change it from the current value
 by answering Y or N (any case).  For each parameter there is some explanation
 or help.  This is displayed by in putting a '?' [question mark], followed
-by a return.
+by a return.  HINT: While going down the list if one has made all the changes
+desired, one need not continue to the end.  Just enter a space and then
+give a return.  The program will interpret this as an illegal entry
+(not Y or N) and will cancel the rest of the list, while retaining any
+changes made to that point.
 
 <P>
 The various help displays are listed here:
 
 
 <PRE><TT>
-HAVE_OUTPUT_FILE
+HAVE_OUTPUT_FILE_HELP :
    This option instructs the program to create a file which can hold the
    output for later study, otherwise the results are just displayed on
-   the screen.  The output file is named WORD.OUT.
+   the screen.  The output file is named  WORD.OUT
    This means that one run will necessarily overwrite a previous run,
    unless the previous results are renamed or copied to a file of another
-   name.  Using this output file slows the program, especially if it is
-   being executed from a floppy; just having it will not matter much.
+   name.  This is available if the METHOD is INTERACTIVE, no parameters.
    The default is N(o), since this prevents the program from overwriting
    previous work unintentionally.  Y(es) creates the output file.
 
-WRITE_OUTPUT_TO_FILE
+WRITE_OUTPUT_TO_FILE_HELP :
    This option instructs the program, when HAVE_OUTPUT_FILE is on, to
-   write results to the file WORD.OUT.
+   write results to the file  WORD.OUT
    This option may be turned on and off during running of the program,
-   thereby capturing only certain desired results.
-   If the option HAVE_OUTPUT_FILE is off, the user will not be given a
-   chance to turn this one on.                 Default is N(o).
+   thereby capturing only certain desired results.  If the option
+   HAVE_OUTPUT_FILE is off, the user will not be given a chance to turn
+   this one on.  Only for INTERACTIVE running.         Default is N(o).
 
-DO_UNKNOWNS_ONLY
+DO_UNKNOWNS_ONLY_HELP :
    This option instructs the program to only output those words that it
    cannot resolve.  Of course, it has to do processing on all words, but
    those that are found (with prefix/suffix, if that option in on) will
@@ -1373,9 +1399,9 @@ DO_UNKNOWNS_ONLY
    text with the unknown words, by line.  This functions as a spelling
    checker for Latin.  The default is N(o).
 
-WRITE_UNKNOWNS_TO_FILE
+WRITE_UNKNOWNS_TO_FILE_HELP :
    This option instructs the program to write all unresolved words to a
-   UNKNOWNS file named WORD.UNK.
+   UNKNOWNS file named  WORD.UNK
    With this option on , the file of unknowns is written, even though
    the main output contains both known and unknown (unresolved) words.
    One may wish to save the unknowns for later analysis, testing, or to
@@ -1386,17 +1412,28 @@ WRITE_UNKNOWNS_TO_FILE
    This option is for specialized use, so its default is N(o).
 
 
-IGNORE_UNKNOWN_NAMES
+IGNORE_UNKNOWN_NAMES_HELP :
    This option instructs the program to assume that any capitalized word
    longer than three letters is a proper name.  As no dictionary can be
    expected to account for many proper names, many such occur that would
    be called UNKNOWN.  This contaminates the output in most cases, and
-   it is often convenient to ignore these spurious UNKNOWN hits.  This
-   option implements that mode, and calls such words proper names.  Of
-   course, any proper names that are in the dictionary are handled in the
-   normal way.                            The default is Y(es).
+   it is often convenient to ignore these sperious UNKNOWN hits.  This
+   option implements that mode, and calls such words proper names.
+   Any proper names that are in the dictionary are handled in the normal
+   manner.                                The default is Y(es).
 
-DO_COMPOUNDS
+IGNORE_UNKNOWN_CAPS_HELP :
+   This option instructs the program to assume that any all caps word
+   is a proper name or similar designation.  This convention is often
+   used to designate speakers in a discussion or play.  No dictionary can
+   claim to be exaustive on proper names, so many such occur that would
+   be called UNKNOWN.  This contaminates the output in most cases, and
+   it is often convenient to ignore these sperious UNKNOWN hits.  This
+   option implements that mode, and calls such words names.  Any similar
+   designations that are in the dictionary are handled in the normal
+   manner, as are normal words in all caps.    The default is Y(es).
+
+DO_COMPOUNDS_HELP :
    This option instructs the program to look ahead for the verb TO_BE (or
    iri) when it finds a verb participle, with the expectation of finding
    a compound perfect tense or periphastic.  This option can also be a
@@ -1404,7 +1441,7 @@ DO_COMPOUNDS
    excluded, possible interpretations are lost.  Default choice is Y(es).
    This processing is turned off with the choice of N(o).
 
-DO_FIXES
+DO_FIXES_HELP :
    This option instructs the program, when it is unable to find a proper
    match in the dictionary, to attach various prefixes and suffixes and
    try again.  This effort is successful in about a quarter of the cases
@@ -1416,47 +1453,47 @@ DO_FIXES
    The default choice is Y(es), since the results are generally useful.
    This processing can be turned off with the choice of N(o).
 
-DO_TRICKS
+DO_TRICKS_HELP :
    This option instructs the program, when it is unable to find a proper
    match in the dictionary, and after various prefixes and suffixes, to
    try every dirty Latin trick it can think of, mainly common letter
    replacements like cl -> cul, vul -> vol, ads -> ass, inp -> imp, etc.
    Together these tricks are useful, but may give false positives (>10%).
-   They provide for recognized variants in classical spelling.  Most of
+   They provide for recognized varients in classical spelling.  Most of
    the texts with which this program will be used have been well edited
    and standardized in spelling.  Now, moreover,  the dictionary is being
    populated to such a state that the hit rate on tricks has fallen to a
    low level.  It is very seldom productive, and it is always expensive.
    The only excuse for keeping it as default is that now the dictionary
-   is quite extensive and misses are rare.         Default is now Y(es).
+   is quite extensive and misses are rare.         Default is now Y(es). ) ;
 
-DO_DICTIONARY_FORMS
+DO_DICTIONARY_FORMS_HELP :
    This option instructs the program to output a line with the forms
    normally associated with a dictionary entry (NOM and GEN of a noun,
    the four principle parts of a verb, M-F-N NOM of an adjective, ...).
    This occurs when there is other output (i.e., not with UNKNOWNS_ONLY).
    The default choice is N(o), but it can be turned on with a Y(es).
 
-DO_EXAMPLES
+DO_EXAMPLES_HELP :
    This option instructs the program to provide examples of usage of the
    cases/tenses/etc. that were constructed.  The default choice is N(o).
-   This produces lengthy output and is turned on with the choice Y(es).
+   This produces lengthly output and is turned on with the choice Y(es).
 
-SHOW_AGE
+SHOW_AGE_HELP :
    This option causes a flag, like '<Late>' to be put before the meaning
    in the output.  The AGE is an indication when this word/meaning came
    into use, at least from indications is dictionary citations.  It is
    just an indication, not controlling, useful when there are choices.
    The default choice is N(o), but it can be turned on with a Y(es).
 
-SHOW_FREQUENCY
+SHOW_FREQUENCY_HELP :
    This option causes a flag, like '<rare>' to be put before the meaning
    in the output.  The FREQ is an indication of the relative usage of the
    word use, at least from indications is dictionary citations.  It is
    just an indication, not controlling, useful when there are choices.
    The default choice is N(o), but it can be turned on with a Y(es).
 
-DO_ONLY_MEANINGS
+DO_ONLY_MEANINGS_HELP :
    This option instructs the program to only output the MEANING for a
    word, and omit the inflection details.  This is primarily used in
    analyzing new dictionary material, comparing with the existing.
@@ -1464,7 +1501,7 @@ DO_ONLY_MEANINGS
    the words and just needs a little reminder for a few.
    The default choice is N(o), but it can be turned on with a Y(es).
 
-DO_STEMS_FOR_UNKNOWN
+DO_STEMS_FOR_UNKNOWN_HELP :
    This option instructs the program, when it is unable to find a proper
    match in the dictionary, and after various prefixes and suffixes, to
    try even dirtier tricks, specifically to try all the dictionary stems
@@ -1476,26 +1513,305 @@ DO_STEMS_FOR_UNKNOWN
    amount of weeding has been done, so only reasonably common endings
    are quoted, and these are lumped together masking declension, etc.
    Only N, ADJ, and V endings are given, LOC and VOC omitted, etc.
-   The user can then make his own judgment.      This option should
+   The user can then make his own judgement.      This option should
    probably only be used with individual UNKNOWN words, and off-line
    from full translations, therefore the default choice is N(o).
    This processing can be turned on with the choice of Y(es).
 
-TRIM_OUTPUT
+
+TRIM_OUTPUT_HELP :
    This option instructs the program to remove from the output list of
    possible constructs those which are least likely.  At the present
-   stage, there is not much trimming, however, if the program grows more
-   powerful this may be a very useful option.  Nevertheless, there is no
-   absolute assurance that the items removed are not correct, just that
+   stage, there is not much trimming except for removing Uncommon and
+   non-classical (Archaic/Medieval) when more common results are found
+   and this action is requested (MDEV), however, if the program grows
+   more powerful this may be a useful option.  Nevertheless, there is no
+   absolute assurence that the items removed are not correct, just that
    they are statistically less likely (e.g., vocatives or locatives in
    certain situations).  Since little is now done, the default is Y(es)
+
+
+SAVE_PARAMETERS_HELP :
+   This option instructs the program, to save the current parameters, as
+   just established by the user, in a file WORD.MOD.  If such a file
+   exists, the program will load those parameters at the start.  If no
+   such file can be found in the current subdirectory, the program will
+   start with a default set of parameters.  Since this parameter file is
+   human-readable ASCII, it may also be created with a text editor.  If
+   the file found has been improperly created, is in the wrong format, or
+   otherwise uninterpretable by the program, it will be ignored and the
+   default parameters used, until a proper parameter file in written by
+   the program.  Since one may want to make temporary changes during a
+   run, but revert to the usual set, the default is N(o).
 </TT></PRE>
+
 
 <P>
 There is also a set of DEVELOPER_PARAMETERS that are unlikely to be of
-interest to the normal user.  These may be changed or examined by in similar
+interest to the normal user.  Some of these parameters may be disconnected
+or not work for other reasons.  They are mostly for the use for and in the
+development process.  These may be changed or examined by in similar
 change procedure by inputting a '!' [exclamation sign] character,
 followed by a return.
+
+
+
+<PRE><TT>
+HAVE_DEBUG_FILE_HELP :
+   This option instructs the program to create a file which can hold
+   certain internal information about the current search.  The file is
+   overwritten for every word in order to prevent it from growing out of
+   hand, so information about the last word searched is saved in case of
+   failure.  The debug output file is named  & DEBUG_FULL_NAME
+                                   & (42+DEBUG_FULL_NAME'LENGTH..70 => ' '),
+   Use of this option, along with the WRITE_DEBUG_FILE option may slow
+   the program significantly.  This information is usually only useful
+   to the developer, so the default is N(o).
+
+WRITE_DEBUG_FILE_HELP :
+   This option instructs the program, when HAVE_DEBUG_FILE is on, to put
+   some debug data to a file named  & DEBUG_FULL_NAME
+                                   & (33+DEBUG_FULL_NAME'LENGTH..70 => ' '),
+   This option may be turned on and off while running of the program,
+   thereby capturing only certain desired results.  The file is reset and
+   restarted after each word parsed, so that it does not get too big.
+   If the option HAVE_DEBUG_FILE is off, the user will not be given a
+   chance to turn this one on.                  Default is N(o).
+
+
+HAVE_STATISTICS_FILE_HELP :
+   This option instructs the program to create a file which can hold
+   certain statistical information about the process.  The file is
+   overwritten for new invocation of the program, so old data must be
+   explicitly saved if it is to be retained.  The statistics are in TEXT
+   format.     The statistics file is named  & STATS_FULL_NAME
+                                & (42+STATS_FULL_NAME'LENGTH..70 => ' '),
+   This information is only of development use, so the default is N(o).
+
+WRITE_STATISTICS_FILE_HELP :
+   This option instructs the program, with HAVE_STATISTICS_FILE, to put
+   derived statistics in a file named  & STATS_FULL_NAME
+                                   & (36+STATS_FULL_NAME'LENGTH..70 => ' '),
+   This option may be turned on and off while running of the program,
+   thereby capturing only certain desired results.  The file is reset at
+   each invocation of the program, if the HAVE_STATISTICS_FILE is set.
+   If the option HAVE_STATISTICS_FILE is off, the user will not be given
+   a chance to turn this one on.                Default is N(o).
+
+
+SHOW_DICTIONARY_HELP :
+   This option causes a flag, like 'GEN>' to be put before the meaning
+   in the output.  While this is useful for certain development purposes,
+   it forces off a few characters from the meaning, and is really of no
+   interest to most users.
+   The default choice is N(o), but it can be turned on with a Y(es).
+
+SHOW_DICTIONARY_LINE_HELP :
+   This option causes the number of the dictionary line for the current
+   meaning to be output.  This is of use to no one but the dictionary
+   maintainer.  The default choice is N(o).  It is activated by Y(es).   );
+
+SHOW_DICTIONARY_CODES_HELP :
+   This option causes the codes for the dictionary entry for the current
+   meaning to be output.  This may not be useful to any but the most
+   involved user.  The default choice is N(o).  It is activated by Y(es).);
+
+DO_PEARSE_CODES_HELP :
+   This option causes special codes to be output flagging the different
+   kinds of output lines.  01 for forms, 02 for dictionary forms, and
+   03 for meaning. The default choice is N(o).  It is activated by Y(es).);
+
+DO_ONLY_INITIAL_WORD_HELP :
+   This option instructs the program to only analyze the initial word on
+   each line submitted.  This is a tool for checking and integrating new
+   dictionary input, and will be of no interest to the general user.
+   The default choice is N(o), but it can be turned on with a Y(es).
+
+FOR_WORD_LIST_CHECK_HELP :
+   This option works in conjunction with DO_ONLY_INITIAL_WORD to allow
+   the processing of scanned dictionarys or text word lists.  It accepts
+   only the forms common in dictionary entries, like NOM S for N or ADJ,
+   or PRES ACTIVE IND 1 S for V.  It is be used only with DO_INITIAL_WORD
+   The default choice is N(o), but it can be turned on with a Y(es).
+
+UPDATE_LOCAL_DICTIONARY_HELP :
+   This option instructs the program to invite the user to input a new
+   word to the local dictionary on the fly.  This is only active if the
+   program is not using an (@) input file!  If an UNKNOWN is discovered,
+   the program asks for STEM, PART, and MEAN, the basic elements of a
+   dictionary entry.  These are put into the local dictionary right then,
+   and are available for the rest of the session, and all later sessions.
+   The use of this option requires a detailed knowledge of the structure
+   of dictionary entries, and is not for the average user.  If the entry
+   is not valid, reloading the dictionary will raise and exception, and
+   the invalid entry will be rejected, but the program will continue
+   without that word.  Any invalid entries can be corrected or deleted
+   off-line with a text editor on the local dictionary file.  If one does
+   not want to enter a word when this option is on, a simple RETURN at
+   the STEM=> prompt will ignore and continue the program.  This option
+   is only for very experienced users and should normally be off.
+                                             The default is N(o).
+         ------    NOT AVAILABLE IN THIS VERSION   -------
+
+UPDATE_MEANINGS_HELP :
+   This option instructs the program to invite the user to modify the
+   meaning displayed on a word translation.  This is only active if the
+   program is not using an (@) input file!  These changes are put into
+   the dictionary right then and permenently, and are available from
+   then on, in this session, and all later sessions.   Unfortunately,
+   these changes will not survive the replacement of the dictionary by a
+   new version from the developer.  Changes can only be recovered by
+   considerable prcessing by the deneloper, and should be left there.
+   This option is only for experienced users and should remain off.
+                                             The default is N(o).
+         ------    NOT AVAILABLE IN THIS VERSION   -------
+
+DO_ONLY_FIXES_HELP :
+   This option instructs the program to ignore the normal dictionary
+   search and to go direct to attach various prefixes and suffixes before
+   processing. This is a pure research tool.  It allows one to examine
+   the coverage of pure stems and dictionary primary compositions.
+   This option is only available if DO_FIXES is turned on.
+   This is entirely a development and research tool, not to be used in
+   conventional translation situations, so the default choice is N(o).
+   This processing can be turned on with the choice of Y(es).
+
+
+DO_FIXES_ANYWAY_HELP :
+   This option instructs the program to do both the normal dictionary
+   search and then process for the various prefixes and suffixes too.
+   This is a pure research tool allowing one to consider the possibility
+   of strangge constructions, even in the presence of conventional
+   results, e.g., alte => deeply (ADV), but al+t+e => wing+ed (ADJ VOC)
+   (If multiple suffixes were supported this could also be wing+ed+ly.)
+   This option is only available if DO_FIXES is turned on.
+   This is entirely a development and research tool, not to be used in
+   conventional translation situations, so the default choice is N(o).
+   This processing can be turned on with the choice of Y(es).
+         ------    PRESENTLY NOT IMPLEMENTED    ------
+
+
+DO_MEDIEVAL_TRICKS_HELP :
+   This option instructs the program, when it is unable to find a proper
+   match in the dictionary, and after various prefixes and suffixes, and
+   tring every Classical Latin trick it can think of, to go to a few that
+   are usually only found in medieval Latin, replacements of caul -> col,
+   st -> est, z -> di, ix -> is, nct -> nt.  It also tries some things
+   like replacing doubled consonants in classical with a single one.
+   Together these tricks are useful, but may give false positives (>20%).
+   This option is only available if the general DO_TRICKS is chosen.
+   If the text is late or medieval, this option is much more useful than
+   tricks for classical.  The dictionary can never contain all spelling
+   variations found in medieval Latin, but some constructs are common.
+   The default choice is N(o), since the results are iffy, medieval only,
+   and expensive.  This processing is turned on with the choice of Y(es).
+
+DO_SYNCOPE_HELP :
+   This option instructs the program to postulate that syncope of
+   perfect stem verbs may have occured (e.g, aver -> ar in the perfect),
+   and to try various possibilities for the insertion of a removed 'v'.
+   To do this it has to fully process the modified candidates, which can
+   have a consderable impact on the speed of processind a large file.
+   However, this trick seldom producesa false positive, and syncope is
+   very common in Latin (first year texts excepted).  Default is Y(es).
+   This lengthy processing is turned off with the choice of N(o).
+
+
+
+INCLUDE_UNKNOWN_CONTEXT_HELP :
+   This option instructs the program, when writing to an UNKNOWNS file,
+   to put out the whole context of the UNKNOWN (the whole input line on
+   which the UNKNOWN was found).  This is appropriate for processing
+   large text files in which it is expected that there will be relatively
+   few UNKNOWNS.    The main use at the moment is to provide display
+   of the input line on the output file in the case of UNKNOWNS_ONLY.    );
+
+MINIMIZE_OUTPUT_HELP :
+   This option instructs the program to minimize the output.  This is a
+   somewhat flexible term, but the use of this option will probably lead
+   to less output.                        The default is Y(es).
+
+OMIT_ARCHAIC_HELP :
+   THIS OPTION IS CAN ONLY BE ACTIVE IF WORDS_MODE(TRIM_OUTPUT) IS SET!
+   This option instructs the program to omit inflections and dictionary
+   entries with an AGE code of A (Archaic).  Archaic results are rarely
+   of interest in general use.  If there is no other possible form, then
+   the Archaic (roughly defined) will be reported.  The default is Y(es).
+
+
+OMIT_MEDIEVAL_HELP :
+   THIS OPTION IS CAN ONLY BE ACTIVE IF WORDS_MODE(TRIM_OUTPUT) IS SET!
+   This option instructs the program to omit inflections and dictionary
+   entries with AGE codes of E or later, those not in use in Roman times.
+   While later forms and words are a significant application, most users
+   will not want them.  If there is no other possible form, then the
+   Medieval (roughly defined) will be reported.   The default is Y(es).
+
+OMIT_UNCOMMON_HELP :
+   THIS OPTION IS CAN ONLY BE ACTIVE IF WORDS_MODE(TRIM_OUTPUT) IS SET!
+   This option instructs the program to omit inflections and dictionary
+   entries with FREQ codes indicating that the selection is uncommon.
+   While these forms area significant feature of the program, many users
+   will not want them.  If there is no other possible form, then the
+   uncommon (roughly defined) will be reported.   The default is Y(es).
+
+DO_I_FOR_J_HELP :
+   This option instructs the program to modify the output so that the j/J
+   is represented as i/I.  The consonant i was writen as j in cursive in
+   Imperial times and called i longa, and often rendered as j in medieval
+   times.  The capital is usually rendered as I, as in inscriptions.
+   If this is NO/FALSE, the output will have the same character as input.
+   The program default, and the dictionary convention is to retain the j.
+   Reset if this ia unsuitable for your application. The default is N(o).
+
+DO_U_FOR_V_HELP :
+   This option instructs the program to modify the output so that the u
+   is represented as v.  The consonant u was writen sometimes as uu.
+   The pronounciation was as current w, and important for poetic meter.
+   With the printing press came the practice of distinguishing consonant
+   u with the character v, and was common for centuries.  The practice of
+   using only u has been adopted in some 20th century publications (OLD),
+    but it is confusing to many modern readers.  The capital is commonly
+   V in any case, as it was and is in inscriptions (easier to chisel).
+   If this is NO/FALSE, the output will have the same character as input.
+   The program default, and the dictionary convention is to retain the v.
+   Reset If this ia unsuitable for your application. The default is N(o).
+
+
+
+PAUSE_IN_SCREEN_OUTPUT_HELP :
+   This option instructs the program to pause in output on the screen
+   after about 16 lines so that the user can read the output, otherwise
+   it would just scroll off the top.  A RETURN/ENTER gives another page.
+   If the program is waiting for a return, it cannot take other input.
+   This option is active only for keyboard entry or command line input,
+   and only when there is no output file.  It is moot if only single word
+   input or brief output.                 The default is Y(es).
+
+
+SAVE_PARAMETERS_HELP :
+   This option instructs the program, to save the current parameters, as
+   just established by the user, in a file WORD.PAR.  If such a file
+   exists, the program will load those parameters at the start.  If no
+   such file can be found in the current subdirectory, the program will
+   start with a default set of parameters.  Since this parameter file is
+   human-readable ASCII, it may also be created with a text editor.  If
+   the file found has been improperly created, is in the wrong format, or
+   otherwise uninterpretable by the program, it will be ignored and the
+   default parameters used, until a proper parameter file in written by
+   the program.  Since one may want to make temporary changes during a
+   run, but revert to the usual set, the default is N(o).
+</TT></PRE>
+
+<BR>
+<A NAME="Program source code"><H4>Program source code</H4></A>
+
+
+<P>
+The program is written in Ada, and is machine independent.
+Ada source code is available for compiling onto other machines.
+
+
 
 <BR>
 
@@ -1674,7 +1990,7 @@ OLD has a conp- for almost every comp- (except derivatives from como).
 Rare exceptions seem to be
 rare words for which few examples (or only one) exist.
 Even in some of these cases, OLD (mechanically?) gives two forms.
-L&amp;S follows the same
+L+S follows the same
 pattern, except for words of late Latin (which would not be found
 in OLD).  It is presumed that the general practice in later times was
 always to use comp-, and the program dictionary follows that.
@@ -1771,7 +2087,7 @@ The reason for this is (besides uniformity in the program) that
 there is much computer processing and checking of the dictionary data,
 including spell-checking of the English.  (This is not to say that
 everything is correct, but it is much better than it would be without
-the computer checking.)  All my programs speak US English. so I can
+the computer checking.)  All my programs speak US English, so I can
 count on it.  Only some are available in UK English, and I do not
 have all of those versions.
 
@@ -1834,7 +2150,7 @@ There is no longer any need for the user to set modes for this process.
 A similar situation arises with I, and its consonant form, J.
 In this instance, the common practice is use only I, but there are
 many counter-examples, both text and dictionaries.
-(Lewis & Short uses J, but OLD does not.)
+(Lewis + Short uses J, but OLD does not.)
 Because of common practice, the program started out as pure-I dictionary
 with conversion of J-to-I on input.
 It remained that way through many versions, in spite of the logical
@@ -2094,7 +2410,7 @@ Most of these words are of Greek origin (although that
 is also true for much of Latin).  For many, the dictionaries report different
 forms or declensions for the word giving the same citation.  Often one
 dictionary will give a Greek-like form (-os, -on) where another gives
-a Latinized form (-us).  There is no consistency.  Both OLD and L&amp;S
+a Latinized form (-us).  There is no consistency.  Both OLD and L+S
 disagree on Latin and Greek forms, with no overwhelming favoritism
 to one form attached to either dictionary.  This may be a reflection
 of the fact that the dictionaries grew over a long time with several
@@ -2114,7 +2430,7 @@ The present dictionary, in blessed innocence, records all forms without bias.
     C,    --  common      --  For Dictionary, in top 10,000 words
     D,    --  lesser      --  For Dictionary, in top 20,000 words
     E,    --  uncommon    --  2 or 3 citations
-    F,    --  very rare   --  Only one citation in OLD or L&S
+    F,    --  very rare   --  Only one citation in OLD or L+S
     I,    --  inscription --  Presently not much used
     M,    --  graffiti    --  Presently not much used
     N     --  Pliny       --  Things that may appear only in Pliny
@@ -2182,13 +2498,13 @@ extensively used.  Others have only been used for an occasional check
 
 <PRE><TT>  type SOURCE_TYPE is (
        X,      --  General or unknown or too common to say
-       A,      --  Allen & Greenough, New Latin Grammar, 1888
+       A,      --  Allen + Greenough, New Latin Grammar, 1888
        B,      --  J.T.Bretzke, Consecrated Phrases: Theolog Dict
        C,      --  Cassell's Latin Dictionary 1968
        D,      --  J.N.Adams, Latin Sexual Vocabulary, 1982
        E,      --  L.F.Stelten, Dictionary of Eccles. Latin, 1995
        F,      --  Roy J. Deferrari, Dictionary of St. Thomas Aquinas, 1960
-       G,      --  Gildersleeve & Lodge, Latin Grammar 1895
+       G,      --  Gildersleeve + Lodge, Latin Grammar 1895
        H,      --  Harrington/Pucci/Elliott, Medieval Latin 2nd Ed 1997
        I,      --  Leverett, F.P., Lexicon of the Latin Language, Boston 1845
        K,      --  W. M. Lindsay, Short Historical Latin Grammar, 1895
@@ -2205,7 +2521,7 @@ extensively used.  Others have only been used for an occasional check
        Y       --  Niermeyer, Mediae Latinitatis Lexicon Minus
        Z       --  Sent by user --  no dictionary reference
                --  also used but no code
-               --  Liddell & Scott Greek-English Lexicon
+               --  Liddell + Scott Greek-English Lexicon
                        );</TT></PRE>
 
 <H5>SPECIAL CONVENTIONS</H5>
@@ -2259,20 +2575,34 @@ source, or in the definition itself.
 
 
 <P>
-L&amp;S is used for later Latin and to check OLE work.
-This started with the thought that if a word was in L&amp;S but not in OLE
+L+S is used for later Latin and to check OLE work.
+This started with the thought that if a word was in L+S but not in OLE
 it must be later Latin, beyond the range of OLD.
-I was surprised at how many words with classical citations were in L&amp;S
+I was surprised at how many words with classical citations were in L+S
 but not in OLD, and how many are of different spelling.
 
 <P>
 The refinement is proceeding one letter at a time, as is the tradition
-for all great dictionaries.  First stage refinement has proceeded through B.
+for all great dictionaries.  First stage refinement has proceeded through COQ.
+
+<A NAME="Testing">
+<H4>Testing</H4></A>
+
+<P>The program has been run against a few common classical texts.  Initially
+this was mostly a check of the process and reliability of the program.
+It is now possible to run real texts and get valid statistics.
+The current program/dictionary has been run against 275,000 words
+of Caesar, Suetonius, Varro, and Virgil.  For this set of texts only
+0.2% of the words are reported as UNKNOWN (excluding proper names).
+While this is a mechanical test and does not assure that the form
+and meaning reported by the program is correct, the actual number of
+misses found by limited detailed examination is vanishingly small.
 
 <P>
-The hardest test is against another dictionary.  While getting a 97%+
+The hardest test is against another dictionary.  While getting a 97+%
 hit rate on long classical texts, a run against a large dictionary
-might fall to 85%.  This is to be expected, since we both have the 10000
+might fall to 85-90%, the missing words being in those letters which the
+update has not reached.  This is to be expected, since we both have the 10000
 most common words and have made somewhat different additions beyond
 that.  So large electronic wordlists are a check on the
 program, and are reserved for that purpose, not simply incorporated as such.
@@ -2302,7 +2632,7 @@ some growth in medieval Latin entries.
 
 <P>
 I will continue to refine the dictionary and the program.  The major
-goal is to complete the inclusion of OLD and L&S, and this may take years.
+goal is to complete the inclusion of OLD and L+S, and this may take years.
 Along the way, and later, I will expand to medieval Latin.  I am not
 so unrealistic as to believe that I will 'finish', indeed, this is a
 hobby and there is no advantage to finishing.
@@ -2439,7 +2769,7 @@ for masculine and feminine.
 <P>Each noun has a GENDER_TYPE (X, M, F, N, C).
 X for unknown (something I avoid for gender - guess if you have to)
 or all genders (useful in the code but not in a dictionary),
-and C for common (M & F).
+and C for common (M + F).
 
 
 <P>There is also a
@@ -2616,7 +2946,7 @@ http://www.erols.com/whitaker/inflects.
 --  Ex: ager agri   =>  ager agr
 
 --  Early (BC) 2nd declension nouns in ius/ium (not filius-like)  - N 2 4
---  for the most part formed GEN S in 'i', not 'ii'   --  G&L 33 R 1
+--  for the most part formed GEN S in 'i', not 'ii'   --  G+L 33 R 1
 --  Dictionaries often show as ...(i)i
 --  N 2 4 uses GENDER discrimination to reduce to single VAR
 --  Ex: radius rad(i)i  => radi radi        M
@@ -2639,13 +2969,13 @@ http://www.erols.com/whitaker/inflects.
 --  Ex: iter itineris =>  iter itiner
 --  Ex: tempus temporis  =>  tempus  tempor
 
---  Third declension nouns  I-stems (M & F)     - N 3 3
+--  Third declension nouns  I-stems (M + F)     - N 3 3
 --  Ex: hostis hostis  =>  hostis host
 --  Ex: finis finis  =>  finis fin
 --  Consonant i-stems
 --  Ex: urbs urbis  =>  urbs urb
 --  Ex: mons montis  =>  mons mont
---  Also use this for present participles (-ns) used as substantives in M & F
+--  Also use this for present participles (-ns) used as substantives in M + F
 
 --  Third declension nouns  I-stems (N)    - N 3 4
 --  Ex: mare amris  =>  mare mar                       --  ending in "e"
@@ -2654,7 +2984,7 @@ http://www.erols.com/whitaker/inflects.
 --  Also use this for present participles (-ns) used as substantives in N
 
 
---  Fourth declension nouns M & F in "us"  - N 4 1
+--  Fourth declension nouns M + F in "us"  - N 4 1
 --  Ex: passus passus  =>  pass pass
 --  Ex: manus manus  =>  man man
 
@@ -2723,7 +3053,7 @@ http://www.erols.com/whitaker/inflects.
 
 --  Verbs of the third conjugation, variant 1  - V 3 1
 --  Ex: rego regere rexi rectum  =>  reg reg rex rect
---  Ex: pono ponoere posui positus  =>  pon pon posu posit
+--  Ex: pono ponere posui positus  =>  pon pon posu posit
 --  Ex: capio capere cepi captus  => capi cap cep capt   --  I-stem too w/KEY
 
 
@@ -2971,7 +3301,7 @@ in the results or their display, or if your favorite word is omitted
 from the dictionary, let me know.
 
 <P>
-PLEASE comment and check back for new versions releases.
+PLEASE comment and check back for new version releases.
 <P>
 Contact
 <A HREF="mailto:whitaker@erols.com"> <B>whitaker@erols.com</B></A>,
