@@ -160,8 +160,8 @@
         end record;
       NULL_STEM_INFLECTION_RECORD : STEM_INFLECTION_RECORD;
       
-      STEM_INFLECTION_ARRAY_SIZE       : constant := 60;
-      STEM_INFLECTION_ARRAY_ARRAY_SIZE : constant := 60;
+      STEM_INFLECTION_ARRAY_SIZE       : constant := 10;
+      STEM_INFLECTION_ARRAY_ARRAY_SIZE : constant := 40;
       type STEM_INFLECTION_ARRAY is array (INTEGER range <>) of STEM_INFLECTION_RECORD;
       type STEM_INFLECTION_ARRAY_ARRAY is array (INTEGER range <>)
                               of STEM_INFLECTION_ARRAY(1..STEM_INFLECTION_ARRAY_SIZE);
@@ -180,7 +180,7 @@
                                   := (X, NULL_MNPC, NULL_DICTIONARY_ENTRY);
       DM, ODM : DICTIONARY_MNPC_RECORD := NULL_DICTIONARY_MNPC_RECORD;
       
-      DICTIONARY_MNPC_ARRAY_SIZE : constant := 60;
+      DICTIONARY_MNPC_ARRAY_SIZE : constant := 40;
       
       type DICTIONARY_MNPC_ARRAY is array (1..DICTIONARY_MNPC_ARRAY_SIZE)
                                        of DICTIONARY_MNPC_RECORD;
@@ -563,7 +563,7 @@ end PRINT_MODIFIED_QUAL;
 --for I in 1..PA_LAST  loop
 --PARSE_RECORD_IO.PUT(PA(I)); TEXT_IO.NEW_LINE;
 --end loop;
-      
+--      
          if (TEXT_IO.NAME(TEXT_IO.CURRENT_OUTPUT) = 
              TEXT_IO.NAME(TEXT_IO.STANDARD_OUTPUT))  then
            MM := MAX_MEANING_PRINT_SIZE;   --  to keep from overflowing screen line
@@ -673,38 +673,38 @@ end PRINT_MODIFIED_QUAL;
 --               --  Does STATS
 --      
 ----TEXT_IO.PUT_LINE("Before STATING FIXES");
---     if  WORDS_MDEV(WRITE_STATISTICS_FILE)    then      --  Omit rest of output
---            
---       for I in 1..PA_LAST  loop                       --  Just to PUT_STAT
---         if (PA(I).D_K = ADDONS)  then
---           if PA(I).IR.QUAL.POFS = PREFIX  then
---             PUT_STAT("ADDON PREFIX at "
---                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
---                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM);
---           elsif PA(I).IR.QUAL.POFS = SUFFIX  then
---             PUT_STAT("ADDON SUFFIX at "
---                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
---                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM);
---           elsif PA(I).IR.QUAL.POFS = TACKON  then
---             PUT_STAT("ADDON TACKON at "
---                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
---                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM);
---           end if;
---         end if;
---       end loop;
---         
---       
+     if  WORDS_MDEV(WRITE_STATISTICS_FILE)    then      --  Omit rest of output
+            
+       for I in 1..PA_LAST  loop                       --  Just to PUT_STAT
+         if (PA(I).D_K = ADDONS)  then
+           if PA(I).IR.QUAL.POFS = PREFIX  then
+             PUT_STAT("ADDON PREFIX at "
+                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
+                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM & "  " & INTEGER'IMAGE(INTEGER(PA(I).MNPC)));
+           elsif PA(I).IR.QUAL.POFS = SUFFIX  then
+             PUT_STAT("ADDON SUFFIX at "
+                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
+                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM & "  " & INTEGER'IMAGE(INTEGER(PA(I).MNPC)));
+           elsif PA(I).IR.QUAL.POFS = TACKON  then
+             PUT_STAT("ADDON TACKON at "
+                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
+                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM & "  " & INTEGER'IMAGE(INTEGER(PA(I).MNPC)));
+           end if;
+         end if;
+       end loop;
+         
+       
 ----    --  Just to find the words with long/complicated output at the LIST level 
 ----    --  This is done with the final PA_LAST, after SWEEP
 ----       if PA_LAST > FINAL_PA_LAST_MAX   then
 ----         PUT_STAT("$FINAL_PA_LAST_MAX    for RAW_WORD " & HEAD(RAW_WORD, 24) & "   = " & INTEGER'IMAGE(PA_LAST));
 ----         FINAL_PA_LAST_MAX := PA_LAST;
 ----       end if;
---       
---     end if;
---                  
---         
---         
+       
+     end if;
+                  
+         
+         
          
        
          
@@ -748,7 +748,7 @@ when N  =>
     else
       K := K + 1;              --  K indexes within the MNPCA array  - Next MNPC
 --TEXT_IO.PUT_LINE("Continuing IRA for N  I = " & INTEGER'IMAGE(I) & "   K = " & INTEGER'IMAGE(K)
---                                                                      & "   J = " & INTEGER'IMAGE(J));
+--                                                                 & "   J = " & INTEGER'IMAGE(J));
       SRAA(J)(K) := (PA(I).STEM, PA(I).IR);
     end if;
 
@@ -939,20 +939,18 @@ when PRON  =>
     exit;                    --  Since Other is only one, don't loop
   end loop;    
  
-    
   end case;
-      
---      
---  --  This just for developer test, will be commented out   
---  if J > SRAA_MAX  then 
---    SRAA_MAX := J;
---PUT_STAT("*SRAA_MAX  for RAW_WORD " & HEAD(RAW_WORD, 24) & "   = " & INTEGER'IMAGE(SRAA_MAX));
---  end if;
---  if K > DMA_MAX  then 
---    DMA_MAX := K;
---PUT_STAT("*SMNPCA_MAX for RAW_WORD " & HEAD(RAW_WORD, 24) & "   = " & INTEGER'IMAGE(DMA_MAX));
---  end if;
---  
+
+        
+  --  This just for developer test, will be commented out   
+  if K > SRA_MAX  then 
+    SRA_MAX := K;
+PUT_STAT("*SRA_MAX for RAW_WORD " & HEAD(RAW_WORD, 26) & "   = " & INTEGER'IMAGE(SRA_MAX));
+  end if;
+  if J > DMA_MAX  then 
+    DMA_MAX := J;
+PUT_STAT("*DMA_MAX for RAW_WORD " & HEAD(RAW_WORD, 26) & "   = " & INTEGER'IMAGE(DMA_MAX));
+  end if;
   
 end loop CYCLE_OVER_PA;
 
@@ -980,7 +978,7 @@ end loop CYCLE_OVER_PA;
 --         end if;
 --       end loop;
 --     end loop;  
-
+--
 
 
 
@@ -1026,32 +1024,32 @@ end loop CYCLE_OVER_PA;
       
 --TEXT_IO.PUT_LINE("Before STATING FIXES");
      if  WORDS_MDEV(WRITE_STATISTICS_FILE)    then      --  Omit rest of output
-            
-       for I in 1..PA_LAST  loop                       --  Just to PUT_STAT
-         if (PA(I).D_K = ADDONS)  then
-           if PA(I).IR.QUAL.POFS = PREFIX  then
-             PUT_STAT("ADDON PREFIX at "
-                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
-                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM);
-           elsif PA(I).IR.QUAL.POFS = SUFFIX  then
-             PUT_STAT("ADDON SUFFIX at "
-                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
-                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM);
-           elsif PA(I).IR.QUAL.POFS = TACKON  then
-             PUT_STAT("ADDON TACKON at "
-                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
-                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM);
-           end if;
-         end if;
-       end loop;
+--            
+--       for I in 1..PA_LAST  loop                       --  Just to PUT_STAT
+--         if (PA(I).D_K = ADDONS)  then
+--           if PA(I).IR.QUAL.POFS = PREFIX  then
+--             PUT_STAT("ADDON PREFIX at "
+--                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
+--                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM);
+--           elsif PA(I).IR.QUAL.POFS = SUFFIX  then
+--             PUT_STAT("ADDON SUFFIX at "
+--                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
+--                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM);
+--           elsif PA(I).IR.QUAL.POFS = TACKON  then
+--             PUT_STAT("ADDON TACKON at "
+--                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
+--                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM);
+--           end if;
+--         end if;
+--       end loop;
          
        
 --    --  Just to find the words with long/complicated output at the LIST level 
 --    --  This is done with the final PA_LAST, after SWEEP
---       if PA_LAST > FINAL_PA_LAST_MAX   then
---         PUT_STAT("$FINAL_PA_LAST_MAX    for RAW_WORD " & HEAD(RAW_WORD, 24) & "   = " & INTEGER'IMAGE(PA_LAST));
---         FINAL_PA_LAST_MAX := PA_LAST;
---       end if;
+       if PA_LAST > FINAL_PA_LAST_MAX   then
+         PUT_STAT("$FINAL_PA_LAST_MAX    for RAW_WORD " & HEAD(RAW_WORD, 24) & "   = " & INTEGER'IMAGE(PA_LAST));
+         FINAL_PA_LAST_MAX := PA_LAST;
+       end if;
        
      end if;
                   
@@ -1197,7 +1195,7 @@ if PA_LAST = 0   then
         end loop OUTPUT_LOOP;
  --TEXT_IO.PUT_LINE("Finished OUTPUT_LOOP");
         
- if TRIMMED  THEN
+ if TRIMMED  then
      PUT(OUTPUT, '*');
  end if;
  TEXT_IO.NEW_LINE(OUTPUT);
@@ -1377,7 +1375,7 @@ end LIST_STEMS;
            MM := MAX_MEANING_SIZE;
          end if;
          
-         UNKNOWN_SEARCH(INPUT_WORD, UNK_MNPC);
+         UNKNOWN_SEARCH(HEAD(INPUT_WORD, MAX_STEM_SIZE), UNK_MNPC);
 --TEXT_IO.PUT_LINE("UNK_MNPC = " & INTEGER'IMAGE(INTEGER(UNK_MNPC)));
       TEXT_IO.PUT_LINE(OUTPUT, 
         "----------  Entries in GENEAL Dictionary around the UNKNOWN  ----------");

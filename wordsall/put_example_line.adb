@@ -308,11 +308,26 @@ when VPAR =>
     when FUT   => 
       if IR.QUAL.VPAR.TENSE_VOICE_MOOD.VOICE = ACTIVE  then
         TEXT_IO.PUT(OUTPUT, 
-               "about to ~  FUT ACTIVE PPL often used as ADJ or N");
+               "about to ~  FUT ACTIVE PPL often used as ADJ or N ");
         TEXT_IO.NEW_LINE(OUTPUT);
       else
-        TEXT_IO.PUT(OUTPUT, 
-               "to(/must) be ~ed  FUT PASSIVE PPL often used as ADJ or N ");
+        case IR.QUAL.VPAR.CS is
+          when GEN =>
+             TEXT_IO.PUT(OUTPUT, 
+               "to(/must) be ~ed  FUT PASSIVE PPL, often used as gerund or gerundive (of ~ing)");
+          when DAT =>
+             TEXT_IO.PUT(OUTPUT, 
+               "to(/must) be ~ed  FUT PASSIVE PPL, often used as gerund or gerundive (to/for ~ing)");
+          when ABL =>
+             TEXT_IO.PUT(OUTPUT, 
+               "to(/must) be ~ed  FUT PASSIVE PPL, often used as gerund or gerundive (by/in ~ing)");
+          when ACC =>
+             TEXT_IO.PUT(OUTPUT, 
+               "to(/must) be ~ed  FUT PASSIVE PPL, often used as gerund or gerundive (for ~ing/to ~)");
+          when others =>
+            TEXT_IO.PUT(OUTPUT, 
+               "to(/must) be ~ed  FUT PASSIVE PPL, often used as gerund or gerundive (~ing)");
+        end case;
         TEXT_IO.NEW_LINE(OUTPUT);
       end if;
     when others  => 

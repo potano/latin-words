@@ -1051,6 +1051,15 @@ PRON 4 1 X
 --
 --  TACKONS  --  that are not PACKONS -- not w/qu PRONS
 --
+TACKON pte           
+ADJ 1 0 POS    
+TACKON ! (emphatic particle w/personal ADJ); (usually with ABL, suapte);
+TACKON pte           
+PRON 4 0 PERS  
+TACKON ! (emphatic particle w/personal PRON); (usually with ABL, mepte);
+TACKON pte           
+PRON 5 0 PERS  
+TACKON ! (emphatic particle w/personal PRON); (usually with ABL, mepte);
 TACKON ce            
 PRON 3 1 ADJECT
 TACKON w/hic this

@@ -99,7 +99,7 @@ package DICTIONARY_PACKAGE is
        U,      --  Du Cange            
        V,      --  Vademecum in opus Saxonis - Franz Blatt (Saxo)
        W,      --  My personal guess   
-       Y,      --  Niermeyer, Mediae Latinitatis Lexicon Minus
+       Y,      --  
        Z       --  Sent by user --  no dictionary reference
          
                --  Consulted but used only indirectly

@@ -48,12 +48,11 @@ package body WORD_PARAMETERS is
 
 TRIM_OUTPUT_HELP : constant HELP_TYPE :=  (
    "This option instructs the program to remove from the output list of   ",
-   "possible constructs those which are least likely.  At the present     ",
-   "stage, there is not much trimming except for removing Uncommon and    ",
+   "possible constructs those which are least likely.  There is now a fair",
+   "amount of trimming, killing LOC and VOC plus removing Uncommon and    ",
    "non-classical (Archaic/Medieval) when more common results are found   ",
-   "and this action is requested (MDEV), however, if the program grows    ",
-   "more powerful this may be a useful option.  A newly added trim is to  ",
-   "ignore enclitics if a normal word is found.  This may be excessive.   ",
+   "and this action is requested (turn it off in MDV (!) parameters).     ",
+   "When a TRIM has been done, the output is followed by an asterix (*).  ",
    "There certainly is no absolute assurence that the items removed are   ",
    "not correct, just that they are statistically less likely.            ",
    "                      Since little is now done, the default is Y(es)  " );
@@ -91,7 +90,7 @@ DO_UNKNOWNS_ONLY_HELP : constant HELP_TYPE :=  (
    "MINIMIZE_OUTPUT option, just producing a list.  Another use is to run ",
    "without MINIMIZE to an output file.  This gives a list of the input   ",
    "text with the unknown words, by line.  This functions as a spelling   ",
-   "checker for Latin.  The default is N(o).                              " );
+   "checker for Latin texts.  The default is N(o).                        " );
 
 WRITE_UNKNOWNS_TO_FILE_HELP : constant HELP_TYPE :=  (
    "This option instructs the program to write all unresolved words to a  ",
@@ -201,16 +200,9 @@ DO_ONLY_MEANINGS_HELP : constant HELP_TYPE :=  (
 DO_STEMS_FOR_UNKNOWN_HELP : constant HELP_TYPE :=  (
    "This option instructs the program, when it is unable to find a proper ",
    "match in the dictionary, and after various prefixes and suffixes, to  ",
-   "try even dirtier tricks, specifically to try all the dictionary stems ",
-   "that it finds that fit the letters, independent of whether the endings",
-   "match the parts of speech to which the stems are assigned.  This will ",
+   "list the dictionary entries around the unknown.  This will likely     ",
    "catch a substantive for which only the ADJ stem appears in dictionary,",
-   "an ADJ for which there is only a N stem, etc.  It will also list the  ",
-   "various endings that match the end of the input word.  A certain      ",
-   "amount of weeding has been done, so only reasonably common endings    ",
-   "are quoted, and these are lumped together masking declension, etc.    ",
-   "Only N, ADJ, and V endings are given, LOC and VOC omitted, etc.       ",
-   "The user can then make his own judgement.      This option should     ",
+   "an ADJ for which there is only a N stem, etc.  This option should     ",
    "probably only be used with individual UNKNOWN words, and off-line     ",
    "from full translations, therefore the default choice is N(o).         ",
    "This processing can be turned on with the choice of Y(es).            " );

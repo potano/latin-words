@@ -197,11 +197,13 @@ N     2 4 GEN S X  2 0           B A
 --  Second declension special nouns in "ius", "filius" and proper names 
 --  Stem includes "i" mostly, loses the "i" in the VOC and GEN
 --  Note that the "i" is kept in plural
+--  I know of only male entries for this variant
 --  Ex: filius fili  =>  fili  fili  --  but is very special case
 --  Ex: Lucius Lucii  =>  Luci  Luci
-N     2 5 NOM S C  1 2 us        X A
-N     2 5 VOC S C  1 0           X A
-N     2 5 GEN S C  2 0           X A
+N     2 5 NOM S M  1 2 us        X A
+N     2 5 VOC S M  1 0           X A
+N     2 5 GEN S M  2 0           X A
+N     2 5 GEN S M  2 1 i         E A   --  Later Latin has filii
 
 
 
@@ -2165,6 +2167,7 @@ VPAR 3 0 VOC P N PRES ACTIVE  PPL 1 5 entia        X A
 --  This is pushing it, TO_BE is not supposed to have this one
 --  but I find examples in St Augustine - "being", maybe special meaning
 VPAR 5 1 NOM S X PRES ACTIVE  PPL 2 3 ens          X A
+VPAR 5 1 NOM S X PRES ACTIVE  PPL 2 3 ens          X A
 VPAR 5 1 GEN S X PRES ACTIVE  PPL 2 5 entis        X A
 VPAR 5 1 DAT S X PRES ACTIVE  PPL 2 4 enti         X A
 VPAR 5 1 ACC S C PRES ACTIVE  PPL 2 5 entem        X A
@@ -2252,6 +2255,17 @@ VPAR 6 2 ACC S N PRES ACTIVE  PPL 1 3 ens          X A
 VPAR 6 2 NOM P N PRES ACTIVE  PPL 1 5 entia        X A
 VPAR 6 2 ACC P N PRES ACTIVE  PPL 1 5 entia        X A
 VPAR 6 2 VOC P N PRES ACTIVE  PPL 1 5 entia        X A
+
+
+
+--  I see examples of inquam having a VPAR PRES (1 Chro 22:18, Mark 12:26)
+--  Only NOM S, but I include a P for completeness.  Key kludged.
+--  It is translated "saying", postpositive, introducing a quote.
+VPAR 7 2 NOM S X PRES ACTIVE  PPL 1 3 ens          E A
+
+VPAR 7 2 NOM P C PRES ACTIVE  PPL 1 5 entes        E A
+
+
 
 
 VPAR 0 0 NOM S M PERF PASSIVE PPL 4 2 us           X A
@@ -2851,6 +2865,8 @@ PRON  6 0 ABL P N   1 2 is                          X A
 
 
 --  Ex: ipse ipsa ipsum  =>  ips
+PRON  6 2 NOM S M   1 2 us                          X C   --  OLD ipse
+PRON  6 2 NOM S M   1 2 os                          B E   --  OLD ipse
 PRON  6 2 NOM S N   1 2 um                          X A
 PRON  6 2 ACC S N   1 2 um                          X A
 

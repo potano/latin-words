@@ -14,6 +14,18 @@ package INFLECTIONS_PACKAGE is
   subtype STEM_TYPE is STRING(1..MAX_STEM_SIZE);
   NULL_STEM_TYPE : constant STEM_TYPE := (others => ' ');
 
+  package STEM_TYPE_IO is
+    DEFAULT_WIDTH : NATURAL := MAX_STEM_SIZE;
+    procedure GET(F : in FILE_TYPE; D : out STEM_TYPE);
+    procedure GET(D : out STEM_TYPE);
+    procedure PUT(F : in FILE_TYPE; D : in STEM_TYPE);
+    procedure PUT(D : in STEM_TYPE);
+    procedure GET(S : in STRING; D : out STEM_TYPE; 
+                                 LAST : out INTEGER);
+    procedure PUT(S : out STRING; D : in STEM_TYPE);  
+  end STEM_TYPE_IO;  
+  
+  
   subtype MEANING_TYPE is STRING(1..MAX_MEANING_SIZE);
   NULL_MEANING_TYPE : constant MEANING_TYPE := (others => ' ');
 

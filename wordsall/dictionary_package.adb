@@ -85,20 +85,14 @@ package body DICTIONARY_PACKAGE is
 
     procedure GET(S : in STRING; PR : out PARSE_RECORD; LAST : out INTEGER) is
       L : INTEGER := S'FIRST - 1;
-      M : INTEGER := 0;
     begin
-      M := L + MAX_STEM_SIZE;
-      PR.STEM := S(L+1..M);
-      L := M + 1;
-      M := L + INFLECTION_RECORD_IO.DEFAULT_WIDTH;
+      STEM_TYPE_IO.GET(S, PR.STEM, L);
+      L := L + 1;
       GET(S(L+1..S'LAST), PR.IR, L);
-      L := M + 1;
-      M := L + DICTIONARY_KIND_IO.DEFAULT_WIDTH;
+      L := L + 1;
       GET(S(L+1..S'LAST), PR.D_K, L);
-      L := M + 1;
-      M := L + MNPC_IO_DEFAULT_WIDTH    ;
-      GET(S(L+1..S'LAST), PR.MNPC, L);
-      LAST := M;
+      L := L + 1;
+      GET(S(L+1..S'LAST), PR.MNPC, LAST);
     end GET;
 
     procedure PUT(S : out STRING; PR : in PARSE_RECORD) is
@@ -1348,26 +1342,25 @@ package body TRANSLATION_RECORD_IO is
 
     procedure GET(S : in STRING; TR : out TRANSLATION_RECORD; LAST : out INTEGER) is
       L : INTEGER := S'FIRST - 1;
-      M : INTEGER := 0;
     begin
-      M := L + AGE_TYPE_IO.DEFAULT_WIDTH;
       GET(S(L+1..S'LAST), TR.AGE, L);
-      L := M + 1;
-      M := L + AREA_TYPE_IO.DEFAULT_WIDTH;
+--PUT(TR.AGE); TEXT_IO.PUT('-');
+      L := L + 1;
       GET(S(L+1..S'LAST), TR.AREA, L);
-      L := M + 1;
-      M := L + GEO_TYPE_IO.DEFAULT_WIDTH;
+--PUT(TR.AREA); TEXT_IO.PUT('-');
+       L := L + 1;
       GET(S(L+1..S'LAST), TR.GEO, L);
-      L := M + 1;
-      M := L + FREQUENCY_TYPE_IO.DEFAULT_WIDTH;
+--PUT(TR.GEO); TEXT_IO.PUT('-');
+       L := L + 1;
       GET(S(L+1..S'LAST), TR.FREQ, L);
-      L := M + 1;
-      M := L + SOURCE_TYPE_IO.DEFAULT_WIDTH;
-      GET(S(L+1..S'LAST), TR.SOURCE, L);
+ --PUT(TR.FREQ); TEXT_IO.PUT('-');
+      L := L + 1;
+      GET(S(L+1..S'LAST), TR.SOURCE, LAST);
+ --PUT(TR.SOURCE); TEXT_IO.PUT('-');
       --L := M + 1;
       --M := L + MAX_MEANING_SIZE;
       --TR.MEAN := HEAD(S(L+1..S'LAST), MAX_MEANING_SIZE);
-      LAST := M;
+      --LAST := M;
     end GET;
 
     procedure PUT(S : out STRING; TR : in TRANSLATION_RECORD) is
@@ -1478,24 +1471,28 @@ package body DICTIONARY_ENTRY_IO is
   procedure GET(S : in STRING; D : out DICTIONARY_ENTRY; LAST : out INTEGER) is
     L : INTEGER := S'FIRST - 1;
     M : INTEGER := 0;
+    I : INTEGER := 0;
   begin
     for I in 1..4  loop
-      M := L + MAX_STEM_SIZE;
-      D.STEMS(I) := S(L+1..M);
-      L := L + 1;
+      STEM_TYPE_IO.GET(S(L+1..S'LAST), D.STEMS(I), L);
     end loop;
-    M := L + PART_ENTRY_IO.DEFAULT_WIDTH;
     GET(S(L+1..S'LAST), D.PART, L);
     L := L + 1;
-    M := L + KIND_ENTRY_IO_DEFAULT_WIDTH;
     GET(S(L+1..S'LAST), D.PART.POFS, D.KIND, L);
     L := L + 1;
-    M := L + TRANSLATION_RECORD_IO.DEFAULT_WIDTH;
     GET(S(L+1..S'LAST), D.TRAN, L);
     L := L + 1;
-    M := L + MAX_MEANING_SIZE;
     D.MEAN := HEAD(S(L+1..S'LAST), MAX_MEANING_SIZE);
-    LAST := M;
+    I := L+1;
+    while S(I) = ' ' loop
+      I := I + 1;
+    end loop;
+    while (S(I) not in 'A'..'Z') and 
+          (S(I) not in 'a'..'z')     loop
+      LAST := I;
+      I := I + 1;
+      exit;
+    end loop;     
   end GET;
 
   procedure PUT(S : out STRING; D : in DICTIONARY_ENTRY) is

@@ -365,8 +365,74 @@ LEFT.V.TENSE_VOICE_MOOD.MOOD   = RIGHT.V.TENSE_VOICE_MOOD.MOOD   and then
       return FALSE;
     end if;
   end "<=";
+  
+  
+  
 
-
+package body STEM_TYPE_IO is
+    procedure GET(F : in FILE_TYPE; D : out STEM_TYPE) is
+      C : CHARACTER := ' ';
+    begin
+      D := NULL_STEM_TYPE;
+      for I in 1..STEM_TYPE_IO.DEFAULT_WIDTH  loop
+        GET(F, C);
+        if (C not in 'A'..'Z') and (C not in 'a'..'z')  then
+          exit;
+        else 
+          D(I) := C;
+        end if;
+      end loop;
+    end GET;
+        
+            
+    procedure GET(D : out STEM_TYPE) is
+      C : CHARACTER := ' ';
+    begin
+      D := NULL_STEM_TYPE;
+      for I in 1..STEM_TYPE_IO.DEFAULT_WIDTH  loop
+        TEXT_IO.GET(C);
+        if (C not in 'A'..'Z') and (C not in 'a'..'z')  then
+          exit;
+        else 
+          D(I) := C;
+        end if;
+      end loop;
+    end GET;
+    
+    procedure PUT(F : in FILE_TYPE; D : in STEM_TYPE) is
+    begin 
+      TEXT_IO.PUT(F, D);
+    end PUT;
+      
+    procedure PUT(D : in STEM_TYPE) is
+    begin 
+      TEXT_IO.PUT(D);
+    end PUT;
+      
+    procedure GET(S : in STRING; D : out STEM_TYPE; 
+                                 LAST : out INTEGER) is
+      C : CHARACTER;
+    begin 
+      D := NULL_STEM_TYPE;
+      LAST := 0;
+      for I in 1..STEM_TYPE_IO.DEFAULT_WIDTH  loop
+        C := S(I);
+        if (C not in 'A'..'Z') and (C not in 'a'..'z')  then
+          exit;
+        else 
+          D(I) := C;
+          LAST := I;
+        end if;
+      end loop;
+    end GET;
+                                   
+    procedure PUT(S : out STRING; D : in STEM_TYPE) is
+    begin 
+      S(S'FIRST..S'FIRST+STEM_TYPE_IO.DEFAULT_WIDTH-1) := D;
+    end PUT;
+        
+  end STEM_TYPE_IO;  
+  
 
 package body DECN_RECORD_IO is
 --  This package will carry the documentation for all the following packages

@@ -162,13 +162,20 @@ begin
       declare
         LESS : constant STRING :=
                SUBTRACT_TACKON(INPUT_WORD, TACKONS(I));
-      begin
+        SAVE_PA_LAST  : INTEGER := 0;
+    begin
 --TEXT_IO.PUT_LINE("In ENCLITIC     LESS/TACKON  = " & LESS & "/" & TACKONS(I).TACK); 
        if LESS  /= INPUT_WORD  then       --  LESS is less
           --WORDS_MODE(DO_FIXES) := FALSE;
           WORD_PACKAGE.WORD(LESS, PA, PA_LAST);
 --TEXT_IO.PUT_LINE("In ENCLITICS after WORD NO_FIXES  LESS = " & LESS & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+          SAVE_PA_LAST := PA_LAST;
           TRY_SLURY(LESS, PA, PA_LAST, LINE_NUMBER, WORD_NUMBER);
+          if SAVE_PA_LAST /= 0   then     
+            if (PA_LAST - 1) - SAVE_PA_LAST = SAVE_PA_LAST  then
+              PA_LAST := SAVE_PA_LAST;
+            end if;
+          end if;
 --TEXT_IO.PUT_LINE("In ENCLITICS after SLURY  LESS = " & LESS & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
           SYPA_LAST := 0;
           SYNCOPE(LESS, SYPA, SYPA_LAST);  --  Want SYNCOPE second to make cleaner LIST
@@ -236,6 +243,7 @@ begin
 
 procedure PASS(INPUT_WORD : STRING) is
 --  This is the core logic of the program, everything else is details
+  SAVE_PA_LAST  : INTEGER := 0;
   SAVE_DO_FIXES  : BOOLEAN := WORDS_MODE(DO_FIXES);
   SAVE_DO_ONLY_FIXES  : BOOLEAN := WORDS_MDEV(DO_ONLY_FIXES);
   SAVE_DO_TRICKS : BOOLEAN := WORDS_MODE(DO_TRICKS);
@@ -244,7 +252,20 @@ begin
   --  Do straight WORDS without FIXES/TRICKS, is the word in the dictionary
   WORDS_MODE(DO_FIXES) := FALSE;
   WORD(INPUT_WORD, PA, PA_LAST);
+  SAVE_PA_LAST := PA_LAST;
+  --  BIG PROBLEM HERE
+  --  If I do SLURY everytime, than each case where there is an aps- and abs- in dictionary 
+  --  will show up twice, straight and SLURY, in the ourout - For either input
+  --  But if I only do SLURY if there is no hit, then some incomplete pairs will not
+  --  fully express (illuxit has two entries, inluxit has only one of them) (inritas)
+  --  So I will do SLURY and if it produces only 1 more PR, kill it, otherwise use it only
   TRY_SLURY(INPUT_WORD, PA, PA_LAST, LINE_NUMBER, WORD_NUMBER);
+  if SAVE_PA_LAST /= 0   then     
+    if (PA_LAST - 1) - SAVE_PA_LAST = SAVE_PA_LAST  then
+      PA_LAST := SAVE_PA_LAST;
+      XXX_MEANING := NULL_MEANING_TYPE;
+    end if;
+  end if;
 --TEXT_IO.PUT_LINE("1  PASS_BLOCK for  " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
           
   --  Pure SYNCOPE

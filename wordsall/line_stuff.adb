@@ -64,19 +64,19 @@ package body LINE_STUFF is
     while not END_OF_FILE(DICTIONARY_FILE)  loop
       ST_LINE := BLANK_LINE;
       GET_NON_COMMENT_LINE(DICTIONARY_FILE, ST_LINE, LAST);      --  STEMS
-  --TEXT_IO.PUT_LINE("READ STEMS");
+--TEXT_IO.PUT_LINE("READ STEMS");
   
       LINE := BLANK_LINE;
-   --TEXT_IO.PUT("1 ");
+--TEXT_IO.PUT("1 ");
    GET_NON_COMMENT_LINE(DICTIONARY_FILE, LINE, L);           --  PART
-   --   TEXT_IO.PUT("2 ");
+--TEXT_IO.PUT("2 ");
    PART_ENTRY_IO.GET(LINE(1..L), PT, LL);
-   --   TEXT_IO.PUT("3 ");
+--TEXT_IO.PUT("3 ");
    KIND_ENTRY_IO.GET(LINE(LL+1..L), PT.POFS, KIND, LL);
-   --   TEXT_IO.PUT("4 ");
+--TEXT_IO.PUT("4 ");
    TRANSLATION_RECORD_IO.GET(LINE(LL+1..L), TRAN, LLL);
- -- TEXT_IO.PUT("5 ");
-  -- TEXT_IO.PUT_LINE("READ PART");
+--TEXT_IO.PUT("5 ");
+--TEXT_IO.PUT_LINE("READ PART");
   
 --  Specialize for parts
 --  If ADV then look if the CO is something other than X
@@ -102,7 +102,7 @@ package body LINE_STUFF is
       LINE := BLANK_LINE;
       GET_NON_COMMENT_LINE(DICTIONARY_FILE, LINE, L);         --  MEANING
       MEAN := HEAD(TRIM(LINE(1..L)), MAX_MEANING_SIZE);         
- --TEXT_IO.PUT_LINE("READ MEANING");
+--TEXT_IO.PUT_LINE("READ MEANING");
       
       
       
