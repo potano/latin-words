@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<TITLE>WORDS (LATIN) DOCUMENTATION 1.96</TITLE>
+<TITLE>WORDS (LATIN) DOCUMENTATION 1.97</TITLE>
 </HEAD>
 <BODY>
 
 
-<H1>WORDS 1.96 -
+<H1>WORDS 1.97 -
 <BR>LATIN-to-ENGLISH DICTIONARY PROGRAM</H1>
 
 
 <HR>
 
 
-                 <H2><CENTER>WORDS (Latin) Version 1.96</CENTER></H2>
+                 <H2><CENTER>WORDS (Latin) Version 1.97</CENTER></H2>
 
 <BR><A HREF="#INSTALLATION">INSTALLATION</A>
 <BR><A HREF="#SUMMARY">SUMMARY</A>
@@ -84,28 +84,23 @@ Intel PC Systems
 <A NAME="SUMMARY"><H3><CENTER>SUMMARY</CENTER></H3></A>
 <BR>
 
-<P>This program, (WORDS.EXE for the PC - DOS, Windows 95 or LINUX
+<P>This program, (WORDS.EXE for the PC - DOS, Windows 95/98/NT or LINUX
 console versions),
 takes keyboard input or a file of Latin text lines and provides
 an analysis of each word individually.
 It uses an INFLECT.SEC, UNIQUES.LAT, ADDONS.LAT, STEMFILE.GEN,
 INDXFILE.GEN, and DICTFILE.GEN, and possibly .SPE and DICT.LOC.
 
-<P>The dictionary contains over 28000 entries, as would be counted
+<P>The dictionary contains over 30000 entries, as would be counted
 in an ordinary dictionary.  This expands to almost twice that number
 of individual stems (the count that the program may display at startup),
 and, through additional word construction with hundreds of prefixes and
 suffixes,
 may generate more, leading to many hundreds of thousands of 'words' that
 can be formed by declension and conjugation.
-This is still an average dictionary in absolute size.
-Kidd's Collins Latin Gem, a breast-pocket (8 by 11 cm.) edition
-(and further has English-to-Latin) contains about 17,000 Latin entries.
-The ultimate 2100 page Oxford Latin Dictionary has about 35,000 entries,
-excluding proper names (and it has lots of those).
 This version of WORDS provides a tool to help in translations for the Latin
-student, but the dictionary is very slowly growing, and the entries
-for A through C exceed any other dictionary.
+student.  It is now a large dictionary by any measure and can be helpful
+to advanced users.  The dictionary will continue to grow - slowly.
 
 
 
@@ -168,7 +163,7 @@ interpretations.  The present system has such a mechanism,
 but it is not yet exploited.
 
 <P>
-The Version 1.95 dictionary may be found to be of fairly
+The Version 1.97 dictionary may be found to be of fairly
 general use for the student; it has the easy
 words that every text uses.  It also has a goodly number of
 adverbs, prepositions, and conjunctions, which are not as
@@ -193,11 +188,12 @@ the normal dictionary meaning.
 BE WARNED!  The program will go to great lengths if all tricks are invoked.
 If you get a word formed with an enclitic, prefix, suffix, and syncope,
 be very suspicious!
-It could be right, but do not bet on it.
+It could be right, but do not bet on it.  (Try siquempiamque!)
 
 <P>
-With this facility, and a 27000 word dictionary, trials
-on some tested classical texts  give hit rates of 97-99%,
+With this facility, and a 30000 word dictionary, trials
+on some tested classical texts and the Vulgate Bible
+give hit rates of far better than 99%,
 excluding proper names (there are very few proper
 names in this dictionary).  (I am an old soldier and seem to have in
 the dictionary every possible word for attack or destroy.  The
@@ -215,7 +211,7 @@ The development system allows the inclusion of
 specialized vocabulary (for instance a SPEcial dictionary
 for specialized words not wanted in most dictionaries),
 and the opportunity
-for the user to add additional words 'on the fly' to a DICT.LOC.
+for the user to add additional words to a DICT.LOC.
 
 <P>It was initially expected that there would be special dictionaries for
 special
@@ -237,11 +233,12 @@ out to do the program.
 <P>
 The program is probably much larger than is necessary for
 the present application.  It is still in development
-but some effort has now been put into optimization.
+but some effort has now been put into optimization.  Nevertheless
+there is lots of room for speeding it up.
 
 
 <P>
-This is a Shareware program, which means it is proper to
+This is a free Shareware program, which means it is proper to
 copy it and pass it on to your friends.  Consider it a developmental
 item for which there is no charge.  However, it is
 Copyrighted (c), so please don't sell it as your own without
@@ -268,8 +265,8 @@ This write up is rudimentary and assumes that the
 user is experienced with computers.
 
 <P>
-The WORDS program, Version 1.95, with it's accompanying data files
-should run on PC in DOS/Windows 95, any monitor.  Simply download
+The WORDS program, Version 1.97, with it's accompanying data files
+should run on PC in DOS/Windows 95/98/NT, any monitor.  Simply download
 the self-extracting EXE file and execute it in your chosen subdirectory
 to UNZIP the files into a subdirectory of a hard disk.  Then call WORDS.
 
@@ -424,7 +421,7 @@ will assume they are Latin words to be processed as command line input.
 will give a good idea of the system.  The present
 version may not match these examples exactly - things are changing -
 but the principle is there.  A recent modification is the output
-of dictionary forms or 'principle parts' (shown below for some examples).
+of dictionary forms or 'principal parts' (shown below for some examples).
 
 <PRE><TT>=>agricolarum
 agricol.arum       N      1  1 GEN  P M P
@@ -1188,7 +1185,7 @@ on the part of the program, but the user should examine the results,
 especially when several tricks are involved.
 
 <P>
-There is a basic conflict here.  At the state of the 1.95 dictionary
+There is a basic conflict here.  At the state of the 1.97 dictionary
 there are so few words that both fail the main program and are caught by
 tricks that this option has been defaulted to No.  However, one could
 argue that there will be very few occasions for trying TRICKS, so that
@@ -1208,7 +1205,7 @@ For completeness, the enumeration codes used in the output are listed
 here as Ada statements.  Simple numbers are used for person, declension,
 conjugations, and their variants.  Not all the facilities implied
 by these values are developed or used in the program or the
-dictionary.  This list is only for Version 1.95.   Other
+dictionary.  This list is only for Version 1.97.   Other
 versions may be somewhat different.  This may
 make their dictionaries incompatible with the present program.
 
@@ -1503,7 +1500,7 @@ DO_TRICKS_HELP :
 DO_DICTIONARY_FORMS_HELP :
    This option instructs the program to output a line with the forms
    normally associated with a dictionary entry (NOM and GEN of a noun,
-   the four principle parts of a verb, M-F-N NOM of an adjective, ...).
+   the four principal parts of a verb, M-F-N NOM of an adjective, ...).
    This occurs when there is other output (i.e., not with UNKNOWNS_ONLY).
    The default choice is N(o), but it can be turned on with a Y(es).
 
@@ -1886,8 +1883,8 @@ Philosophically, thus program deals with Latin as it was, not as
 it should have been.  I make no corrections to Cicero, which some
 might have been tempted to do if producing an academic
 dictionary instead of a program.  Moreover I make no corrections of
-St Jerome.  If (my copy of) the Vulgate has a particular spelling,
-that will be recognized by the program, either through a TRICK or
+St Jerome.  If your copy of the Vulgate has a particular spelling,
+that may be recognized by the program, either through a TRICK or
 as a dictionary entry that I have generated.
 
 <P>A philosophical difference from many dictionary projects is that this
@@ -1915,23 +1912,25 @@ good intentions.
 <A NAME="Method"><H4>Method</H4></A>
 
 <P>
-The program searches a list of stems and tries to make a match.  If no
+The program subtracts possible endings from an input words and
+searches a list of stems, trying to make a match.  If no
 exact match is possible, it tries various modifications, beginning
 with prefixes and suffixes, and eventually involving various
-regular spelling variations (or tricks) common in classical and
+regular spelling variations (or 'tricks') common in classical and
 medieval Latin.
 
 <P>
-A choice was made that the base was classical Latin as defined by the OLD,
-arbitrary/roughly (-200 +100)
+A choice was made that the base was classical Latin as defined by the
+Oxford Latin Dictionary (OLD).  Their primary time period is
+arbitrary/roughly 100 BC to 100 AD.
 
 <P>
-The classical form of words is taken as the base.  All modifications
+The classical form of words is taken as the base.  Modifications
 are in such a way to correct to this base.
 Further additions to local dictionaries should keep this in mind.
 Modifications are made to the input words, not to the dictionary
 stems.  It could be done the other way, but the present situation
-seems to be much easier.
+was initially much easier.
 There are some consequences of this approach.  For instance, it
 is easy to remove an 'h' from an input word to match with a stem.
 It is much more difficult (but not impossible) to add 'h'
@@ -1959,7 +1958,28 @@ all possible tricks.)
 <P>
 For instance, if there is an adjective that matches, a corresponding
 identically spelled, logically valid noun will not be reported unless it is
-explicitly found in the dictionary.
+explicitly found in the dictionary, even though it could be constructed
+or inferred from the adjective or constructed with a suffix from a verb
+in the dictionary.
+
+<P>An exception to this is that enclitics (eg., -que) are always considered.
+Coloque can be a verb or collo-que.  The latter is in Virgil and should
+not be omitted.  Verb syncope is also favored.  In the vast majority
+of cases, if there is a possible syncope it is the correct parse.  This
+is given preference over word construction with suffix.  Audii is
+syncope of audivi, but it could also be aud-i-i.  The latter is
+considered very unlikely.
+
+<P>There are a large number of paths and possibilities.  Choices have
+been made in the code that result in the exclusion of some.  It is hoped
+that they were the best choices.  The method was constructed by taking
+a number of primary procedures and combining/assembling them in
+such a way as to give reasonable parses for a number of test cases.
+Basicly, this is hacking, but it might be considered and emperical
+starting point from which one could construct a logical rationale.
+
+
+
 
 <P>
 Therefore, the philosophy is to populate the stem list as densely as possible.
@@ -1969,6 +1989,12 @@ The advantage is that while regular single-letter modifications
 are fairly easy, and two letter differences are possible (but more expensive),
 further deviations are problematical.  The better populated the stem list,
 the better the chance of a result.
+
+<P>
+Even in easy cases the overpopulation is helpful.  Antebasis is easily
+parsed as ante-basis ('pedestal before', which is reasonable), but inclusion
+as a separate word allows the additional information that it is the
+hindmost pillar of the pedestal of a ballista.
 
 <P>
 The stem list is also populated with variants suggested by different
@@ -1990,7 +2016,7 @@ it is used frequently or by several authors, it will be entered as a
 UNIQUE.
 
 <P>
-Lewis and Short seem to be more willing thxa the more recent Oxford
+Lewis and Short seem to be more willing than the more recent Oxford
 Latin Dictionary to raise a few examples of
 variation to an entry (at least an alternate).  Generally, I make an
 entry if some dictionary does so.  But within an entry I generate additional
@@ -2074,12 +2100,6 @@ apply several tricks in series to a word.  If the dictionary is heavily
 and redundantly populated, tricks are rarely necessary (and therefore
 not an overall processing burden) and largely successful (if the
 input word is a valid, but unusual, variant/construction).
-
-<P>
-Even in easy cases the overpopulation is helpful.  Antebasis is easily
-parsed as ante-basis (pedestal before, which is reasonable), but inclusion
-as a separate word allows the additional information that it is the
-hindmost pillar of the pedestal of a ballista.
 
 <P>
 Further, a conventional dictionary, especially one that wishes to set
@@ -2771,7 +2791,7 @@ ABL      a       is
 
 <P>Or rather, the input word is analyzed for possible endings, and
 when these are subtracted a match is sought with the dictionary stems.
-A file (INFLECTS.) gives all the endings.
+A file (INFLECTS.LAT) gives all the endings.
 
 <P>In this example, the first line
 <PRE><TT>
@@ -2998,10 +3018,11 @@ as it might be.
 
 
 
-<P>All the inflections are in a file called INFLECTS.LAT
+<P>All the inflections are in a file called INFLECTS.LAT now a part of
+the general distribution of source code and date files
 
 <BR>
-http://www.erols.com/whitaker/inflects.
+http://www.erols.com/whitaker/wordsall.zip
 <BR>
 
 <P>Here is a quick reference for the most common types.
@@ -3108,9 +3129,9 @@ http://www.erols.com/whitaker/inflects.
 --  Verbs are mostly TRANS or INTRANS, but X works fine
 --  Depondent verbs must have DEP
 --  Verbs have four stems
---  The first stem is the first principle part (dictionary entry) - less 'o'
+--  The first stem is the first principal part (dictionary entry) - less 'o'
 --  For 2nd decl, the 'e' is omitted, for 3rd decl i-stem, the 'i' is included
---  Third principle part always ends in 'i', this is omitted in stem
+--  Third principal part always ends in 'i', this is omitted in stem
 --  Fourth part in dictionary ends in -us (or -um), this is omitted
 --  DEP verbs omit (have zzz) the third stem
 
