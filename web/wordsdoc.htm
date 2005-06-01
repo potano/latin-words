@@ -25,8 +25,8 @@
 <A HREF="#Command Line Operation">Command Line Operation</A><BR>
 <A HREF="#Latin-to-English Examples">Latin-to-English Examples</A><BR>
 <A HREF="#English-to-Latin Examples">English-to-Latin Examples</A><BR>
-<A HREF="#Signs and Abbreviations in Meaning">Signs and Abbreviations in Meaning</A><BR>
 <A HREF="#Design of the Meaning Line">Design of the Meaning Line</A><BR>
+<A HREF="#Signs and Abbreviations in Meaning">Signs and Abbreviations in Meaning</A><BR>
 <BR>
 <A HREF="#PROGRAM DESCRIPTION"><B>PROGRAM DESCRIPTION</B></A><BR>
 <A HREF="#Codes in Inflection Line">Codes in Inflection Line</A><BR>
@@ -1116,9 +1116,6 @@ in line with these rules.
 <BR><BR>
 
 
-<A NAME="Extent of Meanings">
-<H5>Extent of Meanings</H5></A>
-
 <P>A decision was made to include as many meanings and synonyms as
 convenient.  The OLD will sometimes list a dozen or more meaning
 groups with notably different senses, each with several similiar meanings.
@@ -1137,6 +1134,13 @@ Going the other way, one might not want to
 apply it to a discription of Mother Teressa.
 Also one should be warned if an otherwise simple word also is used as a rude
 reference to female anatomy.
+
+<P>There are a couple of other factors that may influence the user in determining
+the appropriate meaning from the list.  Some words have different meanings depending
+on the age.  If one is reading a text written recently in modern Latin, one must
+consider hints about the meaning.  While the classical meaning, the WORDS default,
+may be appropriate, if there is a line with a late AGE code or an indication
+of a modern dictionary source (e.g,. Cal), the user should take this into consideration.
 <BR><BR>
 
 <A NAME="Signs and Abbreviations in Meaning">
@@ -1227,6 +1231,8 @@ dictionaries point to the same citation).  In these cases a combination of
 meanings are given for both entries with the (L+S) code distinction and
 the entries of different spelling or declension have the SOURCE coded.  <BR>
 <BR>
+NT [New Testament] is a reference in the Bible.
+<BR>
 (OLD) [Oxford Latin Dictionary] is used to indicate an additional meaning
 taken from the Oxford Latin Dictionary in an entry that is otherwise
 attributed.  While it is usually true that if a classical word has other
@@ -1234,6 +1240,8 @@ than OLD as the listed source then it does not appear in that form in OLD,
 this is not always the case.  On occasion some other dictionary gives a
 much better or more complete and understandable definition and the honor
 of source is thereto given.  <BR>
+<BR>
+OT [Old Testament] is a reference in the Bible.
 <BR>
 Other source indicators are occasionally used and are indicated
 in the general discription of SOURCE below.
@@ -1251,10 +1259,11 @@ beginning of the meaning, before the first comma, it applies to all the
 meanings.  If it appears later, it applies only to that and later
 meanings.  For the purpose of this program, this is only advisory.  While
 it is used by some tools to find the expected dictionary entry, the
-program does not exclude a singular form in the output.  While it may be
+program does not necessarily exclude a singular form in the output.  While it may be
 true that in good, classical Latin it is never used in the singular, this
 does not mean that some text somewhere might not use the singular, nor
-that it is uncommon in later Latin.  <BR>
+that it is uncommon in later Latin. The TRIM_OUTPUT option may cause only plural
+forms to appear, with no TRIM_OUTPUT the singular will be shown. <BR>
 <BR>
 prob.  [probably] - denotes some uncertainty, but not as much as
 (perh.).  <BR>
@@ -2406,6 +2415,24 @@ e.g., I expand first declension verbs with '-av' perfect stems, even
 though no example exists in classical Latin.  This is often the practice
 in other dictionaries also.
 <P>
+In some cases I also have expanded adjectives and adverbs to include comparative
+and superlative stems where they seem reasonable or have corresponding English
+instances, even when there is no specific dictionary citation.
+This effort was modivated primarily by finding examples of such comparisons
+in processing of large amounts of text beyond the classical
+works upon which authoritative dictionaries are based, but even classical
+works yielded examples.  The point is that, while these forms would be
+caught by the word formation (prefix/suffix) process in the program,
+the process is limited to how many operations can be done serially.
+Having more/expended stems allows another level of word modification to be
+implemented.
+<P>
+Perhaps a bit out of context, consider the common question of SECLORUM in
+the Great Seal of the USA.  This pure word in not in any dictionary I know of,
+not the OLS or L+S.  A simple trick gives seculorum (seculum = world),
+but the favored translation is from the twice modified saeculorum (saeculum = age),
+which would not be found by a minimalistic system.
+<P>
 It is often the practice in paper dictionaries to double up on an entry
 that may be either adjective or noun, usually by leading with the
 adjective and mentioning its use as a noun.  A much larger set of
@@ -2423,16 +2450,37 @@ processing time for search of the stems (this is far offset by the
 processing which would be required to construct or analyze words working
 from a smaller stem list).
 <P>
+A significant objection is that artifically generated stems may conflict with
+real/common ones and produce false output confusing to the user.  A certain
+amount of this is eliminated by trimming the output to emphisize the most
+probable results, but it is still a problem.
+<P>
+Perhaps a counterexample would be an inferred fourth stem to no/nare (swim).
+Natus conflicts with the fourth stem of nascor (be produced/born) and the
+nouns and adjectives stemming from it.  The nare natus does not appear in
+dictionaries, nor does it occur in compounds of nare, so it has been omitted
+from the WORDS dictionary.
+<P>
 Additional parts of verbs are included (first conjugation is easily filled
 out, even eccentric verbs if they are compounds of known parts), although
 they may not have been found in any well known texts.  Cases can be
 logically constructed that are 'missing' in classical Latin.  Verbs with
 prefix can be expanded when the base is known.  That a form has not been
-found in surviving copies of classical documents does not mean that it was
+found in surviving copies of classical texts does not mean that it was
 not on the lips of every centurion and his girl friend, or that it might
 not find its way into medieval texts.
 <P>
- In some cases there are good reasons not to do the mathematical expansion,
+It may be argued in some cases that forms are missing because their
+pronounciation would be awkward.  This may well be true when Cicero is the
+arbiter, but others may not be so elegant.  Moreover, much of the texts
+are represented by medieval documents, Latin the was written but may not
+have been spoken, so the problem did not arise.
+However, I might be willing to accept this argument for considering carefully
+some perfect stems of first conjugation verbs which otherwise would end
+in -avav.  In the end, the only one I found that I could not support
+was lavo (wash), and its compounds, for which the perfect is lavi.
+<P>
+In some cases there are good reasons not to do the mathematical expansion,
 and these are pointedly avoided.  There is no mechanical generation of,
 for instance, conl- words for every coll- word, unless there is some
 citation or reasonable rationale.  They may be paired in almost every
@@ -2452,7 +2500,7 @@ example turns up in text, the appropriate trick procedure should suffice
 <P>
 One suspects that some amount of analytical expansion is present even in
 the best dictionaries.  Otherwise how can one explain four alternate
-spellings for a word which apparently only appears in a single
+spellings for a word which apparently only appears in citation as a single
 inscription.
 <P>
 Adjectives from participles are included if an entry is found in some
@@ -2469,7 +2517,8 @@ If it passed, that is reported as the answer.  If it fails, another trick
 is tried.  This is effective if very few words get this far.  It is
 expected that application of single tricks will solve most of the
 resolvable difficulties.  It would be impractical to mechanically apply
-several tricks in series to a word.  If the dictionary is heavily and
+several tricks in series to a word.  A large stem population reduces the
+likelyhood of multiple tricks being required.  If the dictionary is heavily and
 redundantly populated, tricks are rarely necessary (and therefore not an
 overall processing burden) and largely successful (if the input word is a
 valid, but unusual, variant/construction).
@@ -2479,8 +2528,9 @@ standard for proper language, excludes words that may not meet criteria of
 propriety, slang, misspellings, etc.  This may place the onus on the
 reader to convert words.  A computer dictionary ought to relieve the
 reader as much as possible.  The present program may be a far way from
-complete, but it's goal is to strive for that.  <A NAME="Word Meanings">
+complete, but it's goal is to strive for that.
 
+<A NAME="Word Meanings">
 <H4>Word Meanings</H4></A>
 <P>
 The meanings listed are generally those in the literature/dictionaries.
@@ -3340,6 +3390,14 @@ also alternative options (jump up/out = jump up; jump out).
 
 <P>Plus (+) is used in the dictionary, as well as in this documentation,
 in place of ampersand, for compatibility with HTML.
+It s a full separator, between two words, each recognized separately.
+
+<P>Hyphen (-) should be is used in the dictionary only to break
+into two words in the parse, each recognized separately.
+Thus, book-keeper will appear in the English pharse as two words.
+But it is likely that a user looking for an accountant would search
+for bookkeeper, rather than book or keeper.
+The dictionary has not yet been scrubbed for this situation.
 
 <P>Parentheses set off both possible supporting words
 (go (down) = go; go down) and explanatory information.
