@@ -35,24 +35,24 @@ package body DEVELOPER_PARAMETERS is
 
                       SHOW_DICTIONARY             => FALSE,
                       SHOW_DICTIONARY_LINE        => FALSE,
-                      SHOW_DICTIONARY_CODES       => FALSE,    --  Eventually should be TRUE
+                      SHOW_DICTIONARY_CODES       => TRUE,   
                       DO_PEARSE_CODES             => FALSE,
 
                       DO_ONLY_INITIAL_WORD        => FALSE,
                       FOR_WORD_LIST_CHECK         => FALSE,
-
-                      UPDATE_LOCAL_DICTIONARY     => FALSE,
-                      UPDATE_MEANINGS             => FALSE,
 
                       DO_ONLY_FIXES               => FALSE,
                       DO_FIXES_ANYWAY             => FALSE,
                       USE_PREFIXES                => TRUE, 
                       USE_SUFFIXES                => TRUE, 
                       USE_TACKONS                 => TRUE, 
-                      
+                                            
                       DO_MEDIEVAL_TRICKS          => TRUE,
+                      
                       DO_SYNCOPE                  => TRUE,
+                      DO_TWO_WORDS                => TRUE,
                       INCLUDE_UNKNOWN_CONTEXT     => TRUE,
+                      NO_MEANINGS                 => FALSE,
 
                       OMIT_ARCHAIC                => TRUE,
                       OMIT_MEDIEVAL               => FALSE,
@@ -64,6 +64,9 @@ package body DEVELOPER_PARAMETERS is
                       PAUSE_IN_SCREEN_OUTPUT      => TRUE,
                       NO_SCREEN_ACTIVITY          => FALSE,
                       
+                      UPDATE_LOCAL_DICTIONARY     => FALSE,
+                      UPDATE_MEANINGS             => FALSE,
+
                       MINIMIZE_OUTPUT             => TRUE    );
 
   BAD_MDEV_FILE : exception;
@@ -133,7 +136,8 @@ SHOW_DICTIONARY_CODES_HELP : constant HELP_TYPE :=  (
 DO_PEARSE_CODES_HELP : constant HELP_TYPE :=  (
    "This option causes special codes to be output flagging the different  ",
    "kinds of output lines.  01 for forms, 02 for dictionary forms, and    ",
-   "03 for meaning. The default choice is N(o).  It is activated by Y(es).");
+   "03 for meaning. The default choice is N(o).  It is activated by Y(es).",
+   "There are no Pearse codes in English mode.                            ");
 
 DO_ONLY_INITIAL_WORD_HELP : constant HELP_TYPE :=  (
    "This option instructs the program to only analyze the initial word on ",
@@ -147,38 +151,6 @@ FOR_WORD_LIST_CHECK_HELP : constant HELP_TYPE :=  (
    "only the forms common in dictionary entries, like NOM S for N or ADJ, ",
    "or PRES ACTIVE IND 1 S for V.  It is be used only with DO_INITIAL_WORD",
    "The default choice is N(o), but it can be turned on with a Y(es).     " );
-
-UPDATE_LOCAL_DICTIONARY_HELP : constant HELP_TYPE :=  (
-   "This option instructs the program to invite the user to input a new   ",
-   "word to the local dictionary on the fly.  This is only active if the  ",
-   "program is not using an (@) input file!  If an UNKNOWN is discovered, ",
-   "the program asks for STEM, PART, and MEAN, the basic elements of a    ",
-   "dictionary entry.  These are put into the local dictionary right then,",
-   "and are available for the rest of the session, and all later sessions.",
-   "The use of this option requires a detailed knowledge of the structure ",
-   "of dictionary entries, and is not for the average user.  If the entry ",
-   "is not valid, reloading the dictionary will raise and exception, and  ",
-   "the invalid entry will be rejected, but the program will continue     ",
-   "without that word.  Any invalid entries can be corrected or deleted   ",
-   "off-line with a text editor on the local dictionary file.  If one does",
-   "not want to enter a word when this option is on, a simple RETURN at   ",
-   "the STEM=> prompt will ignore and continue the program.  This option  ",
-   "is only for very experienced users and should normally be off.        ",
-   "                                          The default is N(o).        ",
-   "      ------    NOT AVAILABLE IN THIS VERSION   -------               " );
-
-UPDATE_MEANINGS_HELP : constant HELP_TYPE :=  (
-   "This option instructs the program to invite the user to modify the    ",
-   "meaning displayed on a word translation.  This is only active if the  ",
-   "program is not using an (@) input file!  These changes are put into   ",
-   "the dictionary right then and permenently, and are available from     ",
-   "then on, in this session, and all later sessions.   Unfortunately,    ",
-   "these changes will not survive the replacement of the dictionary by a ",
-   "new version from the developer.  Changes can only be recovered by     ",
-   "considerable prcessing by the deneloper, and should be left there.    ",
-   "This option is only for experienced users and should remain off.      ",
-   "                                          The default is N(o).        ",
-   "      ------    NOT AVAILABLE IN THIS VERSION   -------               " );
 
 DO_ONLY_FIXES_HELP : constant HELP_TYPE :=  (
    "This option instructs the program to ignore the normal dictionary     ",
@@ -252,6 +224,7 @@ DO_MEDIEVAL_TRICKS_HELP : constant HELP_TYPE :=  (
    "variations found in medieval Latin, but some constructs are common.   ",
    "The default choice is N(o), since the results are iffy, medieval only,",
    "and expensive.  This processing is turned on with the choice of Y(es)." );
+   
 
 DO_SYNCOPE_HELP : constant HELP_TYPE :=  (
    "This option instructs the program to postulate that syncope of        ",
@@ -261,9 +234,21 @@ DO_SYNCOPE_HELP : constant HELP_TYPE :=  (
    "have a consderable impact on the speed of processind a large file.    ",
    "However, this trick seldom producesa false positive, and syncope is   ",
    "very common in Latin (first year texts excepted).  Default is Y(es).  ",
-   "This lengthy processing is turned off with the choice of N(o).        " );
+   "This processing is turned off with the choice of N(o).                " );
 
-
+DO_TWO_WORDS_HELP : constant HELP_TYPE :=  (
+   "There are some few common Lain expressions that combine two inflected ",
+   "words (e.g. respublica, paterfamilias).  There are numerous examples  ",
+   "of numbers composed of two words combined together.                   ",
+   "Sometimes a text or inscription will have words run together.         ",
+   "When WORDS is unable to reach a satisfactory solution with all other  ",
+   "tricks, as a last stab it will try to break the input into two words. ",
+   "This most often fails.  Even if mechnically successful, the result is ",
+   "usually false and must be examined by the user.  If the result is     ",
+   "correct, it is probably clear to the user.  Otherwise,  beware.  .    ",
+   "Since this is a last chanceand infrequent, the default is Y(es);      ",
+   "This processing is turned off with the choice of N(o).                " );
+   
 
 INCLUDE_UNKNOWN_CONTEXT_HELP : constant HELP_TYPE :=  (
    "This option instructs the program, when writing to an UNKNOWNS file,  ",
@@ -272,6 +257,13 @@ INCLUDE_UNKNOWN_CONTEXT_HELP : constant HELP_TYPE :=  (
    "large text files in which it is expected that there will be relatively",
    "few UNKNOWNS.    The main use at the moment is to provide display     ",
    "of the input line on the output file in the case of UNKNOWNS_ONLY.    ");
+
+NO_MEANINGS_HELP : constant HELP_TYPE :=  (  
+   "This option instructs the program to omit putting out meanings.       ", 
+   "This is only useful for certain dictionary maintenance procedures.    ",
+   "The combination not DO_DICTIONARY_FORMS, MEANINGS_ONLY, NO_MEANINGS   ",
+   "results in no visible output, except spacing lines.    Default is N)o.");
+   
 
 OMIT_ARCHAIC_HELP : constant HELP_TYPE :=  (
    "THIS OPTION IS CAN ONLY BE ACTIVE IF WORDS_MODE(TRIM_OUTPUT) IS SET!  ",
@@ -338,6 +330,39 @@ NO_SCREEN_ACTIVITY_HELP : constant HELP_TYPE :=  (
    "write to screen.                       The default is N(o).           ");
  
     
+
+UPDATE_LOCAL_DICTIONARY_HELP : constant HELP_TYPE :=  (
+   "This option instructs the program to invite the user to input a new   ",
+   "word to the local dictionary on the fly.  This is only active if the  ",
+   "program is not using an (@) input file!  If an UNKNOWN is discovered, ",
+   "the program asks for STEM, PART, and MEAN, the basic elements of a    ",
+   "dictionary entry.  These are put into the local dictionary right then,",
+   "and are available for the rest of the session, and all later sessions.",
+   "The use of this option requires a detailed knowledge of the structure ",
+   "of dictionary entries, and is not for the average user.  If the entry ",
+   "is not valid, reloading the dictionary will raise and exception, and  ",
+   "the invalid entry will be rejected, but the program will continue     ",
+   "without that word.  Any invalid entries can be corrected or deleted   ",
+   "off-line with a text editor on the local dictionary file.  If one does",
+   "not want to enter a word when this option is on, a simple RETURN at   ",
+   "the STEM=> prompt will ignore and continue the program.  This option  ",
+   "is only for very experienced users and should normally be off.        ",
+   "                                          The default is N(o).        ",
+   "      ------    NOT AVAILABLE IN THIS VERSION   -------               " );
+
+UPDATE_MEANINGS_HELP : constant HELP_TYPE :=  (
+   "This option instructs the program to invite the user to modify the    ",
+   "meaning displayed on a word translation.  This is only active if the  ",
+   "program is not using an (@) input file!  These changes are put into   ",
+   "the dictionary right then and permenently, and are available from     ",
+   "then on, in this session, and all later sessions.   Unfortunately,    ",
+   "these changes will not survive the replacement of the dictionary by a ",
+   "new version from the developer.  Changes can only be recovered by     ",
+   "considerable prcessing by the deneloper, and should be left there.    ",
+   "This option is only for experienced users and should remain off.      ",
+   "                                          The default is N(o).        ",
+   "      ------    NOT AVAILABLE IN THIS VERSION   -------               " );
+     
 
 MINIMIZE_OUTPUT_HELP : constant HELP_TYPE :=  (
    "This option instructs the program to minimize the output.  This is a  ",
@@ -674,12 +699,6 @@ LOAD_DICTIONARY(DICT_LOC,
     INQUIRE(DO_PEARSE_CODES, DO_PEARSE_CODES_HELP);
 
 
-
-    INQUIRE(UPDATE_LOCAL_DICTIONARY, UPDATE_LOCAL_DICTIONARY_HELP);
-
-    INQUIRE(UPDATE_MEANINGS, UPDATE_MEANINGS_HELP);
-
-
     if WORDS_MODE(DO_FIXES) then
       INQUIRE(DO_ONLY_FIXES, DO_ONLY_FIXES_HELP);
       INQUIRE(DO_FIXES_ANYWAY, DO_FIXES_ANYWAY_HELP);
@@ -699,7 +718,11 @@ LOAD_DICTIONARY(DICT_LOC,
 
     INQUIRE(DO_SYNCOPE, DO_SYNCOPE_HELP);
 
+    INQUIRE(DO_TWO_WORDS, DO_TWO_WORDS_HELP);
+
     INQUIRE(INCLUDE_UNKNOWN_CONTEXT, INCLUDE_UNKNOWN_CONTEXT_HELP);
+
+    INQUIRE(NO_MEANINGS, NO_MEANINGS_HELP);
 
 
     INQUIRE(OMIT_ARCHAIC, OMIT_ARCHAIC_HELP);
@@ -719,6 +742,12 @@ LOAD_DICTIONARY(DICT_LOC,
     INQUIRE(NO_SCREEN_ACTIVITY, NO_SCREEN_ACTIVITY_HELP);        
 
     
+    
+    INQUIRE(UPDATE_LOCAL_DICTIONARY, UPDATE_LOCAL_DICTIONARY_HELP);
+
+    INQUIRE(UPDATE_MEANINGS, UPDATE_MEANINGS_HELP);
+
+
     INQUIRE(MINIMIZE_OUTPUT, MINIMIZE_OUTPUT_HELP);
 
 
@@ -773,6 +802,7 @@ LOAD_DICTIONARY(DICT_LOC,
           (L1(1) in '['..'`')  or
           (L1(1) in '{'..'~'))  and
           (L1(1) /= START_FILE_CHARACTER)  and
+          (L1(1) /= CHANGE_LANGUAGE_CHARACTER)  and
           (L1(1) /= CHANGE_PARAMETERS_CHARACTER)  then
         CHANGE_DEVELOPER_MODES_CHARACTER := L1(1);
       else

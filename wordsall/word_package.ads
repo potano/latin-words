@@ -1,3 +1,4 @@
+with TEXT_IO;
 with INFLECTIONS_PACKAGE; use INFLECTIONS_PACKAGE;
 with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
 with ADDONS_PACKAGE; use ADDONS_PACKAGE;
@@ -40,7 +41,11 @@ package WORD_PACKAGE is
   RRR_MEANING : MEANING_TYPE := NULL_MEANING_TYPE;  --  For Roman Numerals
   PPP_MEANING : MEANING_TYPE := NULL_MEANING_TYPE;  --  For COMPOUNDED
 
-  
+  SCROLL_LINE_NUMBER : INTEGER := 0;
+  OUTPUT_SCROLL_COUNT : INTEGER := 0;
+
+  procedure PAUSE(OUTPUT : TEXT_IO.FILE_TYPE);
+       
   function MIN(A, B : INTEGER) return INTEGER;  
       
   function LTU(C, D : CHARACTER) return BOOLEAN;  
@@ -66,6 +71,8 @@ package WORD_PACKAGE is
   procedure WORD(RAW_WORD : in STRING;
                  PA : in out PARSE_ARRAY; PA_LAST : in out INTEGER);
 
+  procedure CHANGE_LANGUAGE(C : CHARACTER);  
+    
   procedure INITIALIZE_WORD_PACKAGE;
 
 end WORD_PACKAGE;

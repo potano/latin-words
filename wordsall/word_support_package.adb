@@ -127,15 +127,15 @@ if DICTIONARY_AVAILABLE(GENERAL)  then
       D_K : DICTIONARY_KIND := GENERAL;
   begin
       if not IS_OPEN(STEM_FILE(D_K))  then
-  --PUT_LINE("LOADING_BDL is going to OPEN " &  
+  --TEXT_IO.PUT_LINE("LOADING_BDL is going to OPEN " &  
   --ADD_FILE_NAME_EXTENSION(STEM_FILE_NAME, 
   --DICTIONARY_KIND'IMAGE(D_K)));
         OPEN(STEM_FILE(D_K), STEM_IO.IN_FILE,
                              ADD_FILE_NAME_EXTENSION(STEM_FILE_NAME,
                              DICTIONARY_KIND'IMAGE(D_K)));
-  --PUT_LINE("OPENing was successful");
+  --TEXT_IO.PUT_LINE("OPENing was successful");
       end if;
-
+  --TEXT_IO.PUT_LINE("BDL OPEN");
       INDEX_FIRST := BBLF(' ', ' ', DICTIONARY_KIND(D_K));
       INDEX_LAST  := BBLL(' ', ' ', DICTIONARY_KIND(D_K));
 
@@ -146,6 +146,7 @@ if DICTIONARY_AVAILABLE(GENERAL)  then
         BDL(K) := DS;
       end loop;
       CLOSE(STEM_FILE(D_K));
+--TEXT_IO.PUT_LINE("BDL LOADED FROM DISK   K = " & INTEGER'IMAGE(K));
   exception
     when NAME_ERROR =>
       TEXT_IO.PUT_LINE("LOADING BDL FROM DISK had NAME_ERROR on " &
@@ -164,7 +165,7 @@ end if;
     for D_K in GENERAL..DICTIONARY_KIND'LAST loop
       if DICTIONARY_AVAILABLE(D_K)  then
         exit when D_K = LOCAL;
---PUT_LINE("OPENING BDL STEMFILE " & EXT(D_K));
+--TEXT_IO.PUT_LINE("OPENING BDL STEMFILE " & EXT(D_K));
         if not IS_OPEN(STEM_FILE(D_K))  then
 --PUT_LINE("LOADING_BDL is going to OPEN " &  
 --ADD_FILE_NAME_EXTENSION(STEM_FILE_NAME, 
@@ -175,30 +176,28 @@ end if;
 --STEMFILE." & EXT(D_K));
 --PUT_LINE("OPENing was successful");
         end if;
-
         for I in CHARACTER range 'a'..'z'  loop
           INDEX_FIRST := BDLF(I, ' ', D_K);
           INDEX_LAST  := BDLL(I, ' ', D_K);
-
           if INDEX_FIRST > 0  then
-
             SET_INDEX(STEM_FILE(D_K), STEM_IO.POSITIVE_COUNT(INDEX_FIRST));
             for J in INDEX_FIRST..INDEX_LAST  loop
               READ(STEM_FILE(D_K), DS);
-              K := K + 1;
+             K := K + 1;
               BDL(K) := DS;
             end loop;
           end if;
         end loop;
+--TEXT_IO.PUT_LINE("Single letters LOADED FROM DISK   K = " & INTEGER'IMAGE(K));
         CLOSE(STEM_FILE(D_K));
       end if;
 
     end loop;
     BDL_LAST := K;
 
---    PUT("FINISHED LOADING BDL FROM DISK     BDL_LAST = ");
---    PUT(BDL_LAST);
---    NEW_LINE;
+--TEXT_IO.PUT("FINISHED LOADING BDL FROM DISK     BDL_LAST = ");
+--TEXT_IO.PUT(INTEGER'IMAGE(BDL_LAST));
+--TEXT_IO.NEW_LINE;
 
   end LOAD_BDL_FROM_DISK;
 

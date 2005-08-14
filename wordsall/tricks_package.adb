@@ -7,8 +7,8 @@
    with WORD_SUPPORT_PACKAGE; use WORD_SUPPORT_PACKAGE;
    with WORD_PACKAGE; use WORD_PACKAGE;
    with PUT_STAT;
-   package body TRICKS_PACKAGE is
-   
+   package body TRICKS_PACKAGE is    
+     
       function IS_A_VOWEL(C : CHARACTER) return BOOLEAN is
       begin
          if LOWER_CASE(C) = 'a'  or
@@ -76,7 +76,7 @@
       begin
       
       
-         for I in S'RANGE  loop
+         for I in S'range  loop
             if not A_ROMAN_DIGIT(S(I))  then
                return FALSE;
             end if;
@@ -84,61 +84,215 @@
          return TRUE;
       end ONLY_ROMAN_DIGITS;
    
-      function ROMAN_NUMBER(S : STRING) return NATURAL is
+      function ROMAN_NUMBER(ST : STRING) return NATURAL is
       --  Determines and returns the value of a Roman numeral, or 0 if invalid
-      --  This seems to allow all of Caesar's.   Actually there are no rules 
-      --  if you look at some of the 12-15 century stuff
+      
          use TEXT_IO;
          TOTAL : NATURAL := 0;
          INVALID : exception;
-      
+         DECREMENTED : BOOLEAN := FALSE;
+         J : INTEGER := 0;
+         S : constant STRING := UPPER_CASE(ST);
+         
+         
       begin
-      
-      --  Already known that all the characters may be valid numerals
-      --  Loop over the string to check validity, start with second place
-         TOTAL := VALUE(S(S'FIRST));
-      
-         for I in S'FIRST+1..S'LAST  loop
-         
-            if VALUE(S(I)) < VALUE(S(I-1))  then        --  Lesser in VALUE
-            --  Decrease in value, not decrement
-               TOTAL := TOTAL + VALUE(S(I));
-            
-            elsif VALUE(S(I)) = VALUE(S(I-1))  then     --  Equal in VALUE
-            --  Equal in value, not decrement, but check XVVV for XXV 
-            
-               if I - 2 >= S'FIRST           and then
-               VALUE(S(I-2)) = 2 * VALUE(S(I-1))  then
-               --  Check that not a series that should be combined
-                  raise INVALID;                        -- XVVV for XXV 
-               else
-                  TOTAL := TOTAL + VALUE(S(I));
-               end if;
-            
-            
-            elsif VALUE(S(I)) > VALUE(S(I-1))  then     --  Higher in VALUE
-            --  Higher in value, decrement number?
-            
-               if VALUE(S(I)) = 2 * VALUE(S(I-1))  then  --  No VX or LC or DM
-                  raise INVALID;                          --  but IIX, I's first 
-               elsif I - 2 >= S'FIRST           and then
-               VALUE(S(I-2)) = VALUE(S(I-1))  then
-                  raise INVALID;
-               elsif  10 * VALUE(S(I-1)) < VALUE(S(I))     then
-                  raise INVALID;
-               else                  --  Decrement by 1/5 or 1/10, but not less
-                  TOTAL := TOTAL + VALUE(S(I)) - 2 * VALUE(S(I-1)); --  Does XIX
-               end if;
-            
+        if ONLY_ROMAN_DIGITS(S)  then
+    
+--
+--NUMERALS IN A STRING ARE ADDED: CC = 200 ; CCX = 210. 
+--ONE NUMERAL TO THE LEFT of A LARGER NUMERAL IS SUBTRACTED FROM THAT NUMBER: IX = 9 
+--
+--SUBTRACT ONLY A SINGLE LETTER FROM A SINGLE NUMERAL. 
+--VIII FOR 8, NOT IIX; 19 IS XIX, NOT IXX. 
+--
+--SUBTRACT ONLY POWERS of TEN, SUCH AS I, X, or C. 
+--NOT VL FOR 45, BUT XLV. 
+--
+--DON'T SUBTRACT A LETTER FROM ANOTHER LETTER MORE THAN TEN TIMES GREATER. 
+--ONLY SUBTRACT I FROM V or X, and X FROM L or C.
+--NOT IL FOR 49, BUT XLIX. MIM is ILLEGAL. 
+--
+--ONLY IF ANY NUMERAL PRECEEDING IS AT LEAST TEN TIMES LARGER. 
+--NOT VIX FOR 14, BUT XIV. 
+--NOT  IIX, BUT VIII. 
+--ONLY IF ANY NUMERAL FOLLOWING IS SMALLER. 
+--NOT XCL FOR 140, BUT CXL. 
+--        
+        J := S'LAST;
+        
+        EVALUATE:
+        while J >= S'FIRST  loop
+--           
+--Legal in the Ones position
+--  I
+--  II
+--  III
+--  IIII    IV
+--  V
+--  VI
+--  VII
+--  VIII
+--  VIIII   IX
+--    
+--        
+              --  Ones
+          if S(J) = 'I' then
+            TOTAL := TOTAL + 1;
+           J := J - 1;
+            exit EVALUATE when J < S'FIRST;
+            whiLe S(J) = 'I'  loop
+              TOTAL := TOTAL + 1;
+             if TOTAL >= 5  then raise INVALID; end if;
+              J := J - 1;
+              exit EVALUATE when J < S'FIRST;
+            end loop;
+          end if;
+       
+          if S(J) = 'V'  then
+            TOTAL := TOTAL + 5;
+           J := J - 1;
+            exit EVALUATE when J < S'FIRST;
+            if S(J) = 'I'  and TOTAL = 5  then
+              TOTAL := TOTAL - 1;
+             J := J - 1;
+              exit EVALUATE when J < S'FIRST;
             end if;
+            
+            if S(J) = 'I' or S(J) = 'V'  then raise INVALID; end if;
+          end if;
+        
+--    
+--Legal in the tens position
+--  X
+--  XX
+--  XXX
+--  XXXX    XL
+--  L
+--  LX
+--  LXX
+--  LXXX
+--  LXXXX   XC
+--    
+        
+          --  Tens 
+          if S(J) = 'X'  then
+            TOTAL := TOTAL + 10;
+           J := J - 1;
+            exit EVALUATE when J < S'FIRST;
+            whiLe S(J) = 'X'  loop
+              TOTAL := TOTAL + 10;
+              if TOTAL >= 50  then raise INVALID; end if;
+              J := J - 1;
+              exit EVALUATE when J < S'FIRST;
+            end loop;
+            if S(J) = 'I'  and TOTAL = 10  then
+              TOTAL := TOTAL - 1;
+               J := J - 1;
+               exit EVALUATE when J < S'FIRST;
+            end if;
+            if S(J) = 'I' or S(J) = 'V'  then
+              raise INVALID;
+            end if;
+          end if;
+            
+          if S(J) = 'L'  then
+            TOTAL := TOTAL + 50;
+            J := J - 1;
+            exit EVALUATE when J < S'FIRST;
+
+            if S(J) = 'X'  and TOTAL <= 59  then
+              TOTAL := TOTAL - 10;
+              J := J - 1;
+              exit EVALUATE when J < S'FIRST;
+            end if;
+            if S(J) = 'I' or S(J) = 'V'  or S(J) = 'X'  or S(J) = 'L'  then raise INVALID; end if;
+            
+            if S(J) = 'C'  then
+              TOTAL := TOTAL + 100;
+              J := J - 1;
+              exit EVALUATE when J < S'FIRST;
+              if S(J) = 'X'  and TOTAL = 100  then
+                TOTAL := TOTAL - 10;
+                J := J - 1;
+                exit EVALUATE when J < S'FIRST;
+              end if;
+            end if;
+ 
+            if S(J) = 'I' or S(J) = 'V'  or S(J) = 'X'  or S(J) = 'L'  then raise INVALID; end if;
+            end if;
+              
+          
+            if S(J) = 'C'  then
+              TOTAL := TOTAL + 100;
+              J := J - 1;
+              exit EVALUATE when J < S'FIRST;
+              whiLe S(J) = 'C'  loop
+                TOTAL := TOTAL + 100;
+                if TOTAL >= 500  then raise INVALID; end if;
+                J := J - 1;
+                exit EVALUATE when J < S'FIRST;
+              end loop;
+              if S(J) = 'X'  and TOTAL <= 109  then
+                TOTAL := TOTAL - 10;
+                J := J - 1;
+                exit EVALUATE when J < S'FIRST;
+              end if;
+              if S(J) = 'I' or S(J) = 'V'  or S(J) = 'X'  or S(J) = 'L'  then raise INVALID; end if;
+            end if;
+            
+
+    
+          if S(J) = 'D'  then
+            TOTAL := TOTAL + 500;
+            J := J - 1;
+            exit EVALUATE when J < S'FIRST;
+            if S(J) = 'C'  and TOTAL <= 599  then
+              TOTAL := TOTAL - 100;
+              J := J - 1;
+              exit EVALUATE when J < S'FIRST;
+            end if;
+            if S(J) = 'M'  then
+              TOTAL := TOTAL + 1000;
+              J := J - 1;
+              exit EVALUATE when J < S'FIRST;
+            end if;
+            if S(J) = 'C'  and TOTAL <= 1099  then
+              TOTAL := TOTAL - 100;
+              J := J - 1;
+              exit EVALUATE when J < S'FIRST;
+            end if;
+            if S(J) = 'I' or S(J) = 'V'  or S(J) = 'X'  or S(J) = 'L' or S(J) = 'C' or S(J) = 'D'  then raise INVALID; end if;
+          end if;
          
-         end loop;
+
+            if S(J) = 'M'  then
+              TOTAL := TOTAL + 1000;
+              J := J - 1;
+              exit EVALUATE when J < S'FIRST;
+              whiLe S(J) = 'M'  loop
+                TOTAL := TOTAL + 1000;
+                if TOTAL >= 5000  then raise INVALID; end if;
+                J := J - 1;
+                exit EVALUATE when J < S'FIRST;
+              end loop;
+              if S(J) = 'C'  and TOTAL <= 1099  then
+                TOTAL := TOTAL - 100;
+                J := J - 1;
+                exit EVALUATE when J < S'FIRST;
+              end if;
+              if S(J) = 'I' or S(J) = 'V'  or S(J) = 'X'  or S(J) = 'L' or S(J) = 'C' or S(J) = 'D'  then raise INVALID; end if;
+            end if;
+ 
+            
+        end loop EVALUATE;
+           
+          
+       end if;  --  On Only Roman digits
       
          return TOTAL;
-      
          exception
             when INVALID  =>
-               return 0;
+              return 0;
             when CONSTRAINT_ERROR  =>
                return 0;
       end ROMAN_NUMBER;
@@ -170,7 +324,7 @@
                                     FREQ => A),
                               D_K => RRR,
                               MNPC => NULL_MNPC);
-            RRR_MEANING := HEAD(INTEGER'IMAGE(ROMAN_NUMBER_W) & "  as a ROMAN NUMERAL", 
+            RRR_MEANING := HEAD(INTEGER'IMAGE(ROMAN_NUMBER_W) & "  as a ROMAN NUMERAL;", 
                                 MAX_MEANING_SIZE); 
          else
             null;    --  Is not ROMAN NUMERAL, so go on and try something else
@@ -184,50 +338,31 @@
       --  if you look at some of the 12-15 century stuff
          use TEXT_IO;
          TOTAL : INTEGER := 0;
-         SAME_VALUE : NATURAL := 0;
-      
+         DECREMENTED_FROM : INTEGER := 0;
+         
       begin
       
       --  Already known that all the characters may be valid numerals
       --  Loop over the string to check validity, start with second place
       --PUT_LINE(" In function BAD_ROMAN_NUMBER ");
       --PUT_LINE(" BEFORE LOOP      S = " & S);
-         TOTAL := VALUE(S(S'FIRST));
-         SAME_VALUE := VALUE(S(S'FIRST));
-         for I in S'FIRST+1..S'LAST  loop
-         --PUT_LINE(" AT TOP OF LOOP      I = " & INTEGER'IMAGE(I) & "  S(I) = " & S(I)
-         --& "       TOTAL = " & INTEGER'IMAGE(TOTAL));
+         TOTAL := VALUE(S(S'LAST));
+         DECREMENTED_FROM := VALUE(S(S'LAST));
+         for I in reverse S'FIRST..S'LAST-1  loop
          
-            if VALUE(S(I)) < VALUE(S(I-1))  then        --  Lesser in VALUE
-            --  Decrease in value, not decrement
+            if VALUE(S(I)) < VALUE(S(I+1))  then   
+            --  Decrement
+               TOTAL := TOTAL - VALUE(S(I));
+               DECREMENTED_FROM := VALUE(S(I+1));
+            elsif VALUE(S(I)) = VALUE(S(I+1))  then
+              if  VALUE(S(I)) < DECREMENTED_FROM  then
+                TOTAL := TOTAL - VALUE(S(I));   --  IIX = 8 !
+              else
+                TOTAL := TOTAL + VALUE(S(I));      
+              end if;
+            elsif  VALUE(S(I)) > VALUE(S(I+1))  then  
                TOTAL := TOTAL + VALUE(S(I));
-               SAME_VALUE := VALUE(S(I));
-            --PUT_LINE(" I < (I-1)      OK   " & INTEGER'IMAGE(SAME_VALUE) & "   " & S(S'FIRST..I) & 
-            --"       TOTAL = " & INTEGER'IMAGE(TOTAL));
-            
-            elsif VALUE(S(I)) = VALUE(S(I-1))  then     --  Equal in VALUE
-            --  Equal in value, not yet decrement, but allow XVVV for XXV 
-            --PUT(" I = (I-1)   ...     ");
-               TOTAL := TOTAL + VALUE(S(I));
-               SAME_VALUE := SAME_VALUE + VALUE(S(I));
-            --PUT_LINE("  SAME = " & INTEGER'IMAGE(SAME_VALUE) & "   " & S(S'FIRST..I) & 
-            --"       TOTAL = " & INTEGER'IMAGE(TOTAL));
-            
-            --  NO Check that not a series that should be combined  XVVV
-            
-            
-            elsif VALUE(S(I)) > VALUE(S(I-1))  then     --  Higher in VALUE
-            --  Higher in value, decrement number?
-            --PUT(" I > (I-1)   ...     ");
-            
-            --  No Check for VX or LC or DM
-            --  Or XM
-               TOTAL := TOTAL + VALUE(S(I)) - 2 * SAME_VALUE; --  Does IIIX
-            --PUT_LINE(" DECREMENTING SAME     " & INTEGER'IMAGE(SAME_VALUE) & "   " &  S(S'FIRST..I) & 
-            --"       TOTAL = " & INTEGER'IMAGE(TOTAL));
-               SAME_VALUE := 0;
-            
-            
+               DECREMENTED_FROM := VALUE(S(I+1));
             end if;
          end loop;
          if TOTAL > 0  then
@@ -247,7 +382,7 @@
                         PA : in out PARSE_ARRAY; PA_LAST : in out INTEGER) is
          S  : constant STRING(1..W'LENGTH) := LOWER_CASE(W);
          PA_SAVE : INTEGER := PA_LAST;
-         SYNCOPE_INFLECTION_RECORD : INFLECTION_RECORD := null_inflection_record;
+         SYNCOPE_INFLECTION_RECORD : INFLECTION_RECORD := NULL_INFLECTION_RECORD;
       --     ((V, ((0, 0), (X, X, X), 0, X, X)), 0, NULL_ENDING_RECORD, X, A);
       begin
       
@@ -255,11 +390,13 @@
       
          YYY_MEANING := NULL_MEANING_TYPE;
       
-         if WORDS_MDEV(DO_SYNCOPE)  then
+         
          
          --  This one has to go first --  special for 3 4 
-         -- ivi  => ii ,  in perfect  (esp. for V 3 4) 
-            for I in reverse S'FIRST..S'LAST-1  loop
+         --  ivi  => ii ,  in perfect  (esp. for V 3 4) 
+         --  This is handled in WORDS as syncope
+         --  It seems to appear in texts as alternative stems  ii and ivi
+             for I in reverse S'FIRST..S'LAST-1  loop
                if (S(I..I+1) = "ii")  then
                   PA_LAST := PA_LAST + 1;
                   PA(PA_LAST) := ("Syncope  ii => ivi", SYNCOPE_INFLECTION_RECORD,
@@ -287,6 +424,8 @@
                PA_LAST := PA_SAVE;
             end if;
          
+            
+            
          
          -- avis => as, evis => es, ivis => is, ovis => os   in perfect 
             for I in reverse S'FIRST..S'LAST-2  loop     --  Need isse 
@@ -326,6 +465,10 @@
             else
                PA_LAST := PA_SAVE;
             end if;
+            
+            
+            
+            
          
          -- aver => ar, ever => er, in perfect 
             for I in reverse S'FIRST+1..S'LAST-2  loop
@@ -342,6 +485,8 @@
                end if;
                PA_LAST := PA_SAVE;     --  No luck, or it would have exited above
             end loop;
+            
+            
             if PA_LAST > PA_SAVE + 1  and then
             PA(PA_LAST).IR.QUAL.POFS = V and then
             PA(PA_LAST).IR.KEY = 3  then          --  Perfect system
@@ -356,6 +501,9 @@
             else
                PA_LAST := PA_SAVE;
             end if;
+            
+            
+            
          
          -- iver => ier,  in perfect 
             for I in reverse S'FIRST..S'LAST-3  loop
@@ -371,8 +519,8 @@
                PA_LAST := PA_SAVE;     --  No luck, or it would have exited above
             end loop;
             if PA_LAST > PA_SAVE + 1  and then
-            PA(PA_LAST).IR.QUAL.POFS = V and then
-            PA(PA_LAST).IR.KEY = 3  then          --  Perfect system
+               PA(PA_LAST).IR.QUAL.POFS = V and then
+               PA(PA_LAST).IR.KEY = 3  then          --  Perfect system
                YYY_MEANING := HEAD(
                                   "Syncopated perfect often drops the 'v' and contracts vowel "
                                   , MAX_MEANING_SIZE);
@@ -385,11 +533,58 @@
                PA_LAST := PA_SAVE;
             end if;
          
+            
+                  
+            
+         
+--         -- sis => s, xis => x, in perfect 
+            for I in reverse S'FIRST..S'LAST-2  loop     
+               if ((S(I) = 's')  or
+                   (S(I) = 'x'))  then
+                  PA_LAST := PA_LAST + 1;
+                  PA(PA_LAST)         := ("Syncope s/x => +is", SYNCOPE_INFLECTION_RECORD,
+                                          YYY, NULL_MNPC);
+                  WORD(S(S'FIRST..I) & "is" & S(I+1..S'LAST), PA, PA_LAST);
+                  if PA_LAST > PA_SAVE + 1  then
+                     exit;               --  Exit loop here if SYNCOPE found hit
+                  end if;
+               end if;
+               PA_LAST := PA_SAVE;     --  No luck, or it would have exited above
+            end loop;
+         --  Loop over the resulting solutions
+            if PA_LAST > PA_SAVE + 1  and then
+            PA(PA_LAST).IR.QUAL.POFS = V and then
+            PA(PA_LAST).IR.KEY = 3  then          --  Perfect system
+               YYY_MEANING := HEAD(
+                                  "Syncopated perfect sometimes drops the 'is' after 's' or 'x' "
+                                  , MAX_MEANING_SIZE);
+               PUT_STAT("SYNCOPEx/sis at "
+                        & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
+                        & "   " & HEAD(W, 20) & "   "  & PA(PA_SAVE+1).STEM);
+                   return;
+            else
+               PA_LAST := PA_SAVE;
+            end if;
+         
+            
+            
+            
+            
+            
+         --  end loop;   --  over resulting solutions
+            if PA_LAST > PA_SAVE + 1  then
+            
+               return;
+            
+            else
+               PA_LAST := PA_SAVE;
+            end if;            
+       
+            
          
          
             PA(PA_LAST+1) := NULL_PARSE_RECORD;     --  Just to clear the trys
          
-         end if;    --  On WORDS_MODE(DO_SYNCOPE)
       
          exception
             when others  =>
@@ -516,7 +711,7 @@
          --  Replaces X1 with X2 anywhere in word and tries it for validity
             PA_SAVE : INTEGER := PA_LAST;
          begin
-            for I in S'FIRST..S'LAST-X1'LENGTH  loop  --  Not terminal (not last 1)
+            for I in S'FIRST..S'LAST-X1'LENGTH+1  loop  
                if S(I..I+X1'LENGTH-1) = X1   then
                   PA_LAST := PA_LAST + 1;
                   PA(PA_LAST) := (HEAD("Word mod " & X1 & "/" & X2, MAX_STEM_SIZE),
@@ -741,7 +936,8 @@
          begin
          --TEXT_IO.PUT_LINE("Entering TWO_WORDS  PA_LAST = " & INTEGER'IMAGE(PA_LAST));
          --if S(S'FIRST) /= 'q'  then    --  qu words more complicated
-         
+            
+               
             if S'LENGTH  < 5  then    --  Dont try on too short words
                return;
             end if;
@@ -757,7 +953,7 @@
             --TEXT_IO.PUT_LINE("Setting PA TWO_WORDS  PA_LAST = " & INTEGER'IMAGE(PA_LAST));
             
                while I < S'LENGTH - 2  loop
-               --TEXT_IO.PUT_LINE("Trying  " & S(S'FIRST..S'FIRST+I-1));
+    --TEXT_IO.PUT_LINE("Trying  " & S(S'FIRST..S'FIRST+I-1));
                   if not COMMON_PREFIX(S(S'FIRST..S'FIRST+I-1))  then 
                      WORDS_NO_SYNCOPE(S(S'FIRST..S'FIRST+I-1), PA, PA_LAST);
                      if (PA_LAST > PA_SAVE + 1)     then 
@@ -828,9 +1024,10 @@
                                  & "   " & HEAD(W, 20) & "   "  & S(1..I_MID) & '+' & S(I_MID+1..S'LAST));
                      else                
                         XXX_MEANING := HEAD(
-                                           "It may be two words written together    " &
-                                           S(S'FIRST..S'FIRST+I-1) & " + " & 
-                                           S(S'FIRST+I..S'LAST), MAX_MEANING_SIZE);
+                                           "May be 2 words combined (" &
+                                           S(S'FIRST..S'FIRST+I-1) & "+" & 
+                                           S(S'FIRST+I..S'LAST) & 
+                                           ") If not obvious, probably incorrect", MAX_MEANING_SIZE);
                         PUT_STAT("TRICK   2WDS at "
                                  & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
                                  & "   " & HEAD(W, 20) & "   "  & S(1..I_MID) & '+' & S(I_MID+1..S'LAST));
@@ -852,8 +1049,8 @@
          
             PA_LAST := PA_SAVE;   --  No success, so reset to clear the TRICK PA 
          
-         
-         
+          
+            
          
          --  I could try to check cases/gender/number for matches
          --  Discard all that do not have a match
@@ -870,7 +1067,7 @@
       begin
       --  These things might be genericized, at least the PA(1) assignments 
       
-      --XXX_MEANING := NULL_MEANING_TYPE;
+     XXX_MEANING := NULL_MEANING_TYPE;
       
       
       
@@ -934,7 +1131,9 @@
          elsif S(S'FIRST) = 'd'  then
          
            FLIP("dampn" , "damn");   if PA_LAST > 0  then return; end if;
-               
+           FLIP_FLOP("dir"  , "disr");       --  OLD p.556
+            if PA_LAST > 0  then 
+               return; end if;    
                
                
          elsif S(S'FIRST) = 'e'  then
@@ -952,6 +1151,9 @@
             if PA_LAST > 0  then 
                return; end if;
          
+            FLIP("eid",  "id");   
+            if PA_LAST > 0  then 
+               return; end if;
             FLIP("el",  "hel");   
             if PA_LAST > 0  then 
                return; end if;
@@ -1112,7 +1314,9 @@
          --FLIP_FLOP("quadri",  "quadru");   if PA_LAST > 0  then return; end if;
          
          
-         elsif S(S'FIRST) = 's'  then
+            elsif S(S'FIRST) = 's'  then
+              
+               
          --  From Oxford Latin Dictionary p.1835 "sub-"
          
          --SLUR("sub");
@@ -1344,16 +1548,30 @@
             if PA_LAST > 0  then 
                return; end if;
          
-            INTERNAL("nt",  "nct");   
+            INTERNAL("s",  "ns");   
             if PA_LAST > 0  then 
                return; end if;
          
          
          --  Others
          
+            INTERNAL("ch",  "c");   
+            if PA_LAST > 0  then 
+               return; end if;
+         
             INTERNAL("c",  "ch");   
             if PA_LAST > 0  then 
                return; end if;
+         
+            INTERNAL("th",  "t");   
+            if PA_LAST > 0  then 
+               return; end if;
+         
+            INTERNAL("t",  "th");   
+            if PA_LAST > 0  then 
+               return; end if;
+         
+            
          
          
             DOUBLE_CONSONANTS;
@@ -1363,7 +1581,9 @@
       ---------------------------------------------------------------
       
          if not (WORDS_MODE(IGNORE_UNKNOWN_NAMES)  and CAPITALIZED)  then   --  Don't try on Names
-            TWO_WORDS;
+           if WORDS_MDEV(DO_TWO_WORDS)  then
+             TWO_WORDS;
+           end if;
          end if;
       
       
@@ -1373,12 +1593,13 @@
          
          
             PA_LAST := 1;
-            PA(1) := ("Bad Roman Number? ", NULL_INFLECTION_RECORD,
+            PA(1) := ("Bad Roman Numeral?", NULL_INFLECTION_RECORD,
                         XXX, NULL_MNPC);
-            RRR_MEANING := HEAD(
-                               "There are only Roman numeral digits, maybe an ill-formed number - GUESS VALUE"
-                               , MAX_MEANING_SIZE);
-            PA_LAST := PA_LAST + 1;
+                XXX_MEANING := NULL_MEANING_TYPE;
+                
+                RRR_MEANING := HEAD(INTEGER'IMAGE(BAD_ROMAN_NUMBER(W)) & "  as ill-formed ROMAN NUMERAL?;", 
+                                MAX_MEANING_SIZE); 
+                    PA_LAST := PA_LAST + 1;
             PA(PA_LAST) := ( STEM => HEAD(W, MAX_STEM_SIZE),
                               IR => (
                                     QUAL => (
@@ -1547,8 +1768,8 @@
                      (PA(PA_LAST-1).IR.QUAL.POFS /= TACKON)  then
                      if EXPLANATION = ""  then
                         XXX_MEANING := HEAD(
-                                           "An initial '" & X1 & "' may be rendered by " & X1(1) & "~"
-                                           , MAX_MEANING_SIZE);
+                               "An initial '" & X1 & "' may be rendered by " & X1(1..X1'LAST-1) & "~",
+                                            MAX_MEANING_SIZE);
                      else
                         XXX_MEANING := HEAD(EXPLANATION, MAX_MEANING_SIZE);
                      end if;
@@ -1783,7 +2004,12 @@
          
          
          elsif S(S'FIRST) = 's'  then
-         --  From Oxford Latin Dictionary p.1835 "sub-"
+              
+            FLIP("se",  "ce");     --  Latham
+            if PA_LAST > 0  then 
+               return; end if; 
+              
+        --  From Oxford Latin Dictionary p.1835 "sub-"
          
             SLUR("sub");
          

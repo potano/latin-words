@@ -26,6 +26,7 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
       end ADD_TO;
 
     begin
+--DICTIONARY_ENTRY_IO.PUT(DE);
         --  So I can call with a NULL_DICTIONARY_ENTRY and not bomb
         if DE = NULL_DICTIONARY_ENTRY  then
           return "";
@@ -38,8 +39,13 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
 
         if DE.STEMS(2) = NULL_STEM_TYPE  and 
            DE.STEMS(3) = NULL_STEM_TYPE  and
-           DE.STEMS(4) = NULL_STEM_TYPE       then
-          return TRIM(DE.STEMS(1) & "  " & PART_OF_SPEECH_TYPE'IMAGE(DE.PART.POFS));  
+           DE.STEMS(4) = NULL_STEM_TYPE       and not
+           (((DE.PART.POFS = N)  and then (DE.PART.N.DECL.WHICH = 9))  or
+            ((DE.PART.POFS = ADJ)  and then (DE.PART.ADJ.DECL.WHICH = 9)) or  
+            ((DE.PART.POFS = V)  and then (DE.PART.V.CON = (9, 8))) or  
+            ((DE.PART.POFS = V)  and then (DE.PART.V.CON = (9, 9))))  
+             then
+         return TRIM(DE.STEMS(1)) & "  " & PART_OF_SPEECH_TYPE'IMAGE(DE.PART.POFS);  
           --  For UNIQUES, CONJ, INTERJ, ...
         end if;
         
@@ -120,7 +126,7 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
               OX(2) := ADD(DE.STEMS(2), "ei");
 
           elsif DE.PART.N.DECL = (9, 8)  then
-            OX(1) := ADD(DE.STEMS(1), "");
+            OX(1) := ADD(DE.STEMS(1), ".");
             OX(2) := ADD(NULL_OX, "abb.");
 
           elsif DE.PART.N.DECL = (9, 9)  then
@@ -162,6 +168,10 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
               OX(3) := ADD(DE.STEMS(1), "um");
             end if;
 
+          elsif DE.PART.ADJ.DECL = (9, 8)  then
+            OX(1) := ADD(DE.STEMS(1), ".");
+            OX(2) := ADD(NULL_OX, "abb.");
+
           elsif DE.PART.PRON.DECL = (9, 9)  then
             OX(1) := ADD(DE.STEMS(1), "");
             OX(2) := ADD(NULL_OX, "undeclined");
@@ -202,24 +212,28 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
                 OX(1) := ADD(DE.STEMS(1), "us");
                 OX(2) := ADD(DE.STEMS(2), "a");
                 OX(3) := ADD(DE.STEMS(2), "ud");
-              elsif DE.PART.ADJ.DECL.VAR = 6  then
-                OX(1) := ADD(NULL_OX, "-");
-                OX(2) := ADD(DE.STEMS(2), "e");
-                OX(3) := ADD(NULL_OX, "-");
-              elsif DE.PART.ADJ.DECL.VAR = 7  then
-                OX(1) := ADD(DE.STEMS(1), "es");
-                OX(2) := ADD(DE.STEMS(1), "es");
-                OX(3) := ADD(DE.STEMS(1), "es");
               end if;
 
             elsif DE.PART.ADJ.DECL.WHICH = 2  then
-              if DE.PART.ADJ.DECL.VAR = 6  then
+              if DE.PART.ADJ.DECL.VAR = 1  then
+                OX(1) := ADD(DE.STEMS(1), "-");
+                OX(2) := ADD(DE.STEMS(1), "e");
+                OX(3) := ADD(NULL_OX, "-");
+              elsif DE.PART.ADJ.DECL.VAR = 2  then
+                OX(1) := ADD(DE.STEMS(1), "-");
+                OX(2) := ADD(NULL_OX, "a");
+                OX(3) := ADD(NULL_OX, "-");
+              elsif DE.PART.ADJ.DECL.VAR = 3  then
+                OX(1) := ADD(DE.STEMS(1), "es");
+                OX(2) := ADD(DE.STEMS(1), "es");
+                OX(3) := ADD(DE.STEMS(1), "es");
+              elsif DE.PART.ADJ.DECL.VAR = 6  then
                 OX(1) := ADD(DE.STEMS(1), "os");
                 OX(2) := ADD(DE.STEMS(1), "os");
                 OX(3) := ADD(NULL_OX, "-");
               elsif DE.PART.ADJ.DECL.VAR = 7  then
                 OX(1) := ADD(DE.STEMS(1), "os");
-                OX(2) := ADD(DE.STEMS(1), "-");
+                OX(2) := ADD(NULL_OX, "-");
                 OX(3) := ADD(NULL_OX, "-");
               elsif DE.PART.ADJ.DECL.VAR = 8  then
                 OX(1) := ADD(NULL_OX, "-");
@@ -240,11 +254,20 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
                 OX(1) := ADD(DE.STEMS(1), "");
                 OX(2) := ADD(DE.STEMS(2), "is");
                 OX(3) := ADD(DE.STEMS(2), "e");
+              elsif DE.PART.ADJ.DECL.VAR = 6  then
+                OX(1) := ADD(DE.STEMS(1), "");
+                OX(2) := ADD(NULL_OX, "(gen.)");
+                OX(3) := ADD(DE.STEMS(2), "os");
               end if;
 
-            elsif DE.PART.ADJ.DECL.WHICH = 9  then
-                OX(1) := ADD(DE.STEMS(1), "");
-                OX(2) := ADD(NULL_OX, "undeclined");
+            elsif DE.PART.ADJ.DECL = (9, 8)  then
+              OX(1) := ADD(DE.STEMS(1), ".");
+              OX(2) := ADD(NULL_OX, "abb.");
+
+            elsif DE.PART.ADJ.DECL = (9, 9)  then
+              OX(1) := ADD(DE.STEMS(1), "");
+              OX(2) := ADD(NULL_OX, "undeclined");
+
 
             else
               raise NOT_FOUND;
@@ -304,141 +327,166 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
 
 
         elsif DE.PART.POFS = V    then
-          if DE.PART.V.CON = (9, 9)  then  --  undeclined
-            OX(1) := ADD(DE.STEMS(1), "");
-            OX(2) := ADD(NULL_OX, "undeclined");
-
-          else                             --  all declined
-
-            if DE.KIND = (V, DEP)  then    --  all DEP
-              OX(3) := ADD(NULL_OX, "DEP");
-              OX(4) := ADD(DE.STEMS(4), "us sum");
-              if DE.PART.V.CON.WHICH = 1  then
-                OX(1) := ADD(DE.STEMS(1), "or");
-                OX(2) := ADD(DE.STEMS(2), "ari");
-              elsif DE.PART.V.CON.WHICH = 2  then
-                OX(1) := ADD(DE.STEMS(1), "eor");
-                OX(2) := ADD(DE.STEMS(2), "eri");
-              elsif DE.PART.V.CON.WHICH = 3  then
-                OX(1) := ADD(DE.STEMS(1), "or");
-                --  Would be wrong for 3 3, but no 3 3 DEP
-                if DE.PART.V.CON.VAR = 4  then
-                  OX(2) := ADD(DE.STEMS(2), "iri");
-                else
-                  OX(2) := ADD(DE.STEMS(2), "i");
-                end if;
---              elsif DE.PART.V.CON.WHICH = 4  then   --  4th amy be 3,4 or 4,1
---                OX(1) := ADD(DE.STEMS(1), "or");    --  depending on where in code
---                OX(2) := ADD(DE.STEMS(2), "iri");   --  In practice there is no problem
+          
+          if DE.PART.V.KIND = DEP  then    --  all DEP
+            OX(3) := ADD(NULL_OX, "DEP");  --  Flag for later use
+            OX(4) := ADD(DE.STEMS(4), "us sum");
+            if DE.PART.V.CON.WHICH = 1  then
+              OX(1) := ADD(DE.STEMS(1), "or");
+              OX(2) := ADD(DE.STEMS(2), "ari");
+            elsif DE.PART.V.CON.WHICH = 2  then
+              OX(1) := ADD(DE.STEMS(1), "eor");
+              OX(2) := ADD(DE.STEMS(2), "eri");
+            elsif DE.PART.V.CON.WHICH = 3  then
+              OX(1) := ADD(DE.STEMS(1), "or");
+              --  Would be wrong for 3 3, but no 3 3 DEP
+              if DE.PART.V.CON.VAR = 4  then
+                OX(2) := ADD(DE.STEMS(2), "iri");
               else
-                raise NOT_FOUND;
-              end if;                      --  all DEP handled
-
-
-            else                            --  Not DEP  
-              --  OX 1
-              if DE.KIND = (V, IMPERS)  then
-                if DE.PART.V.CON.WHICH = 1  then
-                  OX(1) := ADD(DE.STEMS(1), "at");
-                elsif DE.PART.V.CON.WHICH = 2  then
-                  OX(1) := ADD(DE.STEMS(1), "et");
-                elsif DE.PART.V.CON.WHICH = 3  then
---                   or   DE.PART.V.CON.WHICH = 4  then
-                  if DE.STEMS(1)(TRIM(DE.STEMS(1))'LAST) = 'i'  then
-                    OX(1) := ADD(DE.STEMS(1), "t");
-                  else
-                    OX(1) := ADD(DE.STEMS(1), "it");
-                  end if;
-                end if;                      --   = IMPERS handled
-                
-              else                                --  /= IMPERS
-                if DE.PART.V.CON.WHICH = 2  then  
-                  OX(1) := ADD(DE.STEMS(1), "eo");
-
-                elsif DE.PART.V.CON.WHICH = 5  then
-                  OX(1) := ADD(DE.STEMS(1), "um");
-                elsif DE.PART.V.CON = (7, 2)  then
-                  OX(1) := ADD(DE.STEMS(1), "am");
-                else
-                  OX(1) := ADD(DE.STEMS(1), "o");
-                end if;                      --  /= IMPERS handled
-              end if;                        --  OX(1) handled
-
-              --  OX 2
-              if DE.PART.V.CON.WHICH = 1  then
-                OX(2) := ADD(DE.STEMS(2), "are");
-              elsif DE.PART.V.CON.WHICH = 2  then
-                OX(2) := ADD(DE.STEMS(2), "ere");
-              elsif DE.PART.V.CON.WHICH = 3  then
-                if DE.PART.V.CON.VAR = 2  then
-                  OX(2) := ADD(DE.STEMS(2), "e");
-                elsif DE.PART.V.CON.VAR = 3  then
-                  OX(2) := ADD(DE.STEMS(2), "eri");
-                elsif DE.PART.V.CON.VAR = 4  then
-                  OX(2) := ADD(DE.STEMS(2), "ire");
-                else
-                  OX(2) := ADD(DE.STEMS(2), "ere");
-                end if;
---              elsif DE.PART.V.CON.WHICH = 4  then
---                OX(2) := ADD(DE.STEMS(2), "ire");
-              elsif DE.PART.V.CON.WHICH = 5  then
-                if DE.PART.V.CON.VAR = 1  then
-                  OX(2) := ADD(DE.STEMS(2), "esse");
-                elsif DE.PART.V.CON.VAR = 2  then
-                  OX(2) := ADD(DE.STEMS(1), "e");  --  tricky, but it is 1
-                end if;
-              elsif DE.PART.V.CON.WHICH = 6  then
-                if DE.PART.V.CON.VAR = 1  then
-                  OX(2) := ADD(DE.STEMS(2), "re");
-                elsif DE.PART.V.CON.VAR = 2  then
-                  OX(2) := ADD(DE.STEMS(2), "le");
-                end if;
-              elsif DE.PART.V.CON.WHICH = 7  then
-                if DE.PART.V.CON.VAR = 3  then
-                  OX(2) := ADD(DE.STEMS(2), "se");
-                end if;
-              elsif DE.PART.V.CON.WHICH = 9  then
-                if DE.PART.V.CON.VAR = 1  then
-                  OX(2) := ADD(DE.STEMS(2), "are");
-                elsif DE.PART.V.CON.VAR = 2  then
-                  OX(2) := ADD(DE.STEMS(2), "ere");
-                elsif DE.PART.V.CON.VAR = 3  then
-                  OX(2) := ADD(DE.STEMS(2), "ere");
-                elsif DE.PART.V.CON.VAR = 4  then
-                  OX(2) := ADD(DE.STEMS(2), "ire");
-                else
-                  OX(2) := ADD(DE.STEMS(2), "ere");
-                end if;
-              end if;                        --  OX(2) handled
-
-
-              --  OX 3 & 4
-              if DE.KIND = (V, IMPERS)  then
-                OX(3) := ADD(DE.STEMS(1), "it");
-                OX(4) := ADD(DE.STEMS(4), "us est");
-              elsif DE.PART.V.CON = (5, 1)  then
-                OX(3) := ADD(DE.STEMS(3), "i");
-                OX(4) := ADD(DE.STEMS(4), "urus");
-               elsif DE.PART.V.CON.WHICH = 9  then
-                OX(3) := ADD("", "additional");
-                OX(4) := ADD("", "forms");
-               else
-                OX(3) := ADD(DE.STEMS(3), "i");
-                OX(4) := ADD(DE.STEMS(4), "us");
-              end if;                         --  OX(3 & 4) handled
-
-            --end if;                 --  On V KIND
-
-              if DE.PART.V.CON = (6, 1)  then      --  Finalization correction
-                OX(3) := ADD(OX(3), " (ii)");
+                OX(2) := ADD(DE.STEMS(2), "i");
               end if;
-              if DE.KIND  = (V, SEMIDEP)  then    --  Finalization correction
-                OX(4) := ADD(DE.STEMS(4), "us sum");
-              end if;
-            end if;
+--            elsif DE.PART.V.CON.WHICH = 4  then   --  4th amy be 3,4 or 4,1
+--              OX(1) := ADD(DE.STEMS(1), "or");    --  depending on where in code
+--              OX(2) := ADD(DE.STEMS(2), "iri");   --  In practice there is no problem
+            else
+              raise NOT_FOUND;
+            end if;                      --  all DEP handled
+             
+              
+          elsif DE.PART.V.KIND = PERFDEF  then   --  all PERFDEF handled
+            OX(1) := ADD(DE.STEMS(3), "i");
+            OX(2) := ADD(DE.STEMS(3), "isse");
+            OX(3) := ADD(DE.STEMS(4), "us");
+            OX(4) := NULL_OX;  --  Flag for later use
             
+            
+          elsif DE.PART.V.KIND = IMPERS  and then
+              ((DE.STEMS(1)(1..3) = "zzz")  and   -- Recognize as PERFDEF IMPERS
+               (DE.STEMS(2)(1..3) = "zzz"))  then
+              OX(1) := ADD(DE.STEMS(3), "it");
+              OX(2) := ADD(DE.STEMS(3), "isse");
+              OX(3) := ADD(DE.STEMS(4), "us est");
+  --          OX(4) := ADD(NULL_OX, "PERFDEF");
+           
 
-          end if;                        --  WHICH  9 9
+          else                            --  Not DEP/PERFDEF/IMPERS  
+              
+            
+            if DE.PART.V.KIND = IMPERS  then
+              if DE.PART.V.CON.WHICH = 1  then
+                OX(1) := ADD(DE.STEMS(1), "at");
+              elsif DE.PART.V.CON.WHICH = 2  then
+                OX(1) := ADD(DE.STEMS(1), "et");
+              elsif DE.PART.V.CON.WHICH = 3  then
+--               or   DE.PART.V.CON.WHICH = 4  then
+                if DE.STEMS(1)(TRIM(DE.STEMS(1))'LAST) = 'i'  then
+                  OX(1) := ADD(DE.STEMS(1), "t");
+                else
+                  OX(1) := ADD(DE.STEMS(1), "it");
+                end if;
+              end if;
+               
+            else
+            
+            --  OX 1
+            if DE.PART.V.CON.WHICH = 2  then  
+              OX(1) := ADD(DE.STEMS(1), "eo");
+
+            elsif DE.PART.V.CON.WHICH = 5  then
+              OX(1) := ADD(DE.STEMS(1), "um");
+            elsif DE.PART.V.CON = (7, 2)  then
+              OX(1) := ADD(DE.STEMS(1), "am");
+            else
+              OX(1) := ADD(DE.STEMS(1), "o");
+            end if;                      --  /= IMPERS handled
+            --end if;      
+                              --  OX(1) handled
+          end if;
+
+            --  OX 2
+            if DE.PART.V.CON.WHICH = 1  then
+              OX(2) := ADD(DE.STEMS(2), "are");
+            elsif DE.PART.V.CON.WHICH = 2  then
+              OX(2) := ADD(DE.STEMS(2), "ere");
+            elsif DE.PART.V.CON.WHICH = 3  then
+              if DE.PART.V.CON.VAR = 2  then
+                OX(2) := ADD(DE.STEMS(2), "e");
+              elsif DE.PART.V.CON.VAR = 3  then
+                OX(2) := ADD(DE.STEMS(2), "eri");
+              elsif DE.PART.V.CON.VAR = 4  then
+                OX(2) := ADD(DE.STEMS(2), "ire");
+              else
+                OX(2) := ADD(DE.STEMS(2), "ere");
+              end if;
+--            elsif DE.PART.V.CON.WHICH = 4  then
+--              OX(2) := ADD(DE.STEMS(2), "ire");
+            elsif DE.PART.V.CON.WHICH = 5  then
+              if DE.PART.V.CON.VAR = 1  then
+                OX(2) := ADD(DE.STEMS(2), "esse");
+              elsif DE.PART.V.CON.VAR = 2  then
+                OX(2) := ADD(DE.STEMS(1), "e");  --  tricky, but it is 1
+              end if;
+            elsif DE.PART.V.CON.WHICH = 6  then
+              if DE.PART.V.CON.VAR = 1  then
+                OX(2) := ADD(DE.STEMS(2), "re");
+              elsif DE.PART.V.CON.VAR = 2  then
+                OX(2) := ADD(DE.STEMS(2), "le");
+              end if;
+            elsif DE.PART.V.CON.WHICH = 7  then
+              if DE.PART.V.CON.VAR = 3  then
+                OX(2) := ADD(DE.STEMS(2), "se");
+              end if;
+            elsif DE.PART.V.CON.WHICH = 8  then
+              if DE.PART.V.CON.VAR = 1  then
+                OX(2) := ADD(DE.STEMS(2), "are");
+              elsif DE.PART.V.CON.VAR = 2  then
+                OX(2) := ADD(DE.STEMS(2), "ere");
+              elsif DE.PART.V.CON.VAR = 3  then
+                OX(2) := ADD(DE.STEMS(2), "ere");
+              elsif DE.PART.V.CON.VAR = 4  then
+                OX(2) := ADD(DE.STEMS(2), "ire");
+              else
+                OX(2) := ADD(DE.STEMS(2), "ere");
+              end if;
+            elsif DE.PART.V.CON = (9, 8)  then
+              OX(1) := ADD(DE.STEMS(1), ".");
+              OX(2) := ADD(NULL_OX, "abb.");
+            elsif DE.PART.V.CON = (9, 9)  then
+              OX(1) := ADD(DE.STEMS(1), "");
+              OX(2) := ADD(NULL_OX, "undeclined");
+
+            end if;                        --  OX(2) handled
+
+
+            --  OX 3 & 4
+            if DE.PART.V.KIND = IMPERS  then
+              if (OX(3)(1..7) /= "PERFDEF")  then
+                  OX(3) := ADD(DE.STEMS(3), "it");
+              end if;
+              OX(4) := ADD(DE.STEMS(4), "us est");
+            elsif DE.PART.V.KIND  = SEMIDEP  then    --  Finalization correction
+              OX(4) := ADD(DE.STEMS(4), "us sum");
+            elsif DE.PART.V.CON = (5, 1)  then
+              OX(3) := ADD(DE.STEMS(3), "i");
+              OX(4) := ADD(DE.STEMS(4), "urus");
+            elsif DE.PART.V.CON.WHICH = 8  then
+              OX(3) := ADD("", "additional");
+              OX(4) := ADD("", "forms");
+            elsif DE.PART.V.CON.WHICH = 9  then
+              OX(3) := ADD(NULL_OX, "BLANK");  --  Flag for later use
+              OX(4) := ADD(NULL_OX, "BLANK");  --  Flag for later use
+            else
+              OX(3) := ADD(DE.STEMS(3), "i");
+              OX(4) := ADD(DE.STEMS(4), "us");
+            end if;                         --  OX(3 & 4) handled
+            
+          end if;                 --  On V KIND
+
+          if DE.PART.V.CON = (6, 1)  then      --  Finalization correction
+            OX(3) := ADD(OX(3), " (ii)");
+          end if;
+            
+            
 
         elsif (DE.PART.POFS = NUM) and then (DE.PART.NUM.SORT = X)  then
           if DE.PART.NUM.DECL.WHICH = 1  then
@@ -512,6 +560,11 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
         end if;     -- On PART   
 
 
+        
+--TEXT_IO.PUT_LINE(OX(1) & "+" & OX(2) & "+" & OX(3) & "+" & OX(4));                
+        
+                --  Now clean up and output
+        --  Several flags have been set which modify OX's
         if OX(1)(1..3) = "zzz"  then
           ADD_UP(" - ");
         elsif OX(1) /= NULL_OX  then
@@ -526,26 +579,36 @@ with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
           ADD_UP(", - ");
         elsif OX(3)(1..3) = "DEP"  then
           null;
+        elsif OX(3)(1..7) = "PERFDEF"  then
+          null;
+        elsif OX(3)(1..5) = "BLANK"  then
+          null;
         elsif OX(3) /= NULL_OX  then
           ADD_UP(", " & TRIM(OX(3)));
         end if;
         if OX(4)(1..3) = "zzz"  then
           ADD_UP(", - ");
+        elsif OX(4)(1..5) = "BLANK"  then
+          null;
         elsif OX(4) /= NULL_OX  then
           ADD_UP(", " & TRIM(OX(4)));
         end if;
 
  
-      ADD_TO("  " & PART_OF_SPEECH_TYPE'IMAGE(DE.PART.POFS)& "  ");
+        ADD_TO("  " & PART_OF_SPEECH_TYPE'IMAGE(DE.PART.POFS)& "  ");
+
       if DE.PART.POFS = N  then
         ADD_TO("  " & GENDER_TYPE'IMAGE(DE.PART.N.GENDER) & "  ");
       end if;
-      if (DE.PART.POFS = V)  and then  (DE.KIND.V_KIND in GEN..PERFDEF)  then
-        ADD_TO("  " & VERB_KIND_TYPE'IMAGE(DE.KIND.V_KIND) & "  ");
+      if (DE.PART.POFS = V)  and then  (DE.PART.V.KIND in GEN..PERFDEF)  then
+        ADD_TO("  " & VERB_KIND_TYPE'IMAGE(DE.PART.V.KIND) & "  ");
       end if;
+
+--TEXT_IO.PUT_LINE(">>>>" & TRIM(FORM));
 
       return TRIM(FORM);
 
+      
     exception
       when NOT_FOUND  =>
         return "";

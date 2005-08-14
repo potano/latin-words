@@ -3,6 +3,19 @@ with PREFACE;
 package body INFLECTIONS_PACKAGE is
   use TEXT_IO;
 
+
+  function "<" (LEFT, RIGHT : DECN_RECORD) return BOOLEAN is
+  begin
+    if LEFT.WHICH < RIGHT.WHICH  or else
+      (LEFT.WHICH = RIGHT.WHICH  and then
+       LEFT.VAR < RIGHT.VAR)  then
+      return TRUE;
+    else
+      return FALSE;
+    end if;
+  end "<";
+
+  
   
   function "<" (LEFT, RIGHT : QUALITY_RECORD) return BOOLEAN is
   begin
@@ -336,7 +349,7 @@ LEFT.V.TENSE_VOICE_MOOD.MOOD   = RIGHT.V.TENSE_VOICE_MOOD.MOOD   and then
 
 
   function "<=" (LEFT, RIGHT : STEM_KEY_TYPE)   return BOOLEAN is
-  begin
+  begin            --  Only works for 2 stem parts, not verbs
     if (RIGHT = LEFT   or else
         RIGHT = 0)  then
       return TRUE;
@@ -2106,7 +2119,7 @@ end ENDING_RECORD_IO;
 
 package body INFLECTION_RECORD_IO is
   use QUALITY_RECORD_IO;
-  use INTEGER_IO;
+  use STEM_KEY_TYPE_IO;
   use ENDING_RECORD_IO;
   use AGE_TYPE_IO;
   use FREQUENCY_TYPE_IO;
@@ -2516,14 +2529,14 @@ begin
   PREFACE.PUT(" entries");
   PREFACE.SET_COL(55); PREFACE.PUT_LINE("--  Loaded correctly");
 
---exception
---  when Text_IO.Name_Error  =>
---    NEW_LINE;
---    PUT_LINE("There is no " & INFLECTIONS_SECTIONS_NAME & " file.");
---    PUT_LINE("The program cannot work without one.");
---    PUT_LINE("Make sure you are in the subdirectory containing the files");
---    PUT_LINE("for inflections, dictionary, addons and uniques.");
---    raise GIVE_UP;
+exception
+  when Text_IO.Name_Error  =>
+    NEW_LINE;
+    PUT_LINE("There is no " & INFLECTIONS_SECTIONS_NAME & " file.");
+    PUT_LINE("The program cannot work without one.");
+    PUT_LINE("Make sure you are in the subdirectory containing the files");
+    PUT_LINE("for inflections, dictionary, addons and uniques.");
+    raise GIVE_UP;
 
 end ESTABLISH_INFLECTIONS_SECTION;
 
