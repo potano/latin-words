@@ -1,12 +1,12 @@
 <HTML>
 
 <HEAD>
-<TITLE>WORDS 1.97E (LATIN-ENGLISH DICTIONARY) PROGRAM DOCUMENTATION</TITLE>
+<TITLE>WORDS 1.97Ed (LATIN-ENGLISH DICTIONARY) PROGRAM DOCUMENTATION</TITLE>
 </HEAD>
 <BODY>
 
 
-<H1><CENTER>WORDS Version 1.97E</CENTER>
+<H1><CENTER>WORDS Version 1.97Ed</CENTER>
 <CENTER>LATIN-ENGLISH DICTIONARY PROGRAM</CENTER></H1>
 
 <BR><BR>
@@ -50,6 +50,8 @@
 <A HREF="#GEO">GEO</A><BR>
 <A HREF="#FREQ">FREQ</A><BR>
 <A HREF="#SOURCE">SOURCE</A><BR>
+<A HREF="#Current Distribution of DICTLINE Flags">
+Current Distribution of DICTLINE Flags</A><BR>
 <A HREF="#Dictionary Conventions">Dictionary Conventions</A><BR>
 <A HREF="#Evolution of the Dictionary">Evolution of the Dictionary</A><BR>
 <A HREF="#Text Dictionary - DICTPAGE.TXT">Text Dictionary - DICTPAGE.TXT</A><BR>
@@ -88,7 +90,7 @@ provides an analysis of each word individually.  It uses an INFLECT.SEC,
 UNIQUES.LAT, ADDONS.LAT, STEMFILE.GEN, INDXFILE.GEN, and DICTFILE.GEN, and
 possibly .SPE and DICT.LOC.
 <P>
-The dictionary contains over 37000 entries, as would be counted in an
+The dictionary contains over 38000 entries, as would be counted in an
 ordinary dictionary.  This expands to almost twice that number of
 individual stems (the count that the program may display at startup), and,
 through additional word construction with hundreds of prefixes and
@@ -563,8 +565,9 @@ and may not always correspond to conventional usage.
 <P>On the next line is given the expansion of the form that one might find
 in a paper dictionary, the nominitive and genitive (agricola, agricolae).
 The [XAXBO] is an internal code of the program and is documented below as Dictionary Codes.
-This output has always been available upon request, but has now been
-made the default.  In this case, the interesting piece is the B, which signifies
+Several codes are associated with each dictionary entry (presently AGE, AREA, GEO, FREQ, SOURCE).
+These provide some information to enhance the interpretation of the dictionary entry.
+In this case, the interesting piece is the B, which signifies
 that this word is found frequently in texts, in the top 10 percent.
 The O says it has been verified in the Oxford Latin Dictionary.
 The A says it is an agrigultural word.
@@ -931,7 +934,10 @@ supplemented by it with possible specialized meanings.  <BR>
 <A NAME="English-to-Latin Examples">
 <H4>English-to-Latin Examples</H4></A>
 
-<P>The input English word is followed by the desired part of speech.
+<P>~E (tilde E/e plus Enter/CR)
+changes mode from Latin-to-English to English-to-Latin.  ~L changes back.
+
+<P>A single input English word is followed by the desired part of speech.
 Omitting the part of speech defaults to all, which is not recommended
 for any word which can be ambiguous.  Since the program is looking for a
 part of speech, it would be inconvenient to support the input of several
@@ -1180,6 +1186,9 @@ available.  May indicate somewhat more doubt than (perh.).  <BR>
 have an ending affixed, as is the convention in other dictionaries, but
 represents the word with whatever ending is proper.  It is just a space
 saving shorthand or abbreviation.  <BR>
+<BR>
+{~ [tilde] also is the flag for changing the language base.  ~E (plus Enter/CR)
+changes from Latin-to-English to English-to-Latin.  ~L changes back.)<BR>
 <BR>
 =&gt; in meaning this indicates a translation example.  <BR>
 <BR>
@@ -2662,12 +2671,12 @@ the word.  It will be treated as a real letter, and tricks employed as useful.
 <A NAME="Dictionary Codes">
 <H4>Dictionary Codes</H4></A>
 <P>
-Several codes are associated with each dictionary entry (presently AGE,
-AREA, GEO, FREQ, SOURCE).  These were provided against the possibility of
-the program using them to make a better interpretation.  For the most
-part, this information is of little additional help to the reader, but it
-is carried in codes because it is not available to the program in any
-other way.  Some of these codes, like the KIND code for nouns, may be
+Several codes are associated with each dictionary entry (e.g., AGE,
+AREA, GEO, FREQ, SOURCE).  Initially these were provided against the possibility of
+the program using them to make a better interpretation, however
+this additional information may be of some help to the reader.
+It is carried in codes because it is not available to the program in any
+other way.  Other codes, like the KIND code for nouns, may be
 used, others may not.  The program is still in development and these are
 put in to experiment with a possible capability.  Later versions may use
 them, omit them, or provide others.
@@ -2819,12 +2828,12 @@ understanding that adjustments can be made when additional information is
 available, the initial numeric criteria are:
 
 <PRE>
-A   full column or more, more than 50 citations
-B   half column, more than 20 citations
-C   more then 5 citations
-D   4-5 citations
-E   2-3 citations
-F   only 1 citation
+A   full column or more, more than 50 citations - very frequent
+B   half column, more than 20 citations - frequent
+C   more then 5 citations - common
+D   4-5 citations - lesser
+E   2-3 citations - uncommon
+F   only 1 citation - very rare
 </PRE>
 
 <P>
@@ -2891,8 +2900,8 @@ dictionary, in blessed innocence, records all forms without bias.
 
 <PRE><TT>    type FREQUENCY_TYPE is (     --  For dictionary entries
     X,    --              --  Unknown or unspecified
-    A,    --  very freq   --  Very frequent, in all Elementry Latin books
-    B,    --  frequent    --  Frequent, in top 10 percent
+    A,    --  very freq   --  Very frequent, in all Elementry Latin books, top 1000+ words
+    B,    --  frequent    --  Frequent, next 2000+ words
     C,    --  common      --  For Dictionary, in top 10,000 words
     D,    --  lesser      --  For Dictionary, in top 20,000 words
     E,    --  uncommon    --  2 or 3 citations
@@ -3024,6 +3033,100 @@ extensively used.  Others have only been used for an occasional check
     --  W. M. Lindsay, Short Historical Latin Grammar, 1895 (Lindsay)
                         );
 </TT></PRE>
+
+
+<A NAME="Current Distribution of DICTLINE Flags">
+<H4>Current Distribution of DICTLINE Flags</H4></A>
+<PRE><TT>
+Number of lines in DICTLINE GENERAL        38113
+
+AGE
+X         28147
+A         60
+B         442
+C         58
+D         3762
+E         1621
+F         1909
+G         1923
+H         191
+
+AREA
+X         28536
+A         2907
+B         868
+D         405
+E         1786
+G         457
+L         1154
+P         174
+S         700
+T         369
+W         685
+Y         72
+
+GEO
+X         37140
+A         64
+B         52
+C         1
+D         5
+E         46
+F         67
+G         20
+H         229
+I         137
+J         4
+K         6
+N         8
+P         9
+Q         302
+R         1
+S         22
+U         0
+
+FREQ
+X         11
+A         2070
+B         2617
+C         10765
+D         6414
+E         7092
+F         7519
+I         398
+M         0
+N         1227
+
+SOURCE
+X         7809
+A         0
+B         42
+C         1808
+D         12
+E         1303
+F         121
+G         60
+H         0
+I         4
+J         116
+K         2116
+L         60
+M         699
+N         85
+O         15161
+P         285
+Q         18
+R         12
+S         7749
+T         88
+U         1
+V         49
+W         321
+Y         35
+Z         159
+
+</TT></PRE>
+
 
 
 <A NAME="Dictionary Conventions">
