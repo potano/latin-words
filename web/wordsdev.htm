@@ -7,20 +7,17 @@
 
 <P>
 
-
-<H1>WORDS - Version 1.97E<BR>
+<H1>WORDS - Version 1.97Ed<BR>
 LATIN DICTIONARY PROGRAM <BR>
 DEVELOPERS/REHOSTERS PAGE</H1>
 <P>
-
-
+<H2>WORDSALL and TOOLS</H2>
+<P>
 <H3>This page provides the Ada source code for a Latin dictionary
 program for the PC, and the dictionary material sufficient to re-host
 to other systems.
 <BR>
 Instructions below:  </H3>
-
-
 
 <H3>
 The WORDS System</H3>
@@ -30,7 +27,7 @@ zip of all the Ada source files to port WORDS, and
 support programs and data to generate the necessary dictionaries and
 inflections for re-hosting the WORDS Latin dictionary
 parsing/translation system on any machine with an Ada 95 compiler.  (It
-can be made to work with Ada 83 also by replacing just tha short driver routine.)
+can be made to work with Ada 83 also by replacing just the short driver routine.)
 <P>
 This a console program (keyboard entry), without fancy Windows GUI, and has
 thereby been made system independent.
@@ -121,7 +118,7 @@ environment (one would maximally optimize the main program):
 gnatmake -O3 words
 gnatmake makedict
 gnatmake makestem
-gnatmake ewdsefil
+gnatmake makeefil
 gnatmake makeinfl
 </PRE>
 
@@ -175,7 +172,8 @@ This is also messy.  I cannot really justify not having fixed this, but there it
 
 
 <P>
-For comments mail to <A HREF="mailto:whitaker@erols.com"> <B>whitaker@erols.com</B></A><BR>
+For comments mail to
+<A HREF="mailto:whitaker@erols.com"> <B>whitaker@erols.com</B></A><BR>
 
 
 
@@ -184,7 +182,17 @@ For comments mail to <A HREF="mailto:whitaker@erols.com"> <B>whitaker@erols.com<
 
 <H3>Recent Versions</H3>
 
-<P><B>December 2004 - Version 1.97E release.</B>
+<P><B>August 2005 - Version 1.97Ed last release.</B>
+This is just 1.97E with some corrections prompted by user feedback.
+The dictionary is somewhat larger - 38000.
+There is very little algorithm growth.
+
+<P><B>March 2005 - Version 1.97Ec release.</B>
+This is just 1.97E with some corrections prompted by user feedback.
+There is no significant algorithm or vocabulary growth, but the
+changes are worth the reload.
+
+<P>December 2004 - Version 1.97E release.
 New version has increased dictionary to 37000 entries,
 including more ecclesiastical, medieval, and modern Latin.
 Most of the increase was supplied by John White.
@@ -194,31 +202,6 @@ Changes in parameters and defaults will require users to reset mode files.
 <P><B>Feburary 2004 - Over one million total hits on this site.</B>
 
 <HR>
-<P>
-31 August 2001 - Version 1.97 - Update concentrates on improving
-presentation of results to the user.  There are no significant
-improvements to the algorithms, which seem to be quite stable now.  The
-dictionary is now over 30000 entries, with some increase in late and
-medieval Latin.
-<P>
-The main thrust of this version is to simplify the presentation for the
-average student.  Trimming has been greatly expanded so as to hide
-possible parses which are unlikely in popular classical texts and student
-exercises.  The full parse (archaic, medieval, rare, etc.) is still
-available by switching the TRIM paramenter, and that operation has been
-made more convenient by siting that first in the # parameter list.
-<P>
-15 October 2000 - Version 1.96 still - Some small changes as a result of
-user feedback.  A few errors that crept into the latest version causing
-words previously handled to raise exception were fixed.  There is no
-change in the dictionary.  The changes are corrections and do not amount
-to a new version, even a subversion.  The new code may be recognized by
-successful handling of the word <B>quempiam</B>. (Thanks DiLaura)
-<P>
-10 September 2000 - Version 1.96 - a small change to the user.  <BR>
-Somewhat larger dictionary - additions in medieval and ecclesiastical - I
-hope for additional in the near future.  One reading the Vulgate will not
-be disappointed.
 <P>
 13 July 2002 - Version 1.97 still - This very slight update of the code
 and a very few more entries in the dictionary.  It now takes two
@@ -234,9 +217,16 @@ should use this version, but no one should go out of his way, unless you
 have discovered the presence of these errors.  (Some DICT.LOC entries may
 fail.  Some special cases in listing of dictionary around UNKNOWN may
 raise exception.)
+
 <P>
-30 August 2001 - Version 1.97 - The only significant change is in the
-presentation of the output.  There is now a lot of (default) TRIMming.
+31 August 2001 - Version 1.97 - Update concentrates on improving
+presentation of results to the user.  There are no significant
+improvements to the algorithms, which seem to be quite stable now.  The
+dictionary is now over 30000 entries, with some increase in late and
+medieval Latin.
+<P>
+The main thrust of this version is to simplify the presentation for the
+average student.  There is now a lot of (default) TRIMming.
 This is to make the program more friendly to student users.
 Uncommon/untimely parses are suppressed when there is a much more
 common/likely solution.  Vocatives and locatives are often suppressed.
@@ -245,9 +235,10 @@ user can cut out the TRIM by setting a # parameter, and this has been made
 easier by placing that parameter first in the # menu.  The dictionary now
 contains more than 30000 entries.
 <P>
-The file list_list has been renames list_sweep, and put_example_line has
+The file list_list has been renamed list_sweep, and put_example_line has
 been removed from list_package to stand alone.  .LAT has been added as an
 extension to those data files previously without extension.
+
 <P>
 15 October 2000 - Version 1.96 still - Some small changes as a result of
 user feedback.  A few errors that crept into the latest version causing
@@ -255,6 +246,7 @@ words previously handled to raise exception were fixed.  There is no
 change in the dictionary.  The changes are corrections and do not amount
 to a new version, even a subversion.  The new code may be recognized by
 successful handling of the word <B>quempiam</B>&quot;. (Thanks DiLaura)
+
 <P>
 10 September 2000 - Version 1.96 - a small change to the user.  <BR>
 Somewhat larger dictionary - additions in medieval and ecclesiastical - I
@@ -276,11 +268,15 @@ introduced.  Check the defaults for youe particular application.  <BR>
 Some output (qui) may be a bit better.  <BR>
 One procedure (LIST_LIST) has been added.  It is used by LIST_PACKAGE.
 
-
-
-
-
-
+<H3>
+TOOLS</H3>
+<P>
+There is a <A HREF="tools.zip"><B>TOOLS.ZIP</B></A>
+zip of a number of simple text tools (in Ada) used in preparation of WORDS.
+Thses are mostly trivial, but could be helpful to one working with WORDS.
+There is a brief HOWTO text which is far from complete.  I may do better
+in the next version.
+<P>
 
 <P>
 <BR>
@@ -288,7 +284,7 @@ One procedure (LIST_LIST) has been added.  It is used by LIST_PACKAGE.
 <B>Return to WORDS home<B></A>
 
 
-</BODY>
+
 
 </BODY>
 </HTML>

@@ -1,55 +1,64 @@
-Placeholder for version 1.97.0 (1.97) of wordsall.zip
-File date: 2001-08-30, size 1422533
+Placeholder for version 1.97.7 (1.97Ed) of wordsall.zip
+File date: 2005-08-14, size 2674477
 
    Date      Time           Size  Name
 ------------------- ------------  ------------------------
-1999-05-04 22:49:52          848  strings_package.ads
-1999-05-04 22:49:58         3943  strings_package.adb
-2000-06-11 12:24:14         2866  latin_file_names.ads
-1999-10-08 17:36:20          773  latin_file_names.adb
-1999-04-16 01:22:46          418  config.ads
-1999-04-25 03:01:10          300  preface.ads
-1999-02-24 18:01:38          212  put_stat.adb
-2001-08-21 21:16:46         2089  word_parameters.ads
-2001-07-05 21:08:22         2926  developer_parameters.ads
-1999-04-25 03:00:26         1048  preface.adb
-2001-08-21 21:34:58        21665  word_parameters.adb
-2001-07-01 00:26:26        66895  inflections_package.adb
-2001-07-28 22:06:36        25167  inflections_package.ads
-2001-08-21 21:16:42        39093  parse.adb
-2001-06-02 17:05:50        16043  dictionary_package.ads
-2001-05-17 22:33:58        41550  dictionary_package.adb
-2001-06-09 14:41:16         5642  addons_package.ads
-2001-06-09 14:47:02        23712  addons_package.adb
-2000-08-04 01:38:24          681  uniques_package.ads
-2000-06-17 21:21:00         2831  word_support_package.ads
-1999-02-24 18:01:48         1104  latin_debug.ads
-2000-06-17 21:20:56         9093  word_support_package.adb
-1999-02-24 18:01:48         4441  latin_debug.adb
-2001-07-04 02:30:58         2512  word_package.ads
-2001-06-09 14:55:28         3854  line_stuff.ads
-2001-06-09 19:37:44        32815  line_stuff.adb
-2001-06-25 17:35:46        37064  developer_parameters.adb
-2001-07-01 13:58:26         2340  words.adb
-2000-11-04 15:54:34          730  tricks_package.ads
-2001-08-18 00:37:30       101631  word_package.adb
-2001-08-17 17:36:08        60666  tricks_package.adb
-2001-07-15 12:54:38          588  list_package.ads
-2001-08-28 00:16:52        21556  dictionary_form.adb
-2001-08-25 22:31:28        55927  list_package.adb
-2001-07-30 03:56:10        18118  makedict.adb
-2000-07-24 18:30:52         9590  makestem.adb
-2001-05-02 02:07:34        10311  makeinfl.adb
-2001-08-18 11:45:26        10707  put_example_line.adb
-1999-10-22 15:42:30         2076  MEANINGS.ADB
-2001-08-26 23:36:54        28991  list_sweep.adb
-2001-08-19 15:44:04        33133  ADDONS.LAT
-2001-08-28 11:23:48       120162  INFLECTS.LAT
-2001-08-25 00:24:24        11318  UNIQUES.LAT
-2001-08-29 01:17:24      4779689  DICTLINE.GEN
-2001-08-30 09:17:14      2775786  STEMLIST.GEN
+2005-02-09 21:18:52        24415  addons_package.adb
+2005-02-09 21:22:08         5767  addons_package.ads
+2005-01-11 17:24:36          539  config.ads
+2005-01-04 14:06:32        38720  developer_parameters.adb
+2004-12-19 20:18:46         3079  developer_parameters.ads
+2005-05-08 15:32:06        24674  dictionary_form.adb
+2005-01-16 05:04:02        43644  dictionary_package.adb
+2005-04-05 10:33:00        19287  dictionary_package.ads
+2004-11-17 07:14:34         2576  weed_all.adb
+2004-06-20 15:53:46         2979  english_support_package.adb
+2004-06-20 16:11:04         2281  english_support_package.ads
+2005-01-15 15:02:18        68880  inflections_package.adb
+2005-01-16 23:48:58        25913  inflections_package.ads
+1999-10-08 16:36:20          773  latin_file_names.adb
+2000-06-11 11:24:14         2866  latin_file_names.ads
+2005-01-16 21:34:22        35486  line_stuff.adb
+2001-06-09 13:55:28         3854  line_stuff.ads
+2005-06-20 00:59:36        63699  list_package.adb
+2004-02-16 22:08:42          988  list_package.ads
+2005-06-19 23:23:14        39251  list_sweep.adb
+2005-01-16 04:15:06        24576  makedict.adb
+2005-08-11 16:12:06        25027  makeewds.adb
+2003-11-19 01:41:48        10320  makeinfl.adb
+2004-12-24 01:30:38        11293  makestem.adb
+2005-01-13 02:29:28         6121  meanings.adb
+2005-06-07 03:08:36        45687  parse.adb
+1999-04-25 02:00:26         1048  preface.adb
+1999-04-25 02:01:10          300  preface.ads
+2005-01-16 03:58:54        14971  put_example_line.adb
+1999-02-24 17:01:38          212  put_stat.adb
+2005-01-29 02:06:24        11132  search_english.adb
+2003-03-08 00:05:40         4544  strings_package.adb
+2003-03-08 00:05:40         1036  strings_package.ads
+2005-06-15 07:26:26        83687  tricks_package.adb
+2000-11-04 14:54:34          730  tricks_package.ads
+2005-01-13 01:28:10          849  uniques_package.ads
+2004-12-24 01:37:14        12531  weed.adb
+2005-01-13 02:06:52         6119  words.adb
+2005-05-08 11:25:46       105257  word_package.adb
+2005-01-09 23:53:38         2712  word_package.ads
+2005-01-18 00:48:36        21776  word_parameters.adb
+2005-01-10 01:56:38         2150  word_parameters.ads
+2005-03-30 02:02:24         9323  word_support_package.adb
+2000-06-17 20:21:00         2831  word_support_package.ads
+2004-11-20 18:34:14         1811  makeefil.adb
+2005-01-16 04:20:42        24597  wakedict.adb
+2005-01-15 15:13:06        34911  sorter.adb
+2005-05-23 00:42:36        11565  UNIQUES.LAT
+2005-05-20 01:23:42        35357  ADDONS.LAT
+2005-08-09 07:28:14      5883558  DICTLINE.GEN
+2005-06-27 16:57:46       124079  INFLECTS.LAT
+2005-08-13 21:41:48       204283  wordsdoc.htm
+2005-08-13 22:24:26      9731700  EWDSLIST.GEN
+2005-08-13 22:07:26      3423249  STEMLIST.GEN
 ------------------- ------------  ------------------------
-2001-08-30 09:17:14      8392904  45 files
+2005-08-13 22:24:26     20289013  54 files
 
-This files are available at the commit tagged v1.97.0
+This files are available at the commit tagged v1.97.7
 
