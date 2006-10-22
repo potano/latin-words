@@ -1,12 +1,12 @@
 <HTML>
 
 <HEAD>
-<TITLE>WORDS 1.97Ed (LATIN-ENGLISH DICTIONARY) PROGRAM DOCUMENTATION</TITLE>
+<TITLE>WORDS 1.97F (LATIN-ENGLISH DICTIONARY) PROGRAM DOCUMENTATION</TITLE>
 </HEAD>
 <BODY>
 
 
-<H1><CENTER>WORDS Version 1.97Ed</CENTER>
+<H1><CENTER>WORDS Version 1.97F</CENTER>
 <CENTER>LATIN-ENGLISH DICTIONARY PROGRAM</CENTER></H1>
 
 <BR><BR>
@@ -58,9 +58,11 @@ Current Distribution of DICTLINE Flags</A><BR>
 <A HREF="#Latin Spellchecking - Text Processor List - LISTALL.ZIP">
 Latin Spellchecking - Text Processor List - LISTALL.ZIP</A><BR>
 <BR>
-<A HREF="#ENGLISH to LATIN"><B>ENGLISH to LATIN</B></A><BR>
-<A HREF="#English Parsing of Meanings">English Parsing of Meanings</A>
+<A HREF="#INFLECTIONS"><B>INFLECTIONS</B></A><BR>
 <BR>
+<A HREF="#ENGLISH to LATIN"><B>ENGLISH to LATIN</B></A><BR>
+<A HREF="#English Parsing of Meanings">English Parsing of Meanings</A><BR>
+<A HREF="#Ordering English-to-Latin Output">Ordering English-to-Latin Output</A><BR>
 <BR>
 <A HREF="#TESTS AND STATUS"><B>TESTS AND STATUS</B></A><BR>
 <A HREF="#Testing">Testing</A><BR>
@@ -90,7 +92,7 @@ provides an analysis of each word individually.  It uses an INFLECT.SEC,
 UNIQUES.LAT, ADDONS.LAT, STEMFILE.GEN, INDXFILE.GEN, and DICTFILE.GEN, and
 possibly .SPE and DICT.LOC.
 <P>
-The dictionary contains over 38000 entries, as would be counted in an
+The dictionary contains over 39000 entries, as would be counted in an
 ordinary dictionary.  This expands to almost twice that number of
 individual stems (the count that the program may display at startup), and,
 through additional word construction with hundreds of prefixes and
@@ -243,7 +245,7 @@ most cases this works out, and is especially useful for late Latin number
 usage.  However, this algorithm may go very wrong.  If it is not obviously
 right, it is probably incorrect.
 <P>
-With this facility, and a 36000 word dictionary, trials on some tested
+With this facility, and a 39000 word dictionary, trials on some tested
 classical texts and the Vulgate Bible give hit rates of far better than
 99%, excluding proper names (there are very few proper names in this
 dictionary).  (I am an old soldier so the dictionary may have
@@ -464,7 +466,7 @@ The main mode of usage for WORDS is a simple call, followed by screen interactio
 <P>
 But there are other, command line, options.
 WORDS may be called with arguments on the same line, in a number of different modes.
-The program will execute with these argumants as inpu.
+The program will execute with these arguments as input.
 Remember that the saved parameter settings (in WORD.MOD and WORD.MDV)
 are controlling, even for command line input.
 
@@ -499,7 +501,7 @@ WORDS amo amas
 
 <P>
 WORDS ^e  love
-<BR>switches to English input fron the default Latin and searches foe love.
+<BR>switches to English input from the default Latin and searches for love.
 
 <P>
 With three arguments there could be three Latin words or a language shift
@@ -911,8 +913,8 @@ but it is consisent with ordinary dictionary practice.
 <P>Initially there were more defective adjective entries.
 I had accepted assertions in OLD or L+S and others like
 'comparative does not exist'.
-Later on I went over to your position that
-even if Cicero did not use it, someone might.
+Later on I went over to the position that
+even if theCicero did not use it, someone might.
 I started generating COMP and SUPER where it seemed reasonable.
 One can also count on a suffix to correct most omissions, and it will.
 
@@ -1099,11 +1101,13 @@ while in English one might just use live and a modifing word or phrase.
 <P>The role and complexity of the WORDS meaning line has evolved over time.
 Initially it reflected an elementry, back-of-the-book,  textbook dictionary
 with a single word or two for each entry.
-Nevertheless, the size of the MEAN element was set at 80 characters,
+Nevertheless, the size of the MEAN element was set at 80 characters
+(as God, Holerith and IBM decreed),
 as appropriate for a standard computer screen in text mode.
 (Depending on the system and mode of display, the output
 may be limited to 78 or 79 characters, but the traditional 80
-characters of the century-old IBM card was chosen.)
+characters of the century-old IBM card was chosen.
+They will likely appear on printed output.)
 
 
 <P>With expansion of the dictionary beyond a few thousand elementary seentries
@@ -1256,7 +1260,11 @@ Other source indicators are occasionally used and are indicated
 in the general discription of SOURCE below.
 <BR><BR>
 (PASS) [passive] - indicates a special, unexpected meaning for the passive
-form of the verb, not easily associated with the active meaning.  <BR>
+form of the verb, not easily associated with the active meaning.
+In addition this is often used to remind the user that compounds of facio
+form the passive by using the active of fio.  Ex: calefio (calefacio PASS).
+There may be more translation information in the base word cited and
+the user is encouraged to refer to it.<BR>
 <BR>
 perh.  [perhaps] - denotes an additional uncertainty, but not as strong as
 (?).  <BR>
@@ -2423,6 +2431,12 @@ within an entry I generate additional possible stems not noted elsewhere,
 e.g., I expand first declension verbs with '-av' perfect stems, even
 though no example exists in classical Latin.  This is often the practice
 in other dictionaries also.
+
+<P>
+Verb parts omitted from source dictionaries are mechanically added where it is clear,
+(ex. where the base verb is documented, but parts are omitted in compounds).
+Whether Cicero used them or not, some later text might.
+
 <P>
 In some cases I also have expanded adjectives and adverbs to include comparative
 and superlative stems where they seem reasonable or have corresponding English
@@ -2430,11 +2444,17 @@ instances, even when there is no specific dictionary citation.
 This effort was modivated primarily by finding examples of such comparisons
 in processing of large amounts of text beyond the classical
 works upon which authoritative dictionaries are based, but even classical
-works yielded examples.  The point is that, while these forms would be
+works yielded examples.  The point is that, while these forms would usually be
 caught by the word formation (prefix/suffix) process in the program,
 the process is limited to how many operations can be done serially.
 Having more/expended stems allows another level of word modification to be
 implemented.
+
+<P>Adjectives are extrapolated to COMP and SUPER where it makes sense
+(when those meanings are reasonable, and in many cases they are not)
+even if the source dictionary only lists POS.
+They are expanded fully especially even when the source lists a COMP but no SUPER.
+
 <P>
 Perhaps a bit out of context, consider the common question of SECLORUM in
 the Great Seal of the USA.  This pure word in not in any dictionary I know of,
@@ -2512,6 +2532,13 @@ the best dictionaries.  Otherwise how can one explain four alternate
 spellings for a word which apparently only appears in citation as a single
 inscription.
 <P>
+In a some few cases I have infered a declension to certain very obscure Greek words
+which other dictionaries have treated as indeclinable
+(having only a single classical example of its use).
+My argument is that some later writer, using this word, might attempt
+to decline in it in a conventional manner,
+no matter what Vitruvius thought.  I have indicated the indecl. option in the meaning.
+<P>
 Adjectives from participles are included if an entry is found in some
 reference dictionary.  In some case the adjective has a special meaning
 not obvious from the verb.  The program will return both the adjective and
@@ -2567,6 +2594,12 @@ propose common usage for otherwise complex descriptive definitions.  The
 idea is to prompt the reader, expecting that the text may not be that from
 which some dictionary copied the meaning (from some 18th century
 translator!).
+
+<P>
+In the meanings I only use words of which I know the meaning.
+I find that in some cases the Oxford Latin Dictionary uses English
+that is not in the Oxford English Dictionary.
+
 <P>
 Where available, the Linnean or 'scientific Latin' name is given in
 parentheses, mostly for plants.  This is not a classical Latin name, but a
@@ -2584,7 +2617,7 @@ without the computer checking.) All my programs speak US English, so I can
 count on it.  Only some are available in UK English, and I do not have all
 of those versions.
 <P>
-Latin dictionaries seem to be locked into the early 19th century.  The
+Latin dictionaries seem to be locked into the 19th century.  The
 English terms seem stilted, even by current British usage.  This is
 probably because much work in translation was started then and later work
 tended to copy from the previous dictionaries.  While this dictionary has
@@ -2604,6 +2637,13 @@ entirely different, even contradictory, meanings in a single entry if
 there is some common derivation.  Philosophically, this dictionary is
 usually not sensitive to derivations, but sometimes supports multiple
 entries for vastly different meanings, application areas, or eras.  <BR>
+
+<P>
+In a very small number of cases a source, such as OLD, will have an entry for which no English meaning is ptovifrd.
+Instead, a few words of Latin text containg the word is given.
+If they cannot figure it out, I certainly cannot.
+Such a source entry is usually omitted ftom WORDS.
+
 
 <A NAME="Proper Names">
 <H4>Proper Names</H4></A>
@@ -2820,10 +2860,25 @@ or to exclude rare interpretations.  The first problem is to provide the
 score.  The initial method is to grade each word by how much column space
 is allocated to it in the Oxford Latin Dictionary, or the number of
 citations, on the assumption that many citations mean a word is common.
-This is not the intent of the compilers of existing dictionaries, but it
-is almost the only indication of frequency that can be inferred from most
+This is not the main intent of the compilers of existing dictionaries, but it
+is almost the only indication of frequency that can be inferred from the
 dictionaries.  In many cases it seems to be a reasonable guess, certainly
-for those most common words, and for those that are very rare.  With the
+for those most common words, and for those that are very rare.
+
+<P>FREQ guessed from the relative number of citations given by sources
+need not be valid, but seems to work.
+If the compiler's purpose were just to give sufficient
+examples to clarify the use of the word,
+perhaps a single reference would serve for a simple word.
+However one might observe that dictionary people seem to be enamored
+with filling up this section whenever possible.
+('et' has more than a page in OLD.)
+If there is only one citation, they could only find one.
+(This assertion can now easily be verified by searching the texts
+available on the Internet.)
+
+
+With the
 understanding that adjustments can be made when additional information is
 available, the initial numeric criteria are:
 
@@ -2835,6 +2890,7 @@ D   4-5 citations - lesser
 E   2-3 citations - uncommon
 F   only 1 citation - very rare
 </PRE>
+
 
 <P>
 In the case of late Latin in Lewis and Short, these frequencies may be
@@ -2935,9 +2991,9 @@ Source is the dictionary or grammar which is the source of the
 information, not the Cicero or Caesar text in which it is found.
 
 <P>
-For a number of entries, X is now given as Source.  This is primarily for
+For a number of entries, X is now given as Source.  This is primarily from
 the vocabulary (about 13000 words) which was in place before the Source
-parameter was put in, and which has not been updated.  In fact, they are
+parameter was put in, and some have not been updated.  They are
 from no particular Source, just general vocabulary picked up in various
 texts and readings.  Although, during the dictionary update beginning in
 1998, all entries are being checked against sources, it may be improper to
@@ -2947,41 +3003,93 @@ not correspond exactly to any other view.  However, in the second pass (as
 far as it has progressed) all classical entries have been verified with
 the Oxford Latin Dictionary (OLD).  (By that I mean that I have checked,
 not to imply that I have not made errors.) This does not mean that the
-entry necessarily agrees with the OLD, but that I read the OLD entry with
+entry copies or agrees with the OLD, but that I read the OLD entry with
 great respect and put down what I did anyway.  Newer entries, added in
 this process, and those checked later in the process, if found in the OLD,
 have the O code.  Words added from Lewis and Short, but not in OLD, have
-the S code, etc.  All entries for which there is a Source will be found in
+the S code, etc.
+
+All entries for which there is a Source will be found in
 some form in that Source, but the details of the interpretation of
-declension and meaning is mine.  They may not necessarily be found as
+declension and meaning is mine.
+Each entry is
+my responsibility alone, and there are significant differences and
+elaborations.  They may not necessarily be found as
 primary entries, or even directly referrenced, but they will have been
-constructed from information in that source.  (For instance, adp see app
-may generate more adp words than are directly mentioned in the bulk of the
-dictionary.)
+constructed from information in that source.  For instance, the remark 'adp see app'
+in a source dictionary may generate 'adp' WORDS entries that are not explicitlt mentioned in the
+source dictionary.
+There might be occasions where the source gives a noun
+but on my own initiative I have also introduced the corresponding adjective
+(or the converse), particularly if that usage was found in a text.
+In such a case the source would be the same.  If I have
+done a proper job, the reader will not often be surprised.
 
 <P>An important implication of the SOURCE is age.  OLD contains words
 from the classical period of Latin, and these are carried forward to all ages.
 Thus AGE for OLD entries will be X (all ages).  Those in L+S, but not in OLD,
-might be checked against the premise that they were late/post-classical Latin (D).
-Citations being the determining factor.  Souter (SOURCE=P) is a wordlist of
-later LAtin (AGE=E), so his entries might be presumed not to be common in
+might be checked against the premise that they were late/post-classical Latin (D),
+citations being the determining factor.  Souter (SOURCE=P) is a wordlist of
+later Latin (AGE=E), so his entries might be presumed not to be common in
 classical times.  Other sources, indicated by AGE flags or by parenthesized
 comments, may also indicate to the user the age appropriate for the entry.
 Calepinus Novus (Cal) (SOURCE=K) is especially noteworthy  in that it is
 of modern, 20th century Latin and its meanings should probably not be applied to
 earlier texts.
 
+<P>
+OLD is taken as the most authorative source
+and if it is in OLD then it was used in classical times within a very limited period.
+An entry with source O will have AGE X (or C if it is unique to classical).
+This also define good Latin and the usage should be valid for all ages.
 
 <P>
-There should be no expectation, nor is there any claim, that the result
-of the program is exactly that from the cited Source.  Each entry is
-my responsibility alone, and there are significant differences and
-elaborations.  However, in each case where there is a Source, the reader
-can find the basis from which the program data was derived.
-For instance, there might be occasions where the source gives a noun
-but on my own initiative I have also introduced the corresponding adjective
-(or the converse).  In such a case the source would be the same.  If I have
-done a proper job, the reader will not often be surprised.
+Lewis and Short (S) is next in authority and also somewhat in time.
+It covers, in addition to classical, a later period.  That a word appears in S but not in O
+may mean it is a somewhat later usage.
+If that poiint is well established, the AGE is D.
+But most often the main source is OLD and there are additional meanings
+indicated as L+S.  The user is warned that this may be a case of modified meaning
+coming into use at a later age.
+But it may be that, after review of L+S, OLD differs for reason and has a better interpretation.
+
+<P>
+A formation from a classical word with the natural meaning is usually assumed
+to also be appropriately classical/general - X.
+Such a word with an enhanced, specialized or modified meaning might
+indicate a later usage, and is so labeled.
+It may be that the word was in use earlier but no reference is available,
+In some cases, an additional meaning is identified as (L+S)
+just to give credit, without implying anything further.
+
+<P>
+In time, Souter (P) is next.
+Again if it is in Souter but not O of S it is very likely later Latin
+The date may reflect this, but the source is a hint to the user, not an firm promise.
+
+<P>
+Next in line in time is Latham (M) for medieval Latin.
+
+<P>
+Souter and Latham are poorly represented.  There is no attempt to include these sources
+with the throughness of the OLD and L+S effort.
+Entries from these sources come up only when a particular
+word is submitted from a text and no other source serves, giving credance to the assumption that
+such entries belong to a later AGE..
+
+<P>
+Stelten (Ecc) is more fully represented (goal to complete) since it specializes in an area not well
+covered by other sources.  While it is a complete dictionary, with all the general words, it has
+a number of entries specifically or solely applicable to the Christian Church.
+These are from later (non-classical) times, chiefly medieval.
+
+<P>
+Licoppe (K) is modern.  An additional meaning on a word from an earlier AGE is likely to be uniquely modern.
+
+<P>
+Note that there are examples in which different sources at different ages give contrary meanings.
+This may reflect a real and not uncommon shift in meaning, or there may be errors in the sources.
+At least in such cases the sources (and their implied ages) are identified.
 
 <P>The list of sources goes far beyond what has been directly used so far.
 There should be no expectation at this point in the development that
@@ -3038,93 +3146,92 @@ extensively used.  Others have only been used for an occasional check
 <A NAME="Current Distribution of DICTLINE Flags">
 <H4>Current Distribution of DICTLINE Flags</H4></A>
 <PRE><TT>
-Number of lines in DICTLINE GENERAL        38113
+Number of lines in DICTLINE GENERAL  1.97F    39187
 
 AGE
-X         28147
-A         60
-B         442
+X         28858
+A         61
+B         446
 C         58
-D         3762
-E         1621
-F         1909
-G         1923
-H         191
+D         3937
+E         1718
+F         1996
+G         1920
+H         193
 
 AREA
-X         28536
-A         2907
-B         868
-D         405
-E         1786
-G         457
-L         1154
-P         174
-S         700
-T         369
-W         685
-Y         72
+X         29181
+A         2955
+B         912
+D         410
+E         1916
+G         504
+L         1221
+P         181
+S         730
+T         382
+W         722
+Y         73
 
 GEO
-X         37140
+X         38147
 A         64
 B         52
 C         1
-D         5
-E         46
+D         3
+E         49
 F         67
 G         20
-H         229
-I         137
+H         278
+I         141
 J         4
 K         6
 N         8
 P         9
-Q         302
+Q         312
 R         1
-S         22
+S         25
 U         0
 
 FREQ
 X         11
-A         2070
-B         2617
-C         10765
-D         6414
-E         7092
-F         7519
-I         398
+A         2133
+B         2711
+C         10757
+D         2678
+E         11218
+F         7982
+I         424
 M         0
-N         1227
+N         1273
 
 SOURCE
-X         7809
+X         7554
 A         0
-B         42
-C         1808
-D         12
-E         1303
-F         121
-G         60
+B         41
+C         1751
+D         14
+E         1417
+F         119
+G         59
 H         0
 I         4
 J         116
-K         2116
+K         2100
 L         60
-M         699
-N         85
-O         15161
-P         285
-Q         18
+M         759
+N         84
+O         16039
+P         296
+Q         24
 R         12
-S         7749
+S         8094
 T         88
-U         1
-V         49
-W         321
+U         0
+V         47
+W         316
 Y         35
-Z         159
-
+Z         158
 </TT></PRE>
 
 
@@ -3324,6 +3431,33 @@ Experience will determine its effectiveness.
 
 
 
+<A NAME="INFLECTIONS">
+<H3><CENTER>INFLECTIONS</CENTER>
+</H3></A> <BR>
+
+<P>
+Inflections for WORDS are in a human-readable file called INFLECTS.LAT.
+Presently there are almost 1800 separate entries.
+This data is processed to produce a file INFLECTS.SEC used by the code.
+The format of INFLECTS.LAT is simple, as for example:
+
+<PRE><TT>N     1 1 NOM S C                 1 1 a             X A
+
+V     1 1 PRES  ACTIVE  IND  1 P  2 4 amus          X A
+
+PREP  ACC                         1 0               X A</TT></PRE>
+
+<P>
+The part of speech is given,along with the appropriate characteristics
+for a particular inflection.  The inflection/ending is specified by
+the stem to which it is attached, a number of characters, and the ending string.
+There is an AGE and FREQ for each entry.
+
+
+<BR>
+<BR>
+
+
 <A NAME="ENGLISH to LATIN">
 <H3><CENTER>ENGLISH to LATIN</CENTER>
 </H3></A> <BR>
@@ -3358,12 +3492,6 @@ the MEAN line should be readable by anyone in ASCII,
 without special characters or fonts.
 
 
-
-
-
-
-
-
 <P>I have just begun to work on an English-to-Latin capability.
 Initially this is just a inversion of the WORDS Latin dictionary,
 extracting all the English words in the MEAN field of the WORDS dictionary
@@ -3376,7 +3504,7 @@ Nevertheless, WORDS now has some primitive capability.
 
 <P>The raw inversion produces almost 200_000 English words.
 WEEDing them by the present algorithms (eliminate a, the, to, ...,
-and a number of common modifiers when included in meanings nnot of
+and a number of common modifiers when included in meanings not of
 their part of speach)
 reduces this number only by a third.
 But this finally results in only somewhat over 20_000 unique words,
@@ -3384,13 +3512,31 @@ less than the number of Latin entries!
 This probably reflects more on dictionary makers than on the languages.
 
 
-<P>English is certainly a far richer lanaguage than Latin,
-in the number of individual words.
-However, a translator of Latin may only pick his favorite Engliah word
-for a particular class of meaning and attach that to a number of equivalent Latin
-words, and that is reflected in dictionaries.  There may be 20 English synomyms
-for that word which never appear in a Latin dictionary.
-A next stem would be to integrate a thesaurus and generate those synomyms.
+<P>English is certainly a far richer lanaguage than Latin, measured
+by the number of individual words.
+WORDS has about 40_000 Latin entries, and the corresponding inversion to
+English yields only 22_000 unique English words.
+
+
+<P>The reason seens to be that,
+while English may have lots of words for love or hate,
+in making up a Latin
+dictionary one will opt to give a simple translation.
+So while love is a proper translation of a number of Latin words,
+and one could as well replace it with any of dozens of English synonyms,
+a dictionary compiller will usually take the simplest English word
+that provides the reader with the meaning.   That is what the reader usually wants.
+
+
+<P>Starting from an English basis to produce an English-to-Latin dictinoary
+gives an entirely different outcome.
+In that case, the full power of English can be invoked,
+and it is the Latin that will seem simple by comparison.
+
+<P>In many cases, an English-to-Latin dictionary bound in the same volume
+as a Latin-to-English will have been
+developed by a different author, and sometimes they are not consistent.
+At least the inversion procedure assures basic consistency.
 
 <P>One problem with the inversion method is that one needs
 to weed out a lot of the chaff before presenting to the user.
@@ -3428,11 +3574,21 @@ seem satisfactory.
 
 <P>One important point is that the program mechanically searches the Latin dictionary.
 If one is looking for a adjective, presently one will find all adjectives for which the
-meaning contains the search word, no more.  This is what one would get from searching
-a paper dictionary.  However one should be aware that
+MEAN contains the search word, no more.  However one should be aware that
 participles of appropriate verbs can also serve as adjectives and may be
-a better choice.  It may be desirable in the future to provide such
-constructions.  This would be value added over simple search by the program.
+a better choice.
+
+<P>At the present time there is no complex constrution/deconstruction
+of the English input.  Thus if the input is 'kill', only Latin entries
+with the exact word 'kill' in their MEAN will be selected.  The suffixed words
+'kills'/'killing'/'killed'/'killer'/etc. will not be found.  They must
+be queried seperately.
+Likewise, unlike the Latin phase of WORDS, prefixes are not extracted.
+It may be desirable in the future to provide such additional capabilities.
+This would be value added over simple search by the program.
+
+
+
 <BR>
 <BR>
 
@@ -3461,7 +3617,7 @@ There is much work to do before this ordering is complete.
 
 <P>Any PURE meaning (one not involving modifiers) set off by
 commas or slashes, is assigned a high priority on output that
-a modified meaning in the same MEAN SEMI.
+a modified/compound meaning in the same MEAN SEMI.
 
 <P>Semicolons seperate meaning groups that have a different
 flavor/sense.
@@ -3471,9 +3627,11 @@ Recent requirements demand an ordering of these groups.
 The order of the semicolon groups (called SEMIs in the code) should
 indicate the frequency or probability of that meaning
 among different groups, where this inferrence can be made.
+This ideal is not yet rigorously enforced, even in recent entries,
+and less so in those earlier in the update.
 
 <P>Commas separate meanings that are roughly equivalent -
-synomyns.
+synomyns. In parsing, a COMMA consistes of the words between commas.
 There is no inherent logical order within a SEMI, however,
 to support another application for the dictionary,
 full sentence Latin-to-English translation,
@@ -3560,14 +3718,125 @@ Bars are removed before WORDS output and are not visible to the user.
 There are also some entries with identical STEMS and PART which are
 really different words,
 different derivation and completely different meanings.
-These may not be | coded and will be reported separately in output.
+These will not be | coded and will be reported separately in output.
 {NOTE: The vertical bar should not appear anywhere in meanings except
 at the begining as a continuation flag.)
+
+<P>Correct use of symbols/codes in MEAN is very important.
+One must not use them 'free form'.
+They are used in the parsing of MEAN and inproper use can defeat a processing program.
+While some main programs have many built-in checks,
+there are a number of secondary tools which are not so 'fool proof'.
+MAKEEWDS is a complicated program which I did not do well.
+If it hits something strange it might well fail to properly
+parse that MEAN.  The program will still complete and the
+output will only lose a part of the strange MEAN, affecting only the English mode,
+and may or may not not give a report on the failure.
+
+
+<A NAME="Ordering English-to-Latin Output">
+<H4>Ordering English-to-Latin Output</H4></A>
+<BR>
+
+
+<P>Essentially we start by associating English words in the dictionary entry meaning
+with the entry number (line number in DICTLINE).
+The list of English words (EWDSLIST) is sorted so that all occurances of a particular word are together.
+Then, upon inquiry, a list of the associated Latin dictionary entries is output.
+Unfortunately this list could be large (a hundred or more for some common words) and thereby user-unfriendly.
+The task is to order the list and reduce the output to a few most likely
+
 
 <P>Priorities for display are based on frequencies.  Besides the basic
 FREQ assigned to the entry, it is presumed that the frequency is
 greater for those meanings in the first SEMIs, with gradually
 decreasing frequency assigned to later SEMIs and to bar flagged continuations.
+The algorithm presently used is summarized below,
+but it is subject to modification in future versions.
+
+
+
+
+
+
+<P>Each English word found is given a numerical RANK/priority/weight based on the algorithm below.
+The numerical values of each consideration are added or subtracted to give the priority of the entry.
+
+
+
+<H5>FREQ</H5>
+
+<P>The obvious choice for frequency weights might be the comparative paper dictionary citations,
+which would be roughly:
+
+<PRE><TT>
+A=>50
+B=>25
+C=>10
+D=> 5
+E=> 3
+F=> 1</TT></PRE>
+
+
+<P>However these would weight the A frequency so heavily
+that it would be impossible to overcome with anything
+that could be applied to lower frequencies.  So we must reject this scale
+for a more managable set:
+
+<PRE><TT>
+A=>70
+B=>60
+C=>50
+D=>40
+E=>30
+F=>20
+etc.</TT></PRE>
+
+
+<P>(N is special case, add 25 after formula)
+
+<H5>Compounds</H5>
+
+<P>Compound words ('very tall' vs. 'tall') are often useful,
+indeed the user may be looking for components to make up a compound translation,
+however generally they should be disparaged relative to the pure/simple word.
+A compound A FREQ might be no better than a pure D.
+<BR>
+<BR>
+Compound Yes=> 0<BR>
+Compound No (Pure) =>  10<BR>
+<BR>
+
+Which SEMI (a SEMI is a part of MEAN set off by semicolons)<BR>
+<BR>
+
+-3 per SEMI  after 1
+
+<P>Further, a word on a continuation line is disparaged by 3 SEMIs (-9).
+
+
+<P>The words in the first SEMI are enhanced in the expectation that they are
+the primary meaning.  This follows the tenuous idea that there is a single simple
+translation for each English word.  At least the first SEMI is emphasized. <BR>
+<BR>
+
+If PURE and 1st SEMI => 5<BR>
+
+<P>Priority = FREQ value + Compound value + SEMI value + Continuation value + First SEMI value <BR>
+<BR>
+
+
+Example: for lamp - lanum N 3 2 N
+
+<PRE><TT>
+FREQ A => 70
+Compound No => 10
+Semi 2 => -3
+Continuattion Line No => 0
+Pure 1st No => 0
+RANK/priority => 77</TT></PRE>
+
+
 
 
 
@@ -3575,27 +3844,9 @@ decreasing frequency assigned to later SEMIs and to bar flagged continuations.
 <H3><CENTER>TESTS AND STATUS</CENTER>
 </H3></A> <BR>
 
-<P>I am ashamed to say that there has been no rigorous formal validation of WORDS.
-I know how to do such, and I know that I should, but I am too tired.
-
-<P>Nevertheless there are tests.  The program has been run against standard texts,
-and the UNKNOWNs examined.  Caesar, Virgil, Seudontous, and the Vulgate are some examples.
-Over the years, there has been some tuning to these texts, that is, their UNKNOWNs
-have provided candidates for new entries or tricks, so they should do better
-than other taxts.  Many other texts have also been used to check the system,
-but mostly classical.
-
-<P>John White, in support of his Blitz Latin, using much the same dictionary,
-has scanned 14 million words of Latin from all periods.  He has submitted entries
-from the most common UNKNOWNs found in his texts.<BR>
-<BR>
-
-
-
-
 <A NAME="Testing">
-
 <H4>Testing</H4></A>
+
 <P>
 The program has been run against common classical texts.  Initially
 this was mostly a check of the process and reliability of the program.  It
@@ -4183,7 +4434,7 @@ available to anyone who wishes to use them, for whatever purpose.</B><BR>
 <A NAME="Rehosting WORDS">
 <H4>Rehosting WORDS</H4>
 <P>
-There is a <A HREF="197EALL.ZIP"><B>197EALL.ZIP</B></A>
+There is a <A HREF="wordsall.zip"><B>wordsall.zip</B></A>
 zip of all the Ada source files to port WORDS, and
 support programs and data to generate the necessary dictionaries and
 inflections for re-hosting the WORDS Latin dictionary
@@ -4193,8 +4444,10 @@ can be made to work with Ada 83 also by replacing just tha short driver routine.
 This a console program (keyboard entry), without fancy Windows GUI, and has
 thereby been made system independent.
 <P>
-197EALL contains the Ada source files for WORDS
-
+wordsall contains the Ada source files for WORDS, and complete details for rehosting
+summarized below:
+<P>
+Ada source files for the WORDS system are:
 <PRE>
 strings_package.ads
 strings_package.adb
@@ -4236,7 +4489,7 @@ words.adb
 </PRE>
 
 <P>
-four supporting programs
+There are four supporting programs
 
 <PRE>
 makedict.adb
@@ -4256,7 +4509,7 @@ INFLECTS.LAT
 </PRE>
 
 <P>
-the other WORDS DOS ASCII supporting files
+and other WORDS DOS ASCII supporting files
 
 <PRE>
 ADDONS.LAT
@@ -4265,7 +4518,7 @@ UNIQUES.LAT
 
 <P>
 <P>
-The process is to download the 197ESALL.ZIP (case sensitive) and unzip into a
+The process is to download the 197fall.zip and unzip into a
 subdirectory.  (If the zip form is unsuitable for your system, I can
 provide the files in an uncompressed form.) The wordy file names are for
 compliance with the restrictions of the GNAT system.  They may be renamed,
@@ -4273,7 +4526,7 @@ and I can provide an alternative.  However, the long file names demand an
 UNZIP that preserves them, if GNAT is to be used.
 
 <P>For example, in a GNAT
-environment (one would maximally optimize the main program):
+environment (-O3 optimizes if your system supports it):
 
 <PRE>
 gnatmake -O3 words
@@ -4338,11 +4591,14 @@ Feedback is invited.  If there is a problem in installing or operating, in
 the results or their display, or if your favorite word is omitted from the
 dictionary, please let me know.
 <P>
-All comments are appreciated.  Check back for new version releases.
+All comments are appreciated.  Check back for new version releases at<BR>
+<BR>
+<A HREF="http://www.erols.com/whitaker/words.htm">
+http://www.erols.com/whitaker/words.htm</A>
 <P>
-Contact <A HREF="mailto:whitaker@erols.com"> <B>whitaker@erols.com</B></A>,
+Contact e-mail <A HREF="mailto:whitaker@erols.com"> <B>whitaker@erols.com</B></A>,
 <P>
-or William Whitaker, PO Box 3036, McLean VA 22103 USA.  <BR>
+or William Whitaker, PO Box 51225 Midland TX 79710 USA.  <BR>
 
 
 </BODY>
