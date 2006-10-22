@@ -53,16 +53,16 @@
         DW, EW : EWDS_RECORD := NULL_EWDS_RECORD;
    
       begin
-          INNER_LOOP:    --  Order by KIND, FREQ, SEMI
+          INNER_LOOP:    --  Order by RANK, FREQ, SEMI
           for I in 1..NUMBER_OF_HITS-1  loop
-             if OUTPUT_ARRAY(I+1).KIND  < OUTPUT_ARRAY(I).KIND     or else  
+             if OUTPUT_ARRAY(I+1).RANK  >  OUTPUT_ARRAY(I).RANK     or else  
 
-               (OUTPUT_ARRAY(I+1).KIND  = OUTPUT_ARRAY(I).KIND     and then
-                OUTPUT_ARRAY(I+1).FREQ  < OUTPUT_ARRAY(I).FREQ)  or else  
+               (OUTPUT_ARRAY(I+1).RANK  =  OUTPUT_ARRAY(I).RANK     and then
+                OUTPUT_ARRAY(I+1).FREQ  <  OUTPUT_ARRAY(I).FREQ)  or else  
                   
-               (OUTPUT_ARRAY(I+1).KIND  = OUTPUT_ARRAY(I).KIND     and then
-                OUTPUT_ARRAY(I+1).FREQ  = OUTPUT_ARRAY(I).FREQ   and then
-                OUTPUT_ARRAY(I+1).SEMI  < OUTPUT_ARRAY(I).SEMI)          then
+               (OUTPUT_ARRAY(I+1).RANK  =  OUTPUT_ARRAY(I).RANK     and then
+                OUTPUT_ARRAY(I+1).FREQ  =  OUTPUT_ARRAY(I).FREQ   and then
+                OUTPUT_ARRAY(I+1).SEMI  <  OUTPUT_ARRAY(I).SEMI)          then
                   
                DW := OUTPUT_ARRAY(I);
                OUTPUT_ARRAY(I) := OUTPUT_ARRAY(I+1);
@@ -236,7 +236,7 @@ DICT_IO.READ(DICT_FILE(GENERAL), DE, DICT_IO.COUNT(OUTPUT_ARRAY(I).N));
 --   TEXT_IO.PUT_LINE("J = " & INTEGER'IMAGE(INTEGER(J)) &
 --                  "   J1 = " & INTEGER'IMAGE(INTEGER(J1)) &
 --                 "   J2 = " & INTEGER'IMAGE(INTEGER(J2)));
-                  
+--                  
                         if  "<"(LOWER_CASE(EWDS.W), INPUT_WORD)  then  --  Not LTU, not u=v
                            J1 := J;
                            J := (J1 + J2) / 2;

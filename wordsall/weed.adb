@@ -2,10 +2,16 @@ with TEXT_IO; use TEXT_IO;
 with INFLECTIONS_PACKAGE; use INFLECTIONS_PACKAGE;
 procedure WEED(W : in out STRING; 
                 POFS : in PART_OF_SPEECH_TYPE) is
+                  
 --  In contrast to the Latin phase where the prioritization takes is at runtime
 --  for the English most of the work is done beforehand
 --  both the setting of a priority class for each entry in the scan of DICTLINE
 --  and the WEEDing/TRIMming done herein
+                  
+--  There may not be much reason to WEED
+--  If there are a hundred "the", does it matter.  No one should input "the"
+--  But it is a matter of logic and secondary effects (special on "the")
+                  
       KILL : BOOLEAN := FALSE;
     begin     
 
@@ -105,7 +111,7 @@ procedure WEED(W : in out STRING;
           W = "instrument"   or
           W = "word"   or
           W = "words"   or
-          W = "shape"   or
+          --W = "shape"   or
           W = "parts"   or
           W = "title"   or
           W = "office"   or
@@ -132,7 +138,7 @@ procedure WEED(W : in out STRING;
            W = "thing"   or
            W = "things"   or
            W = "something"   or
-           W = "matter"   or
+           --W = "matter"   or
            W = "law"         )
            
               
@@ -253,7 +259,7 @@ procedure WEED(W : in out STRING;
            W = "used"   or
            W = "joint"   or
            W = "proper"   or
-           W = "great"   or
+           W = "great"   or  --  great-great uncle
            W = "full"   or
            W = "sexual"   or
            W = "public"   or
@@ -277,7 +283,7 @@ procedure WEED(W : in out STRING;
            (
            W = "up"    or
            W = "out"   or
-           W = "away"   or
+           --W = "away"   or
            W = "over"   or
            W = "down"   or
            W = "back"   or
@@ -312,8 +318,8 @@ procedure WEED(W : in out STRING;
                    
                
         if     
-           -- (POFS /= PRON) and then    
-           -- (POFS /= PACK) and then    
+            (POFS /= PRON) and then    
+            (POFS /= PACK) and then    
            (
           
             
@@ -340,9 +346,12 @@ procedure WEED(W : in out STRING;
            W = "what"   or
            W = "which"   or
            W = "that"   or
-           W = "same"   or
-           
-             
+           W = "same"    )  then
+                      KILL := TRUE;
+  
+      end if;  
+       
+       if (      
            W = "kind"   or
            W = "manner"   or
            W = "variety"   or
@@ -422,18 +431,18 @@ procedure WEED(W : in out STRING;
              
            
            --  Numbers  
-           W = "half"   or
-           W = "one"   or
-           W = "first"   or
-           W = "two"   or
-           W = "second"   or
-           W = "double"   or
-           W = "three"   or
-           W = "third"   or
-           W = "four"   or
-           W = "seven"   or
-           W = "ten"   or
-           W = "times"   or
+--           W = "half"   or
+--           W = "one"   or
+--           W = "first"   or
+--           W = "two"   or
+--           W = "second"   or
+--           W = "double"   or
+--           W = "three"   or
+--           W = "third"   or
+--           W = "four"   or
+--           W = "seven"   or
+--           W = "ten"   or
+--           W = "times"   or
              
           
            --  Compounding verbs  
@@ -453,7 +462,7 @@ procedure WEED(W : in out STRING;
            --  Supporting verbs
            W = "is"   or
            W = "been"   or
-           W = "attempt"   or
+           --W = "attempt"   or
            W = "begin"                    --or
            
                              then
@@ -483,9 +492,10 @@ procedure WEED(W : in out STRING;
                          
         if KILL then
           for I in W'RANGE  loop
-            W(I) := '.';
+            W(I) := '\';
           end loop;
         end if;
+        
    --PUT_LINE("WEEDed  "  & W & '|' & BOOLEAN'IMAGE(KILL));         
      
 end WEED;
