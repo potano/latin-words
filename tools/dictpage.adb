@@ -99,6 +99,8 @@
 --              TEXT_IO.PUT(OUTPUT, "  " & VERB_KIND_TYPE'IMAGE(DE.PART.V.KIND) & "  ");
 --            end if;
             
+            SET_COL(OUTPUT, 101);
+            
                  TEXT_IO.PUT(OUTPUT, " [");
                  AGE_TYPE_IO.PUT(OUTPUT, DE.TRAN.AGE);
                  AREA_TYPE_IO.PUT(OUTPUT, DE.TRAN.AREA);

@@ -92,6 +92,7 @@
               TEXT_IO.PUT(UNIQPAGE, "  " & VERB_KIND_TYPE'IMAGE(KIND.V_KIND) & "  ");
             end if;                                              
             
+           SET_COL(UNIQPAGE, 101);
                         
                  TEXT_IO.PUT(UNIQPAGE, " [");
                  AGE_TYPE_IO.PUT(UNIQPAGE, TRAN.AGE);

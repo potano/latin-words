@@ -92,7 +92,7 @@
          begin
             NUMBER := NUMBER + 1;
             PUT(OUTPUT, "LINE"); PUT(OUTPUT, LINE_NUMBER);
-            PUT(OUTPUT, "  " & MESSAGE & "  ");
+            PUT(OUTPUT, "  " & MESSAGE & "  " & STS(1) & "  ");
             PART_ENTRY_IO.PUT(OUTPUT, PT);
             NEW_LINE(OUTPUT);
             PUT_LINE(OUTPUT, S(1..LAST));
@@ -100,33 +100,37 @@
       
       
       begin
-      
-      
+         
       --  Process parts
          if PT.POFS = N  then
-         
+        
          --  Check that there are two and only two stems for a noun
-            if (    BK(STS(1)) or
+            if not (PT.N.DECL = (9, 9) or PT.N.DECL = (9, 8))   and then  --  Undeclined    
+                   (BK(STS(1)) or
                     BK(STS(2)) or
                     not BK(STS(3)) or
-                    not BK(STS(4)) )  and then
-            not (PT.N.DECL = (9, 9) or PT.N.DECL = (9, 8))   then  --  Undeclined
+                    not BK(STS(4)) )   then
+            
                PROB("    EXPECTED  exactly 2  NOUN STEMS");
             end if;
          
-         
+     
          --  Check that the stems are the same when expected
-            if PT.N.DECL = (1, 1) or
+            if PT.N.DECL.WHICH = 1 or
                PT.N.DECL = (2, 1) or
                PT.N.DECL = (2, 2) or
-               PT.N.DECL = (4, 1) or
-               PT.N.DECL = (5, 1)    then
-               if STS(1) /= STS(2)  and then 
-                  ((STS(1) /= ZZZ_STEM) and (STS(2) /= ZZZ_STEM))  then
+               PT.N.DECL = (2, 4) or
+               PT.N.DECL = (2, 5) or
+               PT.N.DECL = (2, 6) or
+               PT.N.DECL = (2, 8) or
+               PT.N.DECL = (2, 9) or
+               PT.N.DECL.WHICH = 4 or
+               PT.N.DECL.WHICH = 5    then
+               if STS(1) /= STS(2)   then
                   PROB("    EXPECTED IDENTICAL NOUN STEMS");
                end if;
             end if;
-         
+
          
          --  Check that the stems progress as expected
             if PT.N.DECL = (1, 2)   and then
@@ -151,6 +155,20 @@
                end if;
             end if;
          
+            
+         --  N 3
+            
+          --  Check N 3 1/2 identical start NOUN STEMS  
+             if PT.N.DECL = (3, 1) or PT.N.DECL = (3, 2)    then
+               if LEN(STS(2)) >= 3                           and then  
+                   STS(1)(1..LEN(STS(2))-2) /=  STS(2)(1..LEN(STS(2))-2)   then           
+                  PROB("    EXPECTED  identical start for  N 3 1/2 NOUN STEMS");
+               end if;
+            end if;
+           
+    
+            
+            
          --   N 3 1 
          
          --  Check N 3 1 er is M/C
@@ -163,8 +181,8 @@
             end if;
          
          --  Check er -> er 
-            if PT.N.DECL = (3, 1) and
-            PT.N.GENDER = M        then
+            if PT.N.DECL = (3, 1) and then
+               PT.N.GENDER = M        then
                if (LEN(STS(1)) >= 3                           and then  
                    STS(1)(LEN(STS(1))-1..LEN(STS(1))) = "er")  and then  
                   ((STS(2)(LEN(STS(2))-1..LEN(STS(2))) /= "er")         or    
@@ -174,18 +192,19 @@
             end if;
          
          
-         --  Check N 3 1 or is M
+         --  Check N 3 1 or is M/C
             if PT.N.DECL = (3, 1)     then
                if (LEN(STS(1)) >= 3                           and then  
                    STS(1)(LEN(STS(1))-1..LEN(STS(1))) = "or")  and then  
-               PT.N.GENDER /= M    then
+               (PT.N.GENDER /= M  and  PT.N.GENDER /= C)    then
                   PROB("    EXPECTED  -or M for  N 3 1 NOUN STEMS");
                end if;
             end if;
          
+            
          --  Check or -> or 
-            if PT.N.DECL = (3, 1) and
-            PT.N.GENDER = M        then
+            if PT.N.DECL = (3, 1) and then
+               PT.N.GENDER = M        then
                if (LEN(STS(1)) >= 3                           and then  
                    STS(1)(LEN(STS(1))-1..LEN(STS(1))) = "or")  and then  
                   ((STS(2)(LEN(STS(2))-1..LEN(STS(2))) /= "or")         or    
@@ -208,8 +227,8 @@
             end if;
          
          --  Check io -> ion
-            if PT.N.DECL = (3, 1) and
-            PT.N.GENDER = F        then
+            if PT.N.DECL = (3, 1) and then
+               PT.N.GENDER = F        then
                if LEN(STS(1)) >= 3                           and then  
                STS(1)(LEN(STS(1))-1..LEN(STS(1))) = "io"  and then  
                STS(2)(LEN(STS(2))-2..LEN(STS(2))) /= "ion"          then  
@@ -226,10 +245,39 @@
          
          
          
+       
          
-            if PT.N.DECL = (3, 1) and
-            PT.N.GENDER = F     and 
-            LEN(STS(1)) >= 3                            then  
+       --  Check tas -> tat
+            if PT.N.DECL = (3, 1)  then
+               if LEN(STS(1)) >= 5                           and then  
+               STS(1)(LEN(STS(1))-2..LEN(STS(1))) = "tas"   then  
+                 if STS(2)(1..LEN(STS(2))) /= STS(1)(STS(1)'FIRST..LEN(STS(1))-3) &  "tat"          then  
+                   PROB("    EXPECTED  tas -> tat  NOUN STEMS");
+                 elsif PT.N.GENDER /= F   then
+                   PROB("    EXPECTED  NOUN 3, 1 tas -> tat  to be F ");
+                 end if;
+               end if;
+            end if;
+         
+         
+        --  Check trix -> tric
+            if PT.N.DECL = (3, 1)  then
+               if LEN(STS(1)) >= 5                           and then  
+               STS(1)(LEN(STS(1))-3..LEN(STS(1))) = "trix"   then  
+                 if STS(2)(1..LEN(STS(2))) /= STS(1)(1..LEN(STS(1))-4) &  "tric"          then  
+                   PROB("    EXPECTED  trix -> tric  NOUN STEMS");
+                 elsif (PT.N.GENDER /= F  or PT.N.KIND /= P)  then
+                   PROB("    EXPECTED  NOUN 3, 1 trix -> tric  to be F P ");
+                 end if;
+               end if;
+            end if;
+         
+         
+         
+         
+            if PT.N.DECL = (3, 1) and then
+              (PT.N.GENDER = F     and 
+               LEN(STS(1)) >= 3 )                           then  
                if STS(1)(LEN(STS(1))-1..LEN(STS(1))) = "do"  and then  
                STS(2)(LEN(STS(2))-2..LEN(STS(2))) /= "din"          then  
                   PROB("    EXPECTED  do -> din  NOUN  3 1 STEMS");
@@ -243,8 +291,8 @@
             end if;
          
          --  Check as -> at/ad 
-            if PT.N.DECL = (3, 1) and
-            PT.N.GENDER = F        then
+            if PT.N.DECL = (3, 1) and then
+               PT.N.GENDER = F        then
                if LEN(STS(1)) >= 3                           and then  
                STS(1)(LEN(STS(1))-1..LEN(STS(1))) = "as"  and then  
               (STS(2)(LEN(STS(2))-1..LEN(STS(2))) /= "at"    and  
@@ -253,21 +301,39 @@
                end if;
             end if;
          
+    
+            
+      --  N 3 2            
          
+         --  Check -en -> -in is N 3 2 N          
+            if PT.N.DECL.WHICH  = 3   then
+               if (LEN(STS(1)) >= 3)                          and  then  
+                  (STS(1)(LEN(STS(1))-1..LEN(STS(1))) = "en")   then  
+                 if ((STS(2)(1..LEN(STS(2))) /= STS(1)(1..LEN(STS(1))-2) & "in")    or 
+                      ((PT.N.DECL /= (3, 2)) or PT.N.GENDER /= N) )      then  
+                   PROB("    EXPECTED  -en -> -in   NOUN STEMS  to be N 3 2 N");
+                 end if;
+               end if;
+            end if;
+            
          
-         --  Check -a, -at is N 3 2 N          
+          --  Check -a, -at is N 3 2 N          
             if PT.N.DECL.WHICH  = 3   then
                if (LEN(STS(1)) >= 3)                          and then  
                   (STS(1)(LEN(STS(1))..LEN(STS(1))) = "a")  and then  
-                  ((STS(2)(LEN(STS(2))-1..LEN(STS(2))) /= "at")    or 
-                      (PT.N.DECL /= (3, 2)) )      then  
-                  PROB("    EXPECTED  a -> at   NOUN STEMS  to be N 3 2 N");
+                  ((STS(2)(1..LEN(STS(2))) /= STS(1)(1..LEN(STS(1))) & "t")    or 
+                      (PT.N.DECL /= (3, 2) and PT.N.DECL /= (3, 7)) )      then  
+                  PROB("    EXPECTED  a -> at   NOUN STEMS  to be N 3 2/7 N");
                end if;
             end if;
          
          
+            
+      --  N 3 3       
+            
+            
          --  Check es/is -> I-stem
-            if PT.N.DECL.WHICH = 3 and
+            if PT.N.DECL.WHICH = 3 and  then
                (PT.N.GENDER = M or PT.N.GENDER = F or PT.N.GENDER = C)    then
                if LEN(STS(1)) >= 3                           and then  
                   (STS(1)(LEN(STS(1))-1..LEN(STS(1))) = "es"  or        
@@ -278,21 +344,10 @@
                   end if;
                end if;
             end if;
-         
-         
-         --  Check is I-stem -es is F                 G&L 58
-            if PT.N.DECL = (3, 3) then
-               if (LEN(STS(1)) >= 3)                           and then  
-                  (STS(1)(LEN(STS(1))-1..LEN(STS(1))) = "es")    then  
-                  if PT.N.GENDER /= F  then
-                     PROB("    EXPECTED  -es to be F  N 3 3");
-                  end if;
-               end if;
-            end if;
-         
-         
-         --  Check ns/rs -> I-stem
-            if PT.N.DECL.WHICH = 3 and
+
+            
+               --  Check ns/rs -> I-stem
+            if PT.N.DECL.WHICH = 3 and  then
                (PT.N.GENDER = M or PT.N.GENDER = F or PT.N.GENDER = C)    then
                if LEN(STS(1)) >= 3                           and then  
                   (STS(1)(LEN(STS(1))-1..LEN(STS(1))) = "ns"  or        
@@ -302,49 +357,164 @@
                   end if;
                end if;
             end if;
+     
+              --  Check short -> I-stem
+            if PT.N.DECL.WHICH = 3 and then
+               (PT.N.GENDER = M or PT.N.GENDER = F or PT.N.GENDER = C)    then
+               if LEN(STS(1)) <= 4                            then  
+                  if (not IS_VOWEL(STS(2)(LEN(STS(2))))) and 
+                     (not IS_VOWEL(STS(2)(LEN(STS(2))-1)))   then 
+                    if PT.N.DECL.VAR /= 3  then
+                     PROB("    EXPECTED  short M/F N 3 w/const stem 2 to be I-stem (3, 3)");
+                    end if;
+                  end if;
+               end if;
+            end if;
+     
+                     
+         --  Check  I-stem -> es/is/ns/rs 
+            if PT.N.DECL = (3, 3)    then
+               if LEN(STS(1)) >= 4                           and then  
+                  (STS(1)(LEN(STS(1))-1..LEN(STS(1))) /= "es"  and        
+                   STS(1)(LEN(STS(1))-1..LEN(STS(1))) /= "is"  and   
+                   STS(1)(LEN(STS(1))-1..LEN(STS(1))) /= "ns"  and  
+                   STS(1)(LEN(STS(1))-1..LEN(STS(1))) /= "rs")    then  
+                    PROB("    EXPECTED (3, 3)  es/is/ns/rs I-stem ");
+               end if;
+            end if;
          
+         
+         --  Check is I-stem -es is F                 G&L 58
+            if PT.N.DECL = (3, 3) then
+               if (LEN(STS(1)) >= 3)                           and then  
+                  (STS(1)(LEN(STS(1))-1..LEN(STS(1))) = "es")    then  
+                  if (PT.N.GENDER /= F) and then 
+                     (PT.N.KIND /= N and PT.N.KIND /= P)  then
+                     PROB("    EXPECTED  -es to be F  N 3 3");
+                  end if;
+               end if;
+            end if;
+         
+          --  Check N (3, 3) es/is for identical stem start  
+             if PT.N.DECL = (3, 3) and then  LEN(STS(2)) >= 3  then
+               if  STS(1)(LEN(STS(1))-1..LEN(STS(1))) = "es"  or
+                   STS(1)(LEN(STS(1))-1..LEN(STS(1))) = "is"     then
+                  if STS(1)(1..LEN(STS(1))-2) /=  STS(2)(1..LEN(STS(1))-2)   then           
+                     PROB("    EXPECTED  identical start for  N 3 3  es/is NOUN STEMS");
+                  end if;
+           --  Check N (3, 3) ns for nt stem start  
+               elsif STS(1)(LEN(STS(1))) = 's'    and then
+                     STS(2)(1..LEN(STS(2))) /=  STS(1)(1..LEN(STS(1))-1) & "t"   then           
+                     PROB("    EXPECTED  Xs -> Xt start for  N 3 3  Xs NOUN STEMS except es/is");
+               end if;
+             end if;
+           
+      
+    
+  
+        --  N 3 4   
          
          --  Check al/e  -> I-stem
-            if PT.N.DECL.WHICH = 3 and
+            if PT.N.DECL.WHICH = 3 and then
                (PT.N.GENDER = N)    then
                if LEN(STS(1)) >= 3                           and then  
                   (STS(1)(LEN(STS(1))-1..LEN(STS(1))) = "al"  or        
-                   STS(1)(LEN(STS(1))..LEN(STS(1))) = "e")    then  
+                   STS(1)(LEN(STS(1))-1..LEN(STS(1))) = "ar"  or        
+                   STS(1)(LEN(STS(1))..LEN(STS(1))) = "e" )   then  
                   if PT.N.DECL.VAR /= 4  then
                      PROB("    EXPECTED  al/e neuter I-stem (3, 4)");
                   end if;
                end if;
             end if;
-         
-         
-         --  Check N 3 starts the same
-            if PT.N.DECL.WHICH = 3  then
-               if LEN(STS(1)) >= 4                           and then  
-                  (STS(1) /= ZZZ_STEM and STS(2) /= ZZZ_STEM)  and then
-                  (STS(1)(LEN(STS(1))..LEN(STS(1))-1) /= 
-                   STS(2)(LEN(STS(1))..LEN(STS(1))-1))    then  
-                  PROB("    EXPECTED  1st and 2nd stems similiar for N 3 X");
-               end if;
+      
+            
+       --  Check N 3 4   -e/blank     l/r to l/r
+            if (PT.N.DECL = (3, 4))  then
+              if (STS(1)(LEN(STS(1))..LEN(STS(1))) = "e")   and then
+                 (STS(2)(1..LEN(STS(2))) /= STS(1)(1..LEN(STS(1))-1))  then
+                  PROB("    EXPECTED  N 3 4 -e to have stem 2 = stem 1 -e");
+              elsif (STS(1)(LEN(STS(1))..LEN(STS(1))) = "l"   or
+                     STS(1)(LEN(STS(1))..LEN(STS(1))) = "r")   and then
+                 STS(2)(1..LEN(STS(2))) /= STS(1)(1..LEN(STS(1)))  then
+                  PROB("    EXPECTED  N 3 4 -l/r to have stem 2 = stem 1");
+              end if;
             end if;
          
+               
+            
+            
+               
+         
+                
          --  Check N 3 GENDER
-            if (PT.N.DECL = (3, 1))  and  (PT.N.GENDER = N)   then
+            if (PT.N.DECL = (3, 1))  and then (PT.N.GENDER = N)   then
                PROB("    EXPECTED  N 3 1 not to be N");
-            elsif (PT.N.DECL = (3, 2))  and  (PT.N.GENDER /= N)   then
+            elsif (PT.N.DECL = (3, 2))  and then (PT.N.GENDER /= N)   then
                PROB("    EXPECTED  N 3 2  to be N");
-            elsif (PT.N.DECL = (3, 3))  and  (PT.N.GENDER = N)   then
+            elsif (PT.N.DECL = (3, 3))  and then (PT.N.GENDER = N)   then
                PROB("    EXPECTED  N 3 3 not to be N");
-            elsif (PT.N.DECL = (3, 4))  and  (PT.N.GENDER /= N)   then
+            elsif (PT.N.DECL = (3, 4))  and then (PT.N.GENDER /= N)   then
                PROB("    EXPECTED  N 3 4 to be N");
             end if;
          
          
+            
+            
+        --  N 4    
+            
+          --  Check N 4 not end in us/u
+            if PT.N.DECL.WHICH = 4 then  
+              if PT.N.DECL.VAR = 1  then
+                if STS(1)(LEN(STS(1))-1..LEN(STS(1))) = "us"  then  
+                  PROB("    EXPECTED  N 4 1 not to end in -us   except abus/applus/aus/conclus/plaus/us");
+                end if;
+                elsif PT.N.DECL.VAR = 2  then
+                 if STS(1)(LEN(STS(1))) = 'u'  then  
+                 PROB("    EXPECTED  N 4 2 not to end in -u");
+                end if;
+              end if;
+            end if;
+        
          
+     --  N 5    
+            
+          --  Check N 5 ends in -i
+            if PT.N.DECL.WHICH = 5 and then
+               LEN(STS(1)) >= 3            then  
+                if STS(1)(LEN(STS(1))) /= 'i'  then  
+                  PROB("    EXPECTED  N 5 to end in -i   except pleb and fid");
+                end if;
+            end if;
+        
+         
+
+   
+   
+   
+   
          elsif PT.POFS = PRON  then
             null;
          
+            
+            
+            
          elsif PT.POFS = ADJ  then
-         
+        
+           
+          --  Check that ADJ 9 is POS    
+               if PT.ADJ.DECL.WHICH = 9 and     
+                  PT.ADJ.CO /= POS  then
+                 PROB("    EXPECTED  ADJ 9 to be POS");
+               end if;
+               
+              --  Check that ADJ 9 has 1 stem    
+               if (PT.ADJ.DECL.WHICH = 9)    and     
+                  (STS(2) /= NULL_STEM_TYPE)     then
+                 PROB("    EXPECTED  ADJ 9 have just 1 stem");
+               end if;
+             
+           
+            
          --  Can only check consistency if more than one stem, CO /= COMP | SUPER
             if (PT.ADJ.CO = POS or PT.ADJ.CO = X)  and  
                (PT.ADJ.DECL /= (9, 9)   and 
@@ -355,8 +525,7 @@
                    (PT.ADJ.DECL = (3, 2)) or
                    ( (PT.ADJ.DECL = (3, 3)) and then
                      (STS(1)( LEN(STS(1))..LEN(STS(1)) ) /= "r")  ) ) and then
-                       
-                ( (STS(1) /= ZZZ_STEM) and (STS(2) /= ZZZ_STEM)  )    then
+                   ( (STS(1) /= ZZZ_STEM) and (STS(2) /= ZZZ_STEM)  )    then
                   if STS(1) /= STS(2)  then 
                      PROB("    EXPECTED IDENTICAL ADJ STEMS");
                   end if;
@@ -381,21 +550,23 @@
                end if;
             
             
-               if PT.ADJ.DECL.WHICH = 3   then
-                  if LEN(STS(1)) >= 3                           and then  
-                  STS(1)(LEN(STS(1))-1..LEN(STS(1))) = "er"  and then  
-                  PT.ADJ.DECL /= (3, 3)   then  
-                     PROB("    EXPECTED  ADJ 3 with -er to be (3, 3)");
-                  end if;
-               end if;
+--               if PT.ADJ.DECL.WHICH = 3   then
+--                  if LEN(STS(1)) >= 3                           and then  
+--                  STS(1)(LEN(STS(1))-1..LEN(STS(1))) = "er"  and then  
+--                  PT.ADJ.DECL /= (3, 3)   then  
+--                     PROB("    EXPECTED  ADJ 3 with -er to be (3, 3)");
+--                  end if;
+--               end if;
+--    I have all (3, 3) expected cases already in DICTLINE        
             
-            
+               
                if PT.ADJ.DECL = (3, 1)   then
-                  if (LEN(STS(1)) > LEN(STS(2)))    then  
-                     PROB("    EXPECTED ADJ (3, 1)  1st stem to be shorter");
+                  if (LEN(STS(1)) /= LEN(STS(2)))    and then  
+                     (STS(1)(LEN(STS(1))-1..LEN(STS(1)))  /= "ps")     then  
+                     PROB("    EXPECTED ADJ (3, 1)  stem to be equal length   except -ps");
                   end if;
-                  if (STS(1)(1..LEN(STS(1))-1) /=   
-                      STS(2)(1..LEN(STS(1))-1))         then  
+                  if (STS(1)(1..LEN(STS(1))-2) /=   
+                      STS(2)(1..LEN(STS(1))-2))         then  
                      PROB("    EXPECTED ADJ (3, 1)  stems to agree in first letters");
                   end if;
                end if;
@@ -404,17 +575,6 @@
                
             --  General ADJ things
             
-            --  Check that ADJ 9 is POS    
-               if PT.ADJ.DECL.WHICH = 9 and     
-                  PT.ADJ.CO /= POS  then
-                 PROB("    EXPECTED  ADJ 9 to be POS");
-               end if;
-               
-              --  Check that ADJ 9 has 1 stem    
-               if (PT.ADJ.DECL.WHICH = 9)    and     
-                  (STS(2) /= NULL_STEM_TYPE)     then
-                 PROB("    EXPECTED  ADJ 9 have just 1 stem");
-               end if;
                
              --  Check that there are two and only two stems if POS     
                if PT.ADJ.CO = POS  and PT.ADJ.DECL /= (9, 9) and     
@@ -446,6 +606,7 @@
                   end if;
                end if;
             end if;
+            
          
          --  Check that SUPER ends in issi, mostly
             if PT.ADJ.CO = X    then
@@ -462,9 +623,10 @@
                      if (STS(4)(LEN(STS(4))-4..LEN(STS(4))) /= "milli") then
                         PROB("    EXPECTED  'mil' ADJ  STEM 4 to end in 'milli'");
                      end if;
-                  elsif (STS(3)(LEN(STS(3))-1..LEN(STS(3))) = "ri")  then
+                     elsif (STS(1)(LEN(STS(1))-1..LEN(STS(1))) = "er")  and  
+                            PT.ADJ.DECL /= (1, 1)   then
                      if (STS(4)(LEN(STS(4))-2..LEN(STS(4))) /= "rri") then
-                        PROB("    EXPECTED  'r' ADJ  STEM 4 to end in 'rri'");
+                        PROB("    EXPECTED  'er' ADJ  STEM 4 to end in 'rri'");
                      end if;
                   elsif STS(4)(LEN(STS(4))-3..LEN(STS(4))) /= "issi"  then
                      PROB("    EXPECTED  ADJ  STEM 4 to end in 'issi'");
@@ -472,9 +634,31 @@
                      PROB("    EXPECTED  ADJ  STEM 4 to be STEM 3 & 'ssi'");
                   elsif STS(4)(1..LEN(STS(4))-4) /= STS(2)(1..LEN(STS(2)))  then
                      PROB("    EXPECTED  ADJ  STEM 4 to be STEM 2 & 'issi'");
+                  elsif STS(4)(LEN(STS(4))) =  'm' then
+                     PROB("    EXPECTED  ADJ  STEM 4 not to end in -m");
+                   elsif STS(4)(LEN(STS(4))) /=  'i' then
+                     PROB("    EXPECTED  ADJ  STEM 4 to end in -i");
                   end if;
                end if;
             end if;
+                  
+                  
+         --  Check that COMP does end in -i
+            if PT.ADJ.CO = COMP     and then
+               STS(1)(LEN(STS(1))) /= 'i'         then
+               PROB("    EXPECTED  ADJ  COMP to end in -i");
+            end if;
+         
+        --  Check that SUPER does not end in -m
+            if PT.ADJ.CO = SUPER      then
+              if STS(1)(LEN(STS(1))) = 'm'         then
+                PROB("    EXPECTED  ADJ  SUPER not to end in -m");
+              elsif STS(1)(LEN(STS(1))) /=  'i' then
+                PROB("    EXPECTED  ADJ  SUPER to end in -i");
+              end if;
+           end if;
+         
+            
          
          --  Check that COMP and SUPER are (0, 0)
             if ((PT.ADJ.CO = COMP) or 
@@ -497,7 +681,7 @@
          --  Can only check consistency if more than one stem, CO /= COMP | SUPER
             if (PT.ADV.CO = POS or PT.ADV.CO = X)  then
             
-            --  Check that there are two and only two stems if POS     
+            --  Check that there is one stem if POS     
                if PT.ADV.CO = POS     then
                   if (STS(2) /= NULL_STEM_TYPE  or 
                       STS(3) /= NULL_STEM_TYPE)     then
@@ -505,11 +689,38 @@
                   end if;
                end if;
             
-            --  Check that there are more than two stems if X           
+            --  Check that there are three stems if X           
                if PT.ADV.CO = X   then
                   if (STS(2) = NULL_STEM_TYPE  or  
                       STS(3) = NULL_STEM_TYPE)     then
                      PROB("    EXPECTED  3  X  ADV  STEMS");
+                  end if;
+               end if;
+           
+               
+--            --  Check ADV POS ends in -e or -ter or -m or -o  
+--               if (PT.ADV.CO = X or PT.ADV.CO = POS) and then 
+--                  STS(1) /= NULL_STEM_TYPE   then 
+--                  if LEN(STS(1)) > 4  then
+--                    if (STS(1)(LEN(STS(1))) /= 'e'  and
+--                        STS(1)(LEN(STS(1))) /= 'm'  and
+--                        STS(1)(LEN(STS(1))) /= 'o'  and
+--                        STS(1)(LEN(STS(1))-2..LEN(STS(1))) /= "ter")    then
+--                     PROB("    EXPECTED  ADV POS to end in -e or -ter or -m or -o");
+--                    end if;
+--                  end if;
+--               end if;
+--      TOO MANY FALSE POSITIVES      
+        
+               
+               
+                   
+               
+            --  Check -ter ADVs           
+               if LEN(STS(1)) > 5  and then (STS(1)(LEN(STS(1))-1..LEN(STS(1)))) = "er"  then
+                  if (STS(1)(LEN(STS(1))-3..LEN(STS(1)))) /= "iter"  and
+                     (STS(1)(LEN(STS(1))-3..LEN(STS(1)))) /= "nter"    then
+                   PROB("    EXPECTED  -iter or -nter ADV");
                   end if;
                end if;
             
@@ -524,7 +735,15 @@
                   PROB("    EXPECTED  ADV  STEM 2 to end in 'ius'");
                end if;
             end if;
+            
+     --  Check that COMP  ends in ius, mostly
+            if PT.ADV.CO = COMP       then
+               if  (STS(1)(LEN(STS(1))-2..LEN(STS(1))) /= "ius")  then
+                  PROB("    EXPECTED  ADV  COMP to end in 'ius'");
+               end if;
+            end if;
          
+            
          --  Check that SUPER ends in ime, mostly
             if PT.ADV.CO = X        then
                if (STS(3) /= NULL_STEM_TYPE  and 
@@ -533,7 +752,15 @@
                   PROB("    EXPECTED  ADV  STEM 3 to end in 'ime'");
                end if;
             end if;
+            
+        --  Check that SUPER ends in ime, mostly
+            if PT.ADV.CO = SUPER    then
+               if (STS(1)(LEN(STS(1))-2..LEN(STS(1))) /= "ime")  then
+                  PROB("    EXPECTED  ADV  SUPER to end in 'ime'");
+               end if;
+            end if;
          
+            
          --  Check that SUPER ends in issime, mostly
             if PT.ADV.CO = X      then
                if ((LEN(STS(2)) > 4) and  (LEN(STS(3)) > 6))    and then
@@ -559,7 +786,8 @@
                end if;
             end if;
          
-         
+  
+            
          
          elsif PT.POFS = V  then 
                
@@ -585,10 +813,31 @@
                PROB("    EXPECTED VERB not to have -i 3rd stem");
             end if;
          
+     
+            
+        --  Check that 4th stem ends in s, t, x (except mortu)
+            if STS(4) /= ZZZ_STEM    then
+              if PT.V.CON.WHICH = 1  then
+                if (STS(4)(LEN(STS(4)))  /=  't')   then
+                  PROB("    EXPECTED VERB 1 STEM 4 to be -t");
+                end if;
+              else 
+                if (STS(4)(LEN(STS(4)))  /=  's')   and
+                   (STS(4)(LEN(STS(4)))  /=  't')   and
+                   (STS(4)(LEN(STS(4)))  /=  'x')       then
+                  if STS(4)(LEN(STS(4))-4..LEN(STS(4))) /= "mortu"  then
+                    PROB("    EXPECTED VERB  STEM 4 to be -s/t/x   except mortu");
+                  end if;
+                end if;
+              end if;
+            end if;  
+              
+            
          --  Check that the stems are the same when expected
             if PT.V.CON.WHICH < 5  and  STS(1)(1..3) /= "zzz"   then
                if (PT.V.CON  /= (3, 1) and
                    PT.V.CON  /= (3, 2) and
+                   PT.V.CON  /= (3, 3) and
                    PT.V.CON  /= (3, 4))   then
                   if STS(1) /= STS(2)  then 
                      PROB("    EXPECTED IDENTICAL VERB 1 & 2 STEMS");
@@ -597,26 +846,31 @@
                   (STS(1)(LEN(STS(1)))  =  'e')  then 
                   PROB("    EXPECTED (2, X) not to have -e 1st stem");
                elsif PT.V.CON  = (3, 1) and then
-               STS(1) /= STS(2)  and then 
+                     STS(1) /= STS(2)  and then 
                   (STS(1)(1..LEN(STS(1)))  /= 
                    STS(2)(1..LEN(STS(2))) & 'i')  then 
-                  PROB("    EXPECTED (3, 1) i-stem  VERB  STEMS");
+                  PROB("    EXPECTED (3, 1) identical or i-stem  VERB  STEMS");
+               elsif PT.V.CON  = (3, 3) and then
+                  (STS(1)(1..LEN(STS(1)))  /= 
+                   STS(2)(1..LEN(STS(2))) & 'i')  then 
+                  PROB("    EXPECTED (3, 3) fi f   VERB  STEMS");
                elsif PT.V.CON  = (3, 4) and then
                   (STS(1)(1..LEN(STS(1)))  /= 
                    STS(2)(1..LEN(STS(2))) & 'i')  then 
                   PROB("    EXPECTED (3, 4) i-stem  VERB  STEMS");
                elsif PT.V.CON  = (3, 2)  then
                   if ((STS(1)(LEN(STS(1))-2..LEN(STS(1)))  /=  "fer") or      
-                         (STS(2)(LEN(STS(2))-3..LEN(STS(2)))  /=  "ferr"))  or      
+                         (STS(2)(LEN(STS(2))-2..LEN(STS(2)))  /=  "fer"))  or      
                      (STS(1)(1..LEN(STS(1))-3)  /= 
-                      STS(2)(1..LEN(STS(2))-4))  then 
+                      STS(2)(1..LEN(STS(2))-3))  then 
                      PROB("    EXPECTED (3, 2) fer   VERB  STEMS");
                   end if;
                end if;
             end if;
          
          
-         
+                
+            
          
          --  Check that the last 2 verb stems progress as expected
             if PT.V.CON  = (1, 1)   and then 
@@ -670,7 +924,7 @@
                      ((STS(2)(1..LEN(STS(2))) /= STS(1)(1..LEN(STS(1))-4) & "fac") or
                          (STS(3)(1..LEN(STS(3))) /= STS(1)(1..LEN(STS(1))-4) & "fec") or
                          (STS(4)(1..LEN(STS(4))) /= STS(1)(1..LEN(STS(1))-4) & "fact")) then
-                     PROB("    EXPECTED  (3, 1) 3/4  feci, fec, fec, fact  VERB STEMS");
+                     PROB("    EXPECTED  (3, 1) 3/4  faci, fac, fec, fact  VERB STEMS");
                   end if;
                   if (STS(1)(LEN(STS(1))-3..LEN(STS(1))) = "fici")  and then  
                      ((STS(2)(1..LEN(STS(2))) /= STS(1)(1..LEN(STS(1))-4) & "fic") or
@@ -737,22 +991,24 @@
       
       
       --  Catch others
-         if (PT.POFS = N)  or   
-            (PT.POFS = ADJ)  then
-            if LEN(STS(1)) >= 3                           and then  
-            STS(1)(LEN(STS(1))..LEN(STS(1))) = "u"  and then  
-            IS_VOWEL(STS(2)(LEN(STS(2))-1))           then  
-               PROB("    CHECK for terminal u or v      ");
-            end if;
-            if LEN(STS(1)) >= 3                           and then  
-            STS(1)(LEN(STS(1))..LEN(STS(1))) = "v"  and then  
-            not IS_VOWEL(STS(2)(LEN(STS(2))-1))           then  
-               PROB("    CHECK for terminal u or v      ");
-            end if;
-         end if;
-      
+--         if ((PT.POFS = N)  and not (PT.N.DECL = (9, 9) or PT.N.DECL = (9, 8)))  or   
+--            ((PT.POFS = ADJ) and not (PT.ADJ.CO = COMP or PT.ADJ.CO = SUPER))    then
+--            if LEN(STS(1)) >= 3                           and then  
+--            STS(1)(LEN(STS(1))..LEN(STS(1))) = "u"  and then  
+--            IS_VOWEL(STS(1)(LEN(STS(1))-1))           then  
+--               PROB("    CHECK for terminal u or v      ");
+--            end if;
+--            if LEN(STS(1)) >= 3                           and then  
+--            STS(1)(LEN(STS(1))..LEN(STS(1))) = "v"  and then  
+--            not IS_VOWEL(STS(1)(LEN(STS(1))-1))           then  
+--               PROB("    CHECK for terminal u or v      ");
+--            end if;
+--         end if;
+--    ALL ARE NOW FALSE POSITIVES, TOO MANY     
+         
+               
          if (PT.POFS = V)  and then
-            (PT.V.CON = (2, 1))  then
+            (PT.V.CON = (2, 1))  then                                              
             if (LEN(STS(1)) >= 3)                           and then  
                (STS(1)(LEN(STS(1))-1..LEN(STS(1))) = "pl")  and then  
                (STS(3)(LEN(STS(3))-1..LEN(STS(3))) /= "ev")    then  
@@ -775,7 +1031,7 @@
       PUT_LINE("produces a report CHECK.OUT - Remember to process CHECK.OUT from end");
       CREATE(OUTPUT, OUT_FILE, "CHECK.OUT");
       OPEN(INPUT, IN_FILE, "CHECK.IN");
-   
+
       while not END_OF_FILE(INPUT) loop
          S := BLANK_LINE;
          GET_LINE(INPUT, S, LAST);
@@ -822,7 +1078,7 @@
                end if;
             end loop;
          
-         
+                  
             GET(S(4*MAX_STEM_SIZE+5..LAST), DE.PART, LL);
             --GET(S(L+1..LAST), DE.PART.POFS, DE.PART.POFS.KIND, LL);
             
@@ -841,7 +1097,8 @@
          --        PUT_LINE(OUTPUT, S(1..LAST));
          --      end if;
          --      OLDLINE(1..190) := S(1..190);
-         
+
+
             VERIFY_STEMS;
          
             exception
