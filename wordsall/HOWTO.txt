@@ -517,7 +517,7 @@ But remember that you have to keep the separate files (.TXT) and reassemble at t
 into a new DICTLINE.
 
 
-For a release, DICTPAGE is done before the final DICTLINE,
+For a release, ideally DICTPAGE is done before the final DICTLINE,
 because in the process there may be some editing of entries.
 To first order, this is accomplished by running DICTPAGE 
 against DICTLINE, producing a listing of DICTLINE with each
@@ -530,18 +530,20 @@ Extracting a few groups of entries for special handling
 will simplify the process.
 
 
-1) Those entries with first stem zzz may give an output
+1) Use the regular DICTLINE sort.
+Those entries with first stem zzz may give an output
 which sorts to #-.  But it is likely the second term which 
 you want to represent this entry.  For this and other reasons
 these entries will require some hand editing, so extract them
 from their place at the end of the regular DICTLINE, run DICTPAGE 
 on them, sort output on full line, and process seperately.  
 (About 30 entries, but half handled completely by DICTPAGE)
-It is likely that this set has not changed since the last run,
+It is likely that this set has not changed much since the last run,
 so check to see if you have to do it over.
 
-2)Many Greek adjectives are handled in DICTLINE in two or three parts
-(ADJ 1 6, 2 6, 2 7, 2 8, by gender.  The full declension is the 
+2)Sort remaining DICTLINE on (77, 8), (110, 80), (1, 75).  Extract ADJ 2 X.
+Many Greek adjectives are handled in DICTLINE in two or three parts
+(ADJ 2, X by gender.  The full declension is the 
 sum of these partials.  (The Greek adjective form 3 6 is handled in the
 regular process and does not have to be extracted.) Extract these ADJ declensions 
 from a sort of DICTLINE by PART.  Sort this output on stem and meaning to group
@@ -693,7 +695,8 @@ Assemble the 6 .PG files to DICTPAGE.PG and sort to produce DICTPAGE.RAW
 
   SORTER
         DICTPAGE.PG   
-           1 300        --  Everything  
+           1 300  C      --  Everything  
+           1 300  A      --  For Caps  
         DICTPAGE.RAW    --  Where to put result
 
 
@@ -728,8 +731,8 @@ WAKEDICT/MAKEDICT
          STEMLIST.GEN    --  Input  
            1    18   U
            20   24   P
-           1    18   C
-           1    56   A
+           1    18   A
+           1    56   C
          STEMLIST.GEN    --  Output  
 
 MAKESTEM

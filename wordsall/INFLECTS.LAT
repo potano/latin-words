@@ -180,10 +180,10 @@ N     2 0 ACC P N  2 1 a         X A
 --  The two stem and KEY combines the two cases
 --  Ex; puer pueri  =>  puer puer
 --  Ex: ager agri   =>  ager agr
---  Ex: corniger the only Neuter example 
-N     2 3 NOM S C  1 0           X A
-N     2 3 VOC S C  1 0           X A
-N     2 3 GEN S C  2 1 i         X A
+--  Ex: corniger may be the only Neuter example 
+N     2 3 NOM S X  1 0           X A
+N     2 3 VOC S X  1 0           X A
+N     2 3 GEN S X  2 1 i         X A
                 
 
 --  Early (BC) 2nd declension nouns in ius/ium (not filius-like) - N 2 4 
@@ -297,11 +297,12 @@ N     3 1 GEN P C  2 3 ium       X B      --  G&L 38 2
 N     3 0 LOC P X  2 4 ibus      X A
 N     3 0 DAT P X  2 4 ibus      X A
 N     3 0 ABL P X  2 4 ibus      X A
-N     3 0 ACC P C  2 2 es        X A
+N     3 1 ACC P C  2 2 is        X C      --  G&L 57 4
+N     3 1 ACC P C  2 2 es        X A
 
 
 --  Third declension  N nouns with stems ending in a consonant - N 3 2 
---  Ex: nomen nomenis  =>  nomen nomen
+--  Ex: nomen nomenis  =>  nomen nomin
 --  Ex: iter itineris =>  iter itiner
 --  Ex: tempus temporis  =>  tempus  tempor
 N     3 2 ABL S N  2 1 e         X A
@@ -323,7 +324,7 @@ N     3 2 ACC P N  2 1 a         X A
 --  Also use this for present participles (-ns) used as substantives in M & F
 N     3 3 ABL S C  2 1 i         X B      --  G&L 57 2
 N     3 3 ACC S C  2 2 em        X A
-N     3 3 ACC S C  2 2 im        X A      --  G&L 57 1
+N     3 3 ACC S C  2 2 im        X B      --  G&L 57 1
 --  While there are some classical words that are claimed to always have -im
 --  you would not bet that over the years every monk obeyed this rule
 
@@ -331,6 +332,7 @@ N     3 3 NOM P C  2 2 is        B C      --  G&L 38 1, 57 4
 N     3 3 GEN P C  2 3 ium       X A
 N     3 3 GEN P C  2 2 um        X B      --  G&L 57 3
 N     3 3 ACC P C  2 2 is        B A      --  G&L 57 5
+N     3 3 ACC P C  2 2 es        X B
 N     3 3 ACC P C  2 3 eis       A C      --  G&L 57 5
 
 
@@ -362,11 +364,11 @@ N     3 6 ACC S C  2 2 as        X A
 
 
 --  Ex:  lampas lampados  =>  lampas  lampad
---  Atlantis, Atlantidos  =>  Atlantis Atlantid
+--  Ex:  Atlantis, Atlantidos  =>  Atlantis Atlantid
 N     3 7 GEN S X  2 2 os        X A
 N     3 7 ABL S N  2 1 e         X A
 N     3 7 ACC S X  2 1 a         X A
-N     3 7 ACC S X  2 2 em        E B
+N     3 7 ACC S X  2 2 em        X A
 
 N     3 7 NOM P N  2 1 a         X A
 N     3 7 VOC P N  2 1 a         X A
@@ -374,6 +376,25 @@ N     3 7 GEN P X  2 2 um        X A
 N     3 7 ACC P C  2 2 as        X A   
 N     3 7 ACC P N  2 1 a         X A   
 
+
+
+--  Mixec Greek II and III  (V)          --  G&L 65
+--  Ex:  Moses, Mosis  =>  Moses Mos     --  Ecc
+--  Ex:  Ulixes, Ulixis/i/ei  =>  Uxiles Uxil/Uxile     
+--  Ex:  Achilles, Achillis  =>  Achilles Achill/Achille
+--N     3 0 VOC S X  1 0           X A
+N     3 8 VOC S X  2 1 e           X A
+N     3 8 VOC S X  2 2 eu          X A    --  G&L 65
+--N     3 0 GEN S X  2 2 is        X A
+N     3 8 GEN S X  2 2 os        B C
+N     3 8 GEN S X  2 1 i         X B
+N     3 8 ACC S X  2 2 em        X A
+N     3 8 ACC S X  2 2 es        X B
+N     3 8 ACC S X  2 2 en        X B     --  G&L 65
+
+N     3 8 GEN P C  2 2 um        X A
+N     3 8 GEN P C  2 3 ium       X B     
+N     3 8 ACC P C  2 2 is        X A
 
 
 --  Both Greek 3rd declension and Latin 3rd.
@@ -586,7 +607,7 @@ ADJ   0 0 VOC P N COMP  3 3 ora       X A
 --  So on both counts it is easier than the minor/COMP problem above.
 --  Including more is a problem.  Most end in issim, but there are r and l's
 --  And there are worse cases, citimus, extremus, postumus, summus
---  These could also be handled as ADJ 1 1 POS, but this more excluding 
+--  These could also be handled as ADJ 1 1 POS, but this more including 
 ADJ   0 0 NOM S M SUPER 4 3 mus       X A
 ADJ   0 0 GEN S M SUPER 4 2 mi        X A
 ADJ   0 0 DAT S M SUPER 4 2 mo        X A
@@ -2075,13 +2096,6 @@ V     7 3 PRES  ACTIVE  IND  3 S  2 1 t             B B    --  est
 V     7 3 PRES  ACTIVE  IND  2 P  2 3 tis           B B    --  estis
 
 
-V     7 3 PRES  ACTIVE  SUB  1 S  1 2 im            B B 
-V     7 3 PRES  ACTIVE  SUB  2 S  1 2 is            B B
-V     7 3 PRES  ACTIVE  SUB  3 S  1 2 it            B B
-
-V     7 3 PRES  ACTIVE  SUB  1 P  1 4 imus          B B
-V     7 3 PRES  ACTIVE  SUB  2 P  1 4 itis          B B
-V     7 3 PRES  ACTIVE  SUB  3 P  1 3 int           B B
 
     --  Passive voice
 
@@ -2091,6 +2105,17 @@ V     7 3 PRES  ACTIVE  IND  3 S  2 3 tur           B B    --  estur
   --  Subjunctive
 
     --  Active voice
+
+
+V     7 3 PRES  ACTIVE  SUB  1 S  1 2 im            B B 
+V     7 3 PRES  ACTIVE  SUB  2 S  1 2 is            B B
+V     7 3 PRES  ACTIVE  SUB  3 S  1 2 it            B B
+
+V     7 3 PRES  ACTIVE  SUB  1 P  1 4 imus          B B
+V     7 3 PRES  ACTIVE  SUB  2 P  1 4 itis          B B
+V     7 3 PRES  ACTIVE  SUB  3 P  1 3 int           B B
+
+
 
 V     7 3 IMPF  ACTIVE  SUB  1 S  2 3 sem           B B    --  essem G&L 172
 V     7 3 IMPF  ACTIVE  SUB  2 S  2 3 ses           B B
@@ -2810,9 +2835,11 @@ PRON  3 0 NOM P M   1 1 i                           X A
 PRON  3 0 NOM P M   1 2 ii                          E C  --  Souter/Vulgate
 PRON  3 0 GEN P M   1 4 orum                        X A
 PRON  3 0 DAT P X   1 2 is                          X A
+PRON  3 0 DAT P X   1 4 ibus                        B E
 PRON  3 0 DAT P X   1 3 iis                         E C  --  Souter/Vulgate
 PRON  3 0 ACC P M   1 2 os                          X A
 PRON  3 0 ABL P X   1 2 is                          X A
+PRON  3 0 ABL P X   1 4 ibus                        B E
 PRON  3 0 ABL P X   1 3 iis                         E C  --  Souter/Vulgate
          
 PRON  3 0 NOM S F   1 3 aec                         X A
@@ -2866,7 +2893,7 @@ PRON  4 0 ACC P F   2 2 as                          X A
 
 PRON  4 1 NOM S N   1 1 d                           X A
 PRON  4 1 ACC S N   1 1 d                           X A
-PRON  4 0 ABL S N   1 1 o                           X A
+PRON  4 0 ABL S N   2 1 o                           X A
 
 PRON  4 0 NOM P N   2 1 a                           X A
 PRON  4 1 GEN P N   2 4 orum                        X A

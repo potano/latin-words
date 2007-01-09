@@ -83,7 +83,7 @@
     E,      --  L.F.Stelten, Dictionary of Eccles. Latin, 1995 (Ecc)
     F,      --  Roy J. Deferrari, Dictionary of St. Thomas Aquinas, 1960 (DeF)
     G,      --  Gildersleeve + Lodge, Latin Grammar 1895 (G+L)
-    H,      --  Collatinus Dictionary by Yves Ouvrard
+    H,      --  Collatinus Dictionary by Yves Ouvrard 
     I,      --  Leverett, F.P., Lexicon of the Latin Language, Boston 1845
     J,      --  Bracton: De Legibus Et Consuetudinibus Angliæ
     K,      --  Calepinus Novus, modern Latin, by Guy Licoppe (Cal)
