@@ -1,112 +1,104 @@
-<HTML>
+<html><head><title>WORDS - Version 1.97 for Linux/FreeBSD (i386)</title></head>
 
-<HEAD>
-<TITLE>WORDS - Version 1.97 for Linux/FreeBSD (i386)</TITLE>
-</HEAD>
-<BODY>
+<body>
 
-<P>
+<p>
 
 
-<H1>WORDS - Version 1.97 for Linux/FreeBSD (i386) <BR>
-LATIN-to-ENGLISH DICTIONARY PROGRAM</H1>
-<P>
+</p><h1>WORDS - Version 1.97 for Linux/FreeBSD (i386) <br>
+LATIN-to-ENGLISH DICTIONARY PROGRAM</h1>
+<p>
 
 
-<H3>This page provides instructions for downloading the WORDS Latin-to-English
-dictionary program for the PC running Linux.  </H3>
-<P>
-The same program also runs under FreeBSD 3.2 with the adjustments cited
+</p><h3>This page provides instructions for downloading the WORDS Latin-to-English
+dictionary program for the PC running Linux.  </h3>
+<p>
+The same program may also run under FreeBSD 3.2 with the adjustments cited
 below.  Note while initially the library changes in FreeBSD 3.4 gave
 trouble, the program now runs without problem under FreeBDC-3.4-STABLE and
 FreeBSD 4.0 and 4.1.
-<P>
-<B>There is now a native FreeBSD.  (see below)</B>
-<P>
+</p><p>
+<b>There is now also a native FreeBSD.  (see below)</b>
+</p><p>
 
 
-<H3>Downloading the WORDS Program</H3>
-<P>
+</p><h3>Downloading the WORDS Program</h3>
+<p>
 There is a file at the Thomas Aquinas FTP site
-<A HREF="ftp://petrus.thomasaquinas.edu/pub/linux/words/words-1.97-linux.tar.gz">
-<B>words-1.97 -linux.tar.gz</B></A>
-(1.6MB), that the viewer can download as a binary file if his browser
+<a href="ftp://petrus.thomasaquinas.edu/pub/linux/words/words-1.97Ed-linux.tar.gz">
+<b>words-1.97Ed-linux.tar.gz</b></a>
+(2.9MB), that the viewer can FTP or download as a binary file if his browser
 allows.
-<P>
+</p><p>
 A short
-<A HREF="ftp://petrus.thomasaquinas.edu/pub/linux/words/README">
-<B>README </B></A> file comes with
+<a href="ftp://petrus.thomasaquinas.edu/pub/linux/words/README">
+<b>README </b></a> file comes with
 the download with more detailed installation/execution instructions.  You
 are encouraged to read this here on-line before downloading.
-<P>
-This version was produced by <A HREF="mailto:bdragoo@thomasaquinas.edu"> <B>Brian Dragoo</B></A> of Thomas Aquinas College in
+</p><p>
+This version was produced by <a href="mailto:bdragoo@thomasaquinas.edu"> <b>Brian Dragoo</b></a> of Thomas Aquinas College in
 California.  It was compiled on RedHat Linux (i386) to run as a console
 program (keyboard entry).  It runs like a DOS program, line-oriented,
 without fancy GUI.
-<P>
- The .tar.gz file, uncompressed on your machine, will produce about 8MB of
+</p><p>
+ The .tar.gz file, uncompressed on your machine, will produce about 20MB of
 program and data files (and then may be discarded).  The main program
-created is <I>words</I>.  Run that to do Latin-to-English word translations.
+created is <i>words</i>.  Run that to do Latin-to-English word translations.
 Given an input of amo, the output looks like this:
 
-<PRE><B><TT>
-=>amat
+</p><pre><b><tt>
+=&gt;amat
 am.at            V      1 1 PRES ACTIVE  IND 3 S X
 amo, amare, amavi, amatus    V
 love, like; fall in love with; be fond of; have a tendency to
-</TT></B></PRE>
+</tt></b></pre>
 
-<P>
+<P>This WORDS version also does Enhglish-to-Latin.
+
+<p>
 The file WORDSDOC.TXT provides some documentation, and there is included
-an HTML version, which is also accessable directly on the present site as <A HREF="http://users.erols.com/whitaker/wordsdoc.htm"><B>
-WORDSDOC.HTM</B></A>.  This is stand-alone, it is not callable from the WORDS
+an HTML version, which is also accessable directly on the present site as <a href="http://users.erols.com/whitaker/wordsdoc.htm"><b>
+WORDSDOC.HTM</b></a>.  This is stand-alone, it is not callable from the WORDS
 program.
-<P>
+</p><p>
 WORDS for Linux runs any Linux distribution.
-<P>
+</p><p>
 There is also a small shell script that takes care of a slight problem in
-executing the program.  <B><I>words</I></B> must be run from the directory with the
+executing the program.  <b><i>words</i></b> must be run from the directory with the
 supporting files.  So the shell script simply changes directories to the
-words directory, executes <B><I>words</I></B>, then changes back to the previous
-directory after <B><I>words</I></B> has exited.  See the
-<B><A HREF="ftp://petrus.thomasaquinas.edu/pub/linux/words/README">README</A></B> for
+words directory, executes <b><i>words</i></b>, then changes back to the previous
+directory after <b><i>words</i></b> has exited.  See the
+<b><a href="ftp://petrus.thomasaquinas.edu/pub/linux/words/README">README</a></b> for
 further details.
 
-<HR>
-
-<H3>Alternate Download</H3>
-<P>
-An
-<A HREF="http://packet.node.to/hacks/words-1.96.tar.gz">
-<B>alternate download</B></A> has been provided by James Quinby.
+</p><hr>
 
 
-<HR>
+</p><hr>
 
-<H3>Running LINUX code under FreeBSD</H3>
-<P>
-The Linux code will run under FreeBSD, or try the native Free BSD below.
+<h3>Running LINUX code under FreeBSD</h3>
+<p>
+The Linux code should run under FreeBSD, or try the native Free BSD below.
 The only modification for the Linux code is is how one can setup Linux
 mode on a FreeBSD machine.  This will work with FreeBSD-3.2 and
 FreeBSD-3.4-STABLE.
-<P>
+</p><p>
 1) Install linux_lib-2.6.1 in /usr/ports/emulators/linux_lib : make
 install
-<P>
-2) Edit /etc/rc.conf line: linux_enable=YES <BR>
+</p><p>
+2) Edit /etc/rc.conf line: linux_enable=YES <br>
 Matt Heckaman reports that it runs great on FreeBSD 4.0 and 4.1 with
 linux_base-6.1 port installed (/usr/ports/emulators/linux_base).
 
-<H3>Native
-FreeBSD</H3>
-<P>
-Philip Paeps has a <A HREF="http://www.paeps.cx/words/words-1.97-freebsd4-i386.tar.gz"><B>FreeBSD package</B></A>, compiled on FreeBSD 4.7-PRERELEASE for
-an i386.  The package is in .tar.gz form.  <!---->
-<BR>
+</p><h3>Native
+FreeBSD</h3>
+<p>
+There is also a native FreeBSD version, download as <br>
+<a href="ftp://petrus.thomasaquinas.edu/pub/linux/words/words-1.97Ed-freebsd.tar.gz">
+<b>words-1.97Ed-freebsd.tar.gz</b></a>
 
-<BR>
-<A HREF="http://users.erols.com/whitaker/words.htm">
-<B>Return to WORDS home<B></A>
+<br>
+<a href="http://users.erols.com/whitaker/words.htm">
+<b>Return to WORDS home<b></b></b></a>
 
-</BODY>
-</HTML>
+</p></body></html>
