@@ -1306,17 +1306,30 @@ if PA_LAST = 0   then
         OSRA := NULL_SRA;
         OUTPUT_LOOP:
         while  DMA(J) /= NULL_DICTIONARY_MNPC_RECORD  loop
-          
+----!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!            
+--            if (J > 1)  and then ((DMA(J-1).D_K = PPP)  or                               --!!!!!!!!!!!!!!!!!!!!!!!!
+--               (DICTIONARY_FORM(DMA(J).DE) = DICTIONARY_FORM(DMA(J-1).DE)))  then        --!!!!!!!!!!!!!!!!!!!!!!!!
+--             null;                                                                       --!!!!!!ND mod!!!!!!!!!!!!
+--            else                                                                         --!!!!!!!!!!!!!!!!!!!!!!!!
+--              NEW_LINE(OUTPUT);                                                          --!!!!!!!!!!!!!!!!!!!!!!!!
+--            end if;                                                                      --!!!!!!!!!!!!!!!!!!!!!!!!
+--                                                                                         --!!!!!!!!!!!!!!!!!!!!!!!!
+-- --!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!     
           if SRAA(J) /= OSRA  then --  Skips one identical SRA
                                      --  no matter what comes next
-         PUT_INFLECTION_ARRAY_J:
+            
+    
+                
+        PUT_INFLECTION_ARRAY_J:
           for K in SRAA(J)'RANGE loop
             exit when SRAA(J)(K) = NULL_STEM_INFLECTION_RECORD;
+                 
+                 
            PUT_INFLECTION(SRAA(J)(K), DMA(J));
             if SRAA(J)(K).STEM(1..3) = "PPL"  then
               TEXT_IO.PUT_LINE(OUTPUT, HEAD(PPP_MEANING, MM));
             end if;
-          end loop PUT_INFLECTION_ARRAY_J;
+         end loop PUT_INFLECTION_ARRAY_J;
           OSRA := SRAA(J);
           end if;
           
@@ -1326,7 +1339,7 @@ if PA_LAST = 0   then
             if J = 1  or else
                DICTIONARY_FORM(DMA(J).DE) /= DICTIONARY_FORM(DMA(J-1).DE)  then
             --  Put at first chance, skip duplicates
-              PUT_FORM(SRAA(J)(1), DMA(J));
+                 PUT_FORM(SRAA(J)(1), DMA(J));
             end if;
           end PUTTING_FORM;
       

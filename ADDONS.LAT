@@ -149,7 +149,7 @@ X X
 ante-, - before;
 PREFIX anti
 X X 
-anti-, counter-, against, contrary, opposite/opposed to; (and for ante-/before);
+anti-, counter-, against, contrary, opposite/opposed to; for ante-/before;
 PREFIX an   
 X X 
 around, round about; having two;
@@ -230,19 +230,22 @@ X X
 ten (numerical prefix);
 PREFIX de
 V V 
-- down, off, away, from; not, removal, reversal; utterly/completely, (intensive);
+- down, off, away, from; not; removal, reversal; utterly/completely (intensive);
 PREFIX dif f
 V V 
-- apart, in different directions;
+- apart/asunder, in different directions; separation/dispersal/process reversal;
+PREFIX dir
+V V 
+- apart/asunder, in different directions; separation/dispersal/process reversal;
 PREFIX dis
 V V 
-- apart, in different directions;
+- apart/asunder, in different directions; separation/dispersal/process reversal;
 PREFIX di
 N N  
 two-;
 PREFIX di
 V V 
-- apart, in different directions;
+- apart/asunder, in different directions; separation/dispersal/process reversal;
 PREFIX duode
 NUM NUM
 - less two/two less than (numerical prefix); (duodeviginti => 20 less 2 = 18);
@@ -285,6 +288,9 @@ within, inside; - between, at intervals, to pieces;
 PREFIX ig n
 V V    
 - in, - on, - against; not -, un-;  
+PREFIX II
+N N    
+two-; second; (Roman numeral for 2); [IIviri/duoviri => 2 man board];  
 PREFIX il l
 V V    
 - in, - on, - against; not -, un-;  
@@ -395,13 +401,13 @@ X X
 seven (numerical prefix);
 PREFIX  sesque
 X X 
-one and half (numerical prefix); one plus aliquot fraction; (sesqui-septimus = 8/7);
+one and half (numerical); one plus aliquot fraction; (sesqui-septimus = 8/7);
 PREFIX  sesqui
 X X 
-one and half (numerical prefix); one plus aliquot fraction; (sesqui-septimus = 8/7);
+one and half (numerical); one plus aliquot fraction; (sesqui-septimus = 8/7);
 PREFIX  sexqui
 X X 
-one and half (numerical prefix); one plus aliquot fraction; (sesqui-septimus = 8/7);
+one and half (numerical); one plus aliquot fraction; (sesqui-septimus = 8/7);
 PREFIX ses
 X X     
 six-;                     
@@ -425,19 +431,19 @@ V V
 sub-; - up to, - under, up from under; to the aid;
 PREFIX sub
 N N     
-sub-; somewhat -, -ish; rather -; under, from under/below; lesser/assistant/vice;
+sub-; somewhat -/-ish/rather -; under, from under/below; lesser/assistant/vice;
 PREFIX sub
 ADJ ADJ
-sub-; somewhat -, -ish; rather -; under, from under/below; lesser/assistant/vice;
+sub-; somewhat -/-ish/rather -; under, from under/below; lesser/assistant/vice;
 PREFIX suc  c
 V V 
 - up to, - under, up from under; to the aid;
 PREFIX suc c
 N N     
-sub-; somewhat -, -ish; rather -; under, from under/below; lesser/assistant/vice;
+sub-; somewhat -/-ish/rather -; under, from under/below; lesser/assistant/vice;
 PREFIX suc c
 ADJ ADJ
-sub-; somewhat -, -ish; rather -; under, from under/below; lesser/assistant/vice;
+sub-; somewhat -/-ish/rather -; under, from under/below; lesser/assistant/vice;
 PREFIX super
 X X
 super-, over, above, upon; from above; over and above; 
@@ -464,7 +470,7 @@ V V
 - across, - over;
 PREFIX  tri
 X X 
-three (numerical prefix); (also used to represent many times, persistant, extreme, gross); 
+three; (also used to represent many times, persistant, extreme, gross); 
 PREFIX ultra
 N N
 beyond; exceeding; over; more than;
@@ -480,6 +486,12 @@ one-; having (only/but) one ~; (being) of one ~;
 PREFIX ve
 ADJ ADJ
 not- (vegrandis => small), without; very (vepallidus => very pale);
+PREFIX V
+N N    
+five-; fifth; (Roman numeral for 5);  
+PREFIX X
+N N    
+ten-; tenth; (Roman numeral for 10);  
 --
 --
 --  SUFFIX is a fragment added to the end of a stem to modify or 
@@ -629,7 +641,7 @@ N 2 N 2 1 M p  0
 -er; -ist; dealer in thing, maker/artisan (argent.arius = money/silver changer);
 SUFFIX ari
 N 2 ADJ 1 1 POS 0
-of, pertaining/belonging to; connected with; derived from; made of; -th; (-like);
+of, pertaining/belonging to; connected with; derived from; made of; -like;
 SUFFIX ari
 NUM 3 ADJ 1 1 POS 0
 consisting of/containing X things; X each; (with number X); of X; digits wide;
@@ -713,19 +725,19 @@ N 2 N 1 1 F x 0
 little, small, -let (Diminutive) target is of gender of root => decl; !!!!!!!!
 SUFFIX ell
 N 2 N 2 1 M x 0   
-little, small, -let (Diminutive) target is of gender of root => decl; !!!!!!!!
+little, small, -let (Diminutive) target is of gender of root => decl;
 SUFFIX ell
 N 2 N 2 2 N x 0   
-little, small, -let (Diminutive) target is of gender of root => decl; !!!!!!!!
+little, small, -let (Diminutive) target is of gender of root => decl;
 SUFFIX ill
 N 2 N 1 1 F x 0   
-little, small, -let (Diminutive) target is of gender of root => decl; !!!!!!!!
+little, small, -let (Diminutive) target is of gender of root => decl; 
 SUFFIX ill
 N 2 N 2 1 M x 0   
-little, small, -let (Diminutive) target is of gender of root => decl; !!!!!!!!
+little, small, -let (Diminutive) target is of gender of root => decl; 
 SUFFIX ill
 N 2 N 2 2 N x 0   
-little, small, -let (Diminutive) target is of gender of root => decl; !!!!!!!!
+little, small, -let (Diminutive) target is of gender of root => decl; 
 SUFFIX al
 N 2 ADJ 3 2 POS 0
 -al; of a ~, pertaining to a ~, in a condition of ~, in a state of ~;

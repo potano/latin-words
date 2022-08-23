@@ -1011,7 +1011,7 @@ begin              --  PARSE
   else
 
   PREFACE.PUT_LINE(
-"Copyright (c) 1993-2006 - Free for any use - Version 1.97F");
+"Copyright (c) 1993-2006 - Free for any use - Version 1.97FC");
   PREFACE.PUT_LINE(
 "For updates and latest version check http://www.erols.com/whitaker/words.htm");
   PREFACE.PUT_LINE(
@@ -1032,7 +1032,7 @@ begin              --  PARSE
     PREFACE.PUT_LINE("English-to-Latin available");
     PREFACE.PUT_LINE(
                    CHANGE_LANGUAGE_CHARACTER & "E changes to English-to-Latin, " &
-                   CHANGE_LANGUAGE_CHARACTER & "L changes back     [tilda E]");
+                   CHANGE_LANGUAGE_CHARACTER & "L changes back     [tilde E]");
   end if;
   
   if CONFIGURATION = ONLY_MEANINGS  then
