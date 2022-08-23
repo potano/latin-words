@@ -14,6 +14,18 @@ package INFLECTIONS_PACKAGE is
   subtype STEM_TYPE is STRING(1..MAX_STEM_SIZE);
   NULL_STEM_TYPE : constant STEM_TYPE := (others => ' ');
 
+  package STEM_TYPE_IO is
+    DEFAULT_WIDTH : NATURAL := MAX_STEM_SIZE;
+    procedure GET(F : in FILE_TYPE; D : out STEM_TYPE);
+    procedure GET(D : out STEM_TYPE);
+    procedure PUT(F : in FILE_TYPE; D : in STEM_TYPE);
+    procedure PUT(D : in STEM_TYPE);
+    procedure GET(S : in STRING; D : out STEM_TYPE; 
+                                 LAST : out INTEGER);
+    procedure PUT(S : out STRING; D : in STEM_TYPE);  
+  end STEM_TYPE_IO;  
+  
+  
   subtype MEANING_TYPE is STRING(1..MAX_MEANING_SIZE);
   NULL_MEANING_TYPE : constant MEANING_TYPE := (others => ' ');
 
@@ -53,7 +65,9 @@ package INFLECTIONS_PACKAGE is
       VAR          : VARIANT_TYPE := 0;
     end record;
 
-  package DECN_RECORD_IO is
+   function "<" (LEFT, RIGHT : DECN_RECORD) return BOOLEAN;
+    
+    package DECN_RECORD_IO is
     DEFAULT_WIDTH : NATURAL;
     procedure GET(F : in FILE_TYPE; D : out DECN_RECORD);
     procedure GET(D : out DECN_RECORD);
@@ -108,8 +122,9 @@ package INFLECTIONS_PACKAGE is
 
   package COMPARISON_TYPE_IO is new TEXT_IO.ENUMERATION_IO(COMPARISON_TYPE);
 
-  subtype STEM_KEY_TYPE is NATURAL range 0..9;
+  type STEM_KEY_TYPE is new NATURAL range 0..9;
     
+  package STEM_KEY_TYPE_IO is new TEXT_IO.INTEGER_IO(STEM_KEY_TYPE);
   STEM_KEY_TYPE_IO_DEFAULT_WIDTH : INTEGER := 1;
   
   
@@ -180,13 +195,14 @@ package INFLECTIONS_PACKAGE is
 
   type NOUN_KIND_TYPE is (
           X,            --  unknown, nondescript
-          S,            --  Singular "only"
-          M,            --  plural or Multiple "only"
+          S,            --  Singular "only"           --  not really used
+          M,            --  plural or Multiple "only" --  not really used
           A,            --  Abstract idea
+          G,            --  Group/collective Name -- Roman(s)
           N,            --  proper Name
-          L,            --  Locale, name of country/city
           P,            --  a Person
           T,            --  a Thing
+          L,            --  Locale, name of country/city
           W             --  a place Where
                            ); 
   
@@ -596,7 +612,7 @@ type INTERJECTION_RECORD is
     D,   --  late        --  Late, post-classical (3rd-5th centuries)
     E,   --  later       --  Latin not in use in Classical times (6-10) Christian
     F,   --  medieval    --  Medieval (11th-15th centuries)
-    G,   --  neo         --  Latin post 15th - Scholarly/Scientific   (16-18)
+    G,   --  scholar     --  Latin post 15th - Scholarly/Scientific   (16-18)
     H    --  modern      --  Coined recently, words for new things (19-20)
                       );
   package AGE_TYPE_IO is new TEXT_IO.ENUMERATION_IO(AGE_TYPE);
@@ -609,7 +625,7 @@ type INTERJECTION_RECORD is
     C,    --  common      --  For Dictionary, in top 10,000 words
     D,    --  lesser      --  For Dictionary, in top 20,000 words
     E,    --  uncommon    --  2 or 3 citations
-    F,    --  very rare   --  Having only single citation in OLD or L&S
+    F,    --  very rare   --  Having only single citation in OLD or L+S
     I,    --  inscription --  Only citation is inscription
     M,    --  graffiti    --  Presently not much used
     N     --  Pliny       --  Things that appear only in Pliny Natural History
@@ -623,7 +639,7 @@ type INTERJECTION_RECORD is
 --  D,    --  infrequent  --  recognizable variant, but unlikely
 --  E,    --  rare        --  for a few cases, very unlikely
 --  F,    --  very rare   --  singular examples, 
---  I,    --              --  Presently not used
+--  I,    --  inscription --  Only citation is inscription
 --  M,    --              --  Presently not used
 --  N     --              --  Presently not used
 
@@ -659,7 +675,7 @@ type INTERJECTION_RECORD is
   subtype INFLECTIONS_SECTION_3 is CHARACTER range 's'..'s';
   subtype INFLECTIONS_SECTION_4 is CHARACTER range 't'..'u';
 
-  SIZE_OF_BLANK_INFLECTIONS   : constant INTEGER :=  60;    --  ############
+  SIZE_OF_BLANK_INFLECTIONS   : constant INTEGER :=  80;    --  ############
   SIZE_OF_INFLECTIONS_SECTION : constant INTEGER := 540;    --  ############
 
   type INFLECTION_ARRAY is array (POSITIVE range <>) of INFLECTION_RECORD;
@@ -699,10 +715,11 @@ type INTERJECTION_RECORD is
   function "<=" (LEFT, RIGHT : TENSE_VOICE_MOOD_RECORD)  return BOOLEAN;  
   function "<=" (LEFT, RIGHT : NOUN_KIND_TYPE)   return BOOLEAN;  
   function "<=" (LEFT, RIGHT : PRONOUN_KIND_TYPE)   return BOOLEAN;  
-  function "<=" (LEFT, RIGHT : STEM_KEY_TYPE)   return BOOLEAN;  
+  function "<=" (LEFT, RIGHT : STEM_KEY_TYPE)   return BOOLEAN;  -- not verbs  
   function "<=" (LEFT, RIGHT : AGE_TYPE)   return BOOLEAN;  
   function "<=" (LEFT, RIGHT : FREQUENCY_TYPE)   return BOOLEAN;  
 
+       
   GIVE_UP : exception;
   
 

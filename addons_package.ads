@@ -16,23 +16,23 @@ package ADDONS_PACKAGE is
       case POFS is
         when N  => 
           N : NOUN_ENTRY;
-          NOUN_KIND : NOUN_KIND_TYPE;
+          --NOUN_KIND : NOUN_KIND_TYPE;
         when PRON  =>
           PRON : PRONOUN_ENTRY;
-          PRONOUN_KIND : PRONOUN_KIND_TYPE;
+          --PRONOUN_KIND : PRONOUN_KIND_TYPE;
         when PACK  =>
           PACK : PROPACK_ENTRY;
-          PROPACK_KIND : PRONOUN_KIND_TYPE;
+          --PROPACK_KIND : PRONOUN_KIND_TYPE;
         when ADJ  => 
           ADJ : ADJECTIVE_ENTRY;
         when NUM  => 
           NUM : NUMERAL_ENTRY;
-          NUMERAL_VALUE : NUMERAL_VALUE_TYPE;
+          --NUMERAL_VALUE : NUMERAL_VALUE_TYPE;
         when ADV  => 
           ADV : ADVERB_ENTRY;
         when V  => 
           V : VERB_ENTRY;
-          VERB_KIND : VERB_KIND_TYPE;
+          --VERB_KIND : VERB_KIND_TYPE;
         when others  =>
           null;
       end case;
@@ -112,7 +112,7 @@ package ADDONS_PACKAGE is
       POFS: PART_OF_SPEECH_TYPE := TACKON;
       TACK : STEM_TYPE := NULL_STEM_TYPE;
       ENTR : TACKON_ENTRY := NULL_TACKON_ENTRY;
-      MNPC : DICT_IO.COUNT := NULL_MNPC;
+      MNPC : INTEGER := 0;
     end record;
 
   NULL_TACKON_ITEM : TACKON_ITEM;
@@ -124,7 +124,7 @@ package ADDONS_PACKAGE is
       FIX  : FIX_TYPE := NULL_FIX_TYPE;
       CONNECT : CHARACTER := ' ';
       ENTR : PREFIX_ENTRY := NULL_PREFIX_ENTRY;
-      MNPC : DICT_IO.COUNT := NULL_MNPC;
+      MNPC : INTEGER := 0;
     end record;
   
   NULL_PREFIX_ITEM : PREFIX_ITEM;
@@ -136,7 +136,7 @@ package ADDONS_PACKAGE is
       FIX  : FIX_TYPE := NULL_FIX_TYPE;
       CONNECT    : CHARACTER := ' ';
       ENTR : SUFFIX_ENTRY := NULL_SUFFIX_ENTRY;
-      MNPC : DICT_IO.COUNT := NULL_MNPC;
+      MNPC : INTEGER := 0;
     end record;
 
   NULL_SUFFIX_ITEM : SUFFIX_ITEM;
@@ -146,12 +146,15 @@ package ADDONS_PACKAGE is
   type TICKON_ARRAY is array (INTEGER range <>) of PREFIX_ITEM; 
   type SUFFIX_ARRAY is array (INTEGER range <>) of SUFFIX_ITEM; 
   type TACKON_ARRAY is array (INTEGER range <>) of TACKON_ITEM; 
+  type MEANS_ARRAY  is array (INTEGER range <>) of MEANING_TYPE;
+    --  To simulate a DICT_IO file, as used previously
   
-  TACKONS  : TACKON_ARRAY(1..15);
+  TACKONS  : TACKON_ARRAY(1..20);
   PACKONS  : TACKON_ARRAY(1..25);
   TICKONS  : PREFIX_ARRAY(1..10);
-  PREFIXES : PREFIX_ARRAY(1..120);
+  PREFIXES : PREFIX_ARRAY(1..130);
   SUFFIXES : SUFFIX_ARRAY(1..185);
+  MEANS    : MEANS_ARRAY(1..370);
   
   NUMBER_OF_TICKONS  : INTEGER := 0;
   NUMBER_OF_TACKONS  : INTEGER := 0;

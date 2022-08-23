@@ -3,6 +3,19 @@ with PREFACE;
 package body INFLECTIONS_PACKAGE is
   use TEXT_IO;
 
+
+  function "<" (LEFT, RIGHT : DECN_RECORD) return BOOLEAN is
+  begin
+    if LEFT.WHICH < RIGHT.WHICH  or else
+      (LEFT.WHICH = RIGHT.WHICH  and then
+       LEFT.VAR < RIGHT.VAR)  then
+      return TRUE;
+    else
+      return FALSE;
+    end if;
+  end "<";
+
+  
   
   function "<" (LEFT, RIGHT : QUALITY_RECORD) return BOOLEAN is
   begin
@@ -336,7 +349,7 @@ LEFT.V.TENSE_VOICE_MOOD.MOOD   = RIGHT.V.TENSE_VOICE_MOOD.MOOD   and then
 
 
   function "<=" (LEFT, RIGHT : STEM_KEY_TYPE)   return BOOLEAN is
-  begin
+  begin            --  Only works for 2 stem parts, not verbs
     if (RIGHT = LEFT   or else
         RIGHT = 0)  then
       return TRUE;
@@ -365,8 +378,74 @@ LEFT.V.TENSE_VOICE_MOOD.MOOD   = RIGHT.V.TENSE_VOICE_MOOD.MOOD   and then
       return FALSE;
     end if;
   end "<=";
+  
+  
+  
 
-
+package body STEM_TYPE_IO is
+    procedure GET(F : in FILE_TYPE; D : out STEM_TYPE) is
+      C : CHARACTER := ' ';
+    begin
+      D := NULL_STEM_TYPE;
+      for I in 1..STEM_TYPE_IO.DEFAULT_WIDTH  loop
+        GET(F, C);
+        if (C not in 'A'..'Z') and (C not in 'a'..'z')  then
+          exit;
+        else 
+          D(I) := C;
+        end if;
+      end loop;
+    end GET;
+        
+            
+    procedure GET(D : out STEM_TYPE) is
+      C : CHARACTER := ' ';
+    begin
+      D := NULL_STEM_TYPE;
+      for I in 1..STEM_TYPE_IO.DEFAULT_WIDTH  loop
+        TEXT_IO.GET(C);
+        if (C not in 'A'..'Z') and (C not in 'a'..'z')  then
+          exit;
+        else 
+          D(I) := C;
+        end if;
+      end loop;
+    end GET;
+    
+    procedure PUT(F : in FILE_TYPE; D : in STEM_TYPE) is
+    begin 
+      TEXT_IO.PUT(F, D);
+    end PUT;
+      
+    procedure PUT(D : in STEM_TYPE) is
+    begin 
+      TEXT_IO.PUT(D);
+    end PUT;
+      
+    procedure GET(S : in STRING; D : out STEM_TYPE; 
+                                 LAST : out INTEGER) is
+      C : CHARACTER;
+    begin 
+      D := NULL_STEM_TYPE;
+      LAST := 0;
+      for I in 1..STEM_TYPE_IO.DEFAULT_WIDTH  loop
+        C := S(I);
+        if (C not in 'A'..'Z') and (C not in 'a'..'z')  then
+          exit;
+        else 
+          D(I) := C;
+          LAST := I;
+        end if;
+      end loop;
+    end GET;
+                                   
+    procedure PUT(S : out STRING; D : in STEM_TYPE) is
+    begin 
+      S(S'FIRST..S'FIRST+STEM_TYPE_IO.DEFAULT_WIDTH-1) := D;
+    end PUT;
+        
+  end STEM_TYPE_IO;  
+  
 
 package body DECN_RECORD_IO is
 --  This package will carry the documentation for all the following packages
@@ -2040,7 +2119,7 @@ end ENDING_RECORD_IO;
 
 package body INFLECTION_RECORD_IO is
   use QUALITY_RECORD_IO;
-  use INTEGER_IO;
+  use STEM_KEY_TYPE_IO;
   use ENDING_RECORD_IO;
   use AGE_TYPE_IO;
   use FREQUENCY_TYPE_IO;
@@ -2450,14 +2529,14 @@ begin
   PREFACE.PUT(" entries");
   PREFACE.SET_COL(55); PREFACE.PUT_LINE("--  Loaded correctly");
 
---exception
---  when Text_IO.Name_Error  =>
---    NEW_LINE;
---    PUT_LINE("There is no " & INFLECTIONS_SECTIONS_NAME & " file.");
---    PUT_LINE("The program cannot work without one.");
---    PUT_LINE("Make sure you are in the subdirectory containing the files");
---    PUT_LINE("for inflections, dictionary, addons and uniques.");
---    raise GIVE_UP;
+exception
+  when Text_IO.Name_Error  =>
+    NEW_LINE;
+    PUT_LINE("There is no " & INFLECTIONS_SECTIONS_NAME & " file.");
+    PUT_LINE("The program cannot work without one.");
+    PUT_LINE("Make sure you are in the subdirectory containing the files");
+    PUT_LINE("for inflections, dictionary, addons and uniques.");
+    raise GIVE_UP;
 
 end ESTABLISH_INFLECTIONS_SECTION;
 

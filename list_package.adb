@@ -4,7 +4,8 @@
    with WORD_PARAMETERS; use WORD_PARAMETERS;
    with INFLECTIONS_PACKAGE; use INFLECTIONS_PACKAGE;
    with DICTIONARY_PACKAGE; use DICTIONARY_PACKAGE;
-   --with ADDONS_PACKAGE; use ADDONS_PACKAGE;
+   with ADDONS_PACKAGE; use ADDONS_PACKAGE;
+   with UNIQUES_PACKAGE; use UNIQUES_PACKAGE;
    with WORD_SUPPORT_PACKAGE; use WORD_SUPPORT_PACKAGE;
    with DEVELOPER_PARAMETERS; use DEVELOPER_PARAMETERS;
    with WORD_PACKAGE; use WORD_PACKAGE;
@@ -18,7 +19,15 @@
    
       subtype XONS is PART_OF_SPEECH_TYPE range TACKON..SUFFIX;
       
-      MAX_MEANING_PRINT_SIZE : constant := 78;
+      type DICTIONARY_MNPC_RECORD is record
+        D_K  : DICTIONARY_KIND := DEFAULT_DICTIONARY_KIND;
+        MNPC : MNPC_TYPE := NULL_MNPC;
+        DE   : DICTIONARY_ENTRY := NULL_DICTIONARY_ENTRY;
+      end record;
+      NULL_DICTIONARY_MNPC_RECORD : DICTIONARY_MNPC_RECORD
+                                  := (X, NULL_MNPC, NULL_DICTIONARY_ENTRY);
+                                  
+      MAX_MEANING_PRINT_SIZE : constant := 79;
       MM : INTEGER := MAX_MEANING_SIZE;
       I, J, K : INTEGER := 0;
        
@@ -31,8 +40,8 @@
                "infreq  ",  --  D
                "rare    ",  --  E
                "veryrare",  --  F
+               "inscript",  --  I
                "        ",  --  Not used
-               "        ",
                "        " );
          INFLECTION_AGE : array (AGE_TYPE) of STRING(1..8) :=
               ("Always  ",   --  X
@@ -42,7 +51,7 @@
                "Late    ",   --  D
                "Later   ",   --  E
                "Medieval",   --  F
-               "NeoLatin",   --  G
+               "Scholar ",   --  G
                "Modern  " ); --  H   
       
          DICTIONARY_FREQUENCY : array (FREQUENCY_TYPE) of STRING(1..8) :=
@@ -90,30 +99,101 @@
       end CAP_ENDING;
    
      
-         procedure PAUSE(OUTPUT : TEXT_IO.FILE_TYPE) is
-            PAUSE_LINE : STRING(1..300);
-            PAUSE_LAST : INTEGER := 0;
-         begin
-            if WORDS_MDEV(PAUSE_IN_SCREEN_OUTPUT)  then
-               if METHOD = INTERACTIVE  then
-                  if TEXT_IO.NAME(OUTPUT) =
-                  TEXT_IO.NAME(TEXT_IO.STANDARD_OUTPUT)  then
-                     TEXT_IO.PUT_LINE(TEXT_IO.STANDARD_OUTPUT,
-                                      "                          MORE - hit RETURN/ENTER to continue");
-                     TEXT_IO.GET_LINE(TEXT_IO.STANDARD_INPUT, PAUSE_LINE, PAUSE_LAST);
-                  end if;
-               elsif METHOD = COMMAND_LINE_INPUT  then
-                  TEXT_IO.PUT_LINE(TEXT_IO.STANDARD_OUTPUT,
-                                   "                          MORE - hit RETURN/ENTER to continue");
-                  TEXT_IO.GET_LINE(TEXT_IO.STANDARD_INPUT, PAUSE_LINE, PAUSE_LAST);
-               elsif METHOD = COMMAND_LINE_FILES  then
-                  null;                       --  Do not PAUSE
+           procedure PUT_DICTIONARY_FLAGS(OUTPUT : TEXT_IO.FILE_TYPE;
+                                          DE     : DICTIONARY_ENTRY;
+                                          HIT    : out BOOLEAN) is
+             begin
+
+               if WORDS_MODE(SHOW_AGE)   or 
+                 (TRIM(DICTIONARY_AGE(DE.TRAN.AGE))'LENGTH /= 0)  then  --  Not X
+                  TEXT_IO.PUT(OUTPUT, "  " & TRIM(DICTIONARY_AGE(DE.TRAN.AGE)));
+                  HIT := TRUE;
+                end if;
+               if (WORDS_MODE(SHOW_FREQUENCY) or 
+                  (DE.TRAN.FREQ >= D))  and 
+                  (TRIM(DICTIONARY_FREQUENCY(DE.TRAN.FREQ))'LENGTH /= 0)  then
+                  TEXT_IO.PUT(OUTPUT, "  " & TRIM(DICTIONARY_FREQUENCY(DE.TRAN.FREQ)));
+                  HIT := TRUE;
                end if;
-            end if;
-         end PAUSE;
+           end PUT_DICTIONARY_FLAGS; 
+             
       
-        
       
+      procedure PUT_DICTIONARY_FORM(OUTPUT : TEXT_IO.FILE_TYPE;
+                                    D_K    : DICTIONARY_KIND;
+                                    MNPC   : DICT_IO.COUNT; 
+                                    DE     : DICTIONARY_ENTRY) is
+             CHIT, DHIT, EHIT, FHIT, LHIT : BOOLEAN := FALSE;   --  Things on this line?
+             DICTIONARY_LINE_NUMBER : INTEGER := INTEGER(MNPC);
+             --DE : DICTIONARY_ENTRY := DM.DE;
+             
+       
+         begin                               --  PUT_DICTIONARY_FORM
+               if WORDS_MODE(DO_DICTIONARY_FORMS)  then
+                 if WORDS_MDEV(DO_PEARSE_CODES) then
+                   TEXT_IO.PUT(OUTPUT, "02 ");
+                   DHIT := TRUE;
+                 end if;
+                 if DICTIONARY_FORM(DE)'LENGTH /= 0  then
+                   TEXT_IO.PUT(OUTPUT, DICTIONARY_FORM(DE) & "  ");
+                 
+                   --TEXT_IO.PUT(OUTPUT, PART_OF_SPEECH_TYPE'IMAGE(DE.PART.POFS)& "  ");
+--                     if DE.PART.POFS = N  then
+--                        TEXT_IO.PUT(OUTPUT, "  " & GENDER_TYPE'IMAGE(DE.PART.N.GENDER) & "  ");
+--                      end if;
+--                      if (DE.PART.POFS = V)  and then  (DE.PART.V.KIND in GEN..PERFDEF)  then
+--                        TEXT_IO.PUT(OUTPUT, "  " & VERB_KIND_TYPE'IMAGE(DE.PART.V.KIND) & "  ");
+--                      end if;
+      
+                     DHIT := TRUE;
+                 end if;
+               end if;
+    
+               
+                    
+               if WORDS_MDEV(SHOW_DICTIONARY_CODES) and then
+                  DE.PART.POFS not in XONS              then
+                  TEXT_IO.PUT(OUTPUT, " [");
+                 AGE_TYPE_IO.PUT(OUTPUT, DE.TRAN.AGE);
+                 AREA_TYPE_IO.PUT(OUTPUT, DE.TRAN.AREA);
+                 GEO_TYPE_IO.PUT(OUTPUT, DE.TRAN.GEO);
+                 FREQUENCY_TYPE_IO.PUT(OUTPUT, DE.TRAN.FREQ);
+                 SOURCE_TYPE_IO.PUT(OUTPUT, DE.TRAN.SOURCE);
+                 TEXT_IO.PUT(OUTPUT, "]  ");
+                 CHIT := TRUE;
+               end if;
+               
+                        
+               if WORDS_MDEV(SHOW_DICTIONARY) then
+                 TEXT_IO.PUT(OUTPUT, EXT(D_K) & ">");
+                 EHIT := TRUE;
+              end if;
+               
+               if WORDS_MDEV(SHOW_DICTIONARY_LINE)  then
+                 if DICTIONARY_LINE_NUMBER > 0  then
+                   TEXT_IO.PUT(OUTPUT, "(" 
+                         & TRIM(INTEGER'IMAGE(DICTIONARY_LINE_NUMBER)) & ")");
+                   LHIT := TRUE;
+                  end if;
+               end if;
+            
+            
+               PUT_DICTIONARY_FLAGS(OUTPUT, DE, FHIT);       
+               
+            
+               if (CHIT or DHIT or EHIT or FHIT or LHIT)  then
+                  TEXT_IO.NEW_LINE(OUTPUT);
+               end if;
+            --end if;
+         
+         end PUT_DICTIONARY_FORM;
+      
+     
+      
+      
+      
+      
+
       procedure LIST_STEMS(OUTPUT   : TEXT_IO.FILE_TYPE;
                            RAW_WORD : STRING;
                            INPUT_LINE : STRING;
@@ -160,8 +240,8 @@
         end record;
       NULL_STEM_INFLECTION_RECORD : STEM_INFLECTION_RECORD;
       
-      STEM_INFLECTION_ARRAY_SIZE       : constant := 60;
-      STEM_INFLECTION_ARRAY_ARRAY_SIZE : constant := 60;
+      STEM_INFLECTION_ARRAY_SIZE       : constant := 10;
+      STEM_INFLECTION_ARRAY_ARRAY_SIZE : constant := 40;
       type STEM_INFLECTION_ARRAY is array (INTEGER range <>) of STEM_INFLECTION_RECORD;
       type STEM_INFLECTION_ARRAY_ARRAY is array (INTEGER range <>)
                               of STEM_INFLECTION_ARRAY(1..STEM_INFLECTION_ARRAY_SIZE);
@@ -171,16 +251,16 @@
       SRAA, NULL_SRAA : STEM_INFLECTION_ARRAY_ARRAY(1..STEM_INFLECTION_ARRAY_ARRAY_SIZE)
                         := (others => NULL_SRA);
       
-      type DICTIONARY_MNPC_RECORD is record
-        D_K  : DICTIONARY_KIND := DEFAULT_DICTIONARY_KIND;
-        MNPC : MNPC_TYPE := NULL_MNPC;
-        DE   : DICTIONARY_ENTRY := NULL_DICTIONARY_ENTRY;
-      end record;
-      NULL_DICTIONARY_MNPC_RECORD : DICTIONARY_MNPC_RECORD
-                                  := (X, NULL_MNPC, NULL_DICTIONARY_ENTRY);
+--      type DICTIONARY_MNPC_RECORD is record
+--        D_K  : DICTIONARY_KIND := DEFAULT_DICTIONARY_KIND;
+--        MNPC : MNPC_TYPE := NULL_MNPC;
+--        DE   : DICTIONARY_ENTRY := NULL_DICTIONARY_ENTRY;
+--      end record;
+--      NULL_DICTIONARY_MNPC_RECORD : DICTIONARY_MNPC_RECORD
+--                                  := (X, NULL_MNPC, NULL_DICTIONARY_ENTRY);
       DM, ODM : DICTIONARY_MNPC_RECORD := NULL_DICTIONARY_MNPC_RECORD;
       
-      DICTIONARY_MNPC_ARRAY_SIZE : constant := 60;
+      DICTIONARY_MNPC_ARRAY_SIZE : constant := 40;
       
       type DICTIONARY_MNPC_ARRAY is array (1..DICTIONARY_MNPC_ARRAY_SIZE)
                                        of DICTIONARY_MNPC_RECORD;
@@ -227,7 +307,7 @@
          begin
 --TEXT_IO.PUT_LINE("PUT_INFLECTION ");
            if (not WORDS_MODE(DO_ONLY_MEANINGS) and
-               not (CONFIGURATION = MEANINGS))       then
+               not (CONFIGURATION = ONLY_MEANINGS))       then
              TEXT_IO.SET_COL(OUTPUT, 1);
              if WORDS_MDEV(DO_PEARSE_CODES) then
                if DM.D_K = ADDONS  then
@@ -240,11 +320,11 @@
              end if;
                
             
-             --TEXT_IO.PUT(OUTPUT, CAP_STEM(TRIM(SR.STEM)));
+--TEXT_IO.PUT(OUTPUT, CAP_STEM(TRIM(SR.STEM)));
              TEXT_IO.PUT(OUTPUT, (TRIM(SR.STEM)));
              if SR.IR.ENDING.SIZE > 0  then
                TEXT_IO.PUT(OUTPUT, ".");
-               --TEXT_IO.PUT(OUTPUT, TRIM(CAP_ENDING(SR.IR.ENDING.SUF)));
+--TEXT_IO.PUT(OUTPUT, TRIM(CAP_ENDING(SR.IR.ENDING.SUF)));
                TEXT_IO.PUT(OUTPUT, TRIM((SR.IR.ENDING.SUF)));
              end if;
                
@@ -286,8 +366,10 @@
 --  TEXT_IO.PUT(OUTPUT, OUT_STRING);
 --end PRINT_MODIFIED_QUAL;
                
-   --QUALITY_RECORD_IO.PUT(OUTPUT, SR.IR.QUAL);
-              
+--QUALITY_RECORD_IO.PUT(OUTPUT, SR.IR.QUAL);
+--NEW_LINE(OUTPUT);
+--DICTIONARY_ENTRY_IO.PUT(OUTPUT, DM.DE);              
+--NEW_LINE(OUTPUT);
               
                
 PRINT_MODIFIED_QUAL:   
@@ -300,18 +382,68 @@ declare
   PASSIVE_FINISH : INTEGER :=
                     PASSIVE_START + 
                     VOICE_TYPE_IO.DEFAULT_WIDTH;             
+  PPL_START      : INTEGER :=
+                   PART_OF_SPEECH_TYPE_IO.DEFAULT_WIDTH + 1 +
+                   DECN_RECORD_IO.DEFAULT_WIDTH + 1 +
+                   CASE_TYPE_IO.DEFAULT_WIDTH + 1 +
+                   NUMBER_TYPE_IO.DEFAULT_WIDTH + 1 +
+                   GENDER_TYPE_IO.DEFAULT_WIDTH + 1 +
+                   TENSE_TYPE_IO.DEFAULT_WIDTH + 1;
+  PPL_FINISH     : INTEGER :=
+                    PPL_START + 
+                    VOICE_TYPE_IO.DEFAULT_WIDTH;             
   PASSIVE_BLANK : constant STRING(1..VOICE_TYPE_IO.DEFAULT_WIDTH) :=
                            (others => ' ');
 begin
-  QUALITY_RECORD_IO.PUT(OUT_STRING, SR.IR.QUAL);
-  if (SR.IR.QUAL.POFS = V)  and then
-     ((SR.IR.QUAL.V.TENSE_VOICE_MOOD.MOOD in IND..IMP)   and
-     (DM.DE.KIND = (V, DEP)))       then
-    OUT_STRING(PASSIVE_START+1..PASSIVE_FINISH) := PASSIVE_BLANK; 
-    
-  end if;
+  
+--TEXT_IO.PUT_LINE("PASSIVE_START   = " & INTEGER'IMAGE(PASSIVE_START));
+--TEXT_IO.PUT_LINE("PASSIVE_FINISH  = " & INTEGER'IMAGE(PASSIVE_FINISH));
+--TEXT_IO.PUT_LINE("PPL_START   =  " & INTEGER'IMAGE(PPL_START));
+--TEXT_IO.PUT_LINE("PPL_FINISH   =  " & INTEGER'IMAGE(PPL_FINISH));
+--  
+  
+--TEXT_IO.PUT_LINE("START PRINT MODIFIED QUAL " );
+--  QUALITY_RECORD_IO.PUT(OUT_STRING, SR.IR.QUAL);
+--  if (DM.D_K in GENERAL..LOCAL)  and then  --  UNIQUES has no DE
+--     (SR.IR.QUAL.POFS = V)    and then
+--    ((SR.IR.QUAL.V.TENSE_VOICE_MOOD.MOOD in IND..INF)   and
+--     (DM.DE.PART.V.KIND = DEP))       then
+----TEXT_IO.PUT_LINE("PRINT MODIFIED QUAL 1a" );
+--    OUT_STRING(PASSIVE_START+1..PASSIVE_FINISH) := PASSIVE_BLANK; 
+----TEXT_IO.PUT_LINE("PRINT MODIFIED QUAL 2a" );
+--  elsif (DM.D_K in GENERAL..LOCAL)  and then  --  UNIQUES has no DE
+--     (SR.IR.QUAL.POFS = VPAR)  and then
+--    ((SR.IR.QUAL.V.TENSE_VOICE_MOOD.MOOD = PPL)   and
+--     (DM.DE.PART.V.KIND = DEP))       then
+--TEXT_IO.PUT_LINE("PRINT MODIFIED QUAL 1b" );
+--    OUT_STRING(PPL_START+1..PPL_FINISH) := PASSIVE_BLANK; 
+--TEXT_IO.PUT_LINE("PRINT MODIFIED QUAL 2b" );
+--    
+--  end if;
+----TEXT_IO.PUT_LINE("PRINT MODIFIED QUAL 3" );
    
+  
+  
+--TEXT_IO.PUT_LINE("START PRINT MODIFIED QUAL " );
+  QUALITY_RECORD_IO.PUT(OUT_STRING, SR.IR.QUAL);
+  if (DM.D_K in GENERAL..LOCAL)  then  --  UNIQUES has no DE
+     
+       
+    if (SR.IR.QUAL.POFS = V)    and then
+       (DM.DE.PART.V.KIND = DEP)       and then
+       (SR.IR.QUAL.V.TENSE_VOICE_MOOD.MOOD in IND..INF)   then
+--TEXT_IO.PUT_LINE("START PRINT MODIFIED QUAL   V" );
+      OUT_STRING(PASSIVE_START+1..PASSIVE_FINISH) := PASSIVE_BLANK; 
+    elsif (SR.IR.QUAL.POFS = VPAR)    and then
+          (DM.DE.PART.V.KIND = DEP)    and then
+          (SR.IR.QUAL.VPAR.TENSE_VOICE_MOOD.MOOD = PPL)  then
+--TEXT_IO.PUT_LINE("START PRINT MODIFIED QUAL   VPAR" );
+      OUT_STRING(PPL_START+1..PPL_FINISH) := PASSIVE_BLANK; 
+    end if;
+  end if;
+  
   TEXT_IO.PUT(OUTPUT, OUT_STRING);
+--TEXT_IO.PUT_LINE("PRINT MODIFIED QUAL 4" );
 end PRINT_MODIFIED_QUAL;
 
              
@@ -325,7 +457,7 @@ end PRINT_MODIFIED_QUAL;
 --               end if;
                PUT_INFLECTION_FLAGS;
                TEXT_IO.NEW_LINE(OUTPUT);
-               PUT_EXAMPLE_LINE(OUTPUT, SR.IR, DM.DE.KIND);    --  Only full when DO_EXAMPLES
+               PUT_EXAMPLE_LINE(OUTPUT, SR.IR, DM.DE);    --  Only full when DO_EXAMPLES
             else
               TEXT_IO.NEW_LINE(OUTPUT);
              end if;
@@ -334,94 +466,78 @@ end PRINT_MODIFIED_QUAL;
          end PUT_INFLECTION;
          
   
-         procedure PUT_DICTIONARY_FORM(OUTPUT : TEXT_IO.FILE_TYPE;
-                                       DM     : DICTIONARY_MNPC_RECORD) is
-             HIT : BOOLEAN := FALSE;   --  Is anything on this line
-             DICTIONARY_LINE_NUMBER : INTEGER := INTEGER(DM.MNPC);
-             DE : DICTIONARY_ENTRY := DM.DE;
-             
-             procedure PUT_DICTIONARY_FLAGS is
-             begin
-            
-               if WORDS_MODE(SHOW_AGE)   or 
-                 (TRIM(DICTIONARY_AGE(DM.DE.TRAN.AGE))'LENGTH /= 0)  then  --  Not X
-                  TEXT_IO.PUT(OUTPUT, "  " & TRIM(DICTIONARY_AGE(DM.DE.TRAN.AGE)));
-                  HIT := TRUE;
-                end if;
-               if (WORDS_MODE(SHOW_FREQUENCY) or 
-                  (DM.DE.TRAN.FREQ >= D))  and 
-                  (TRIM(DICTIONARY_FREQUENCY(DM.DE.TRAN.FREQ))'LENGTH /= 0)  then
-                  TEXT_IO.PUT(OUTPUT, "  " & TRIM(DICTIONARY_FREQUENCY(DM.DE.TRAN.FREQ)));
-                  HIT := TRUE;
-               end if;
-            end PUT_DICTIONARY_FLAGS; 
-            
-         begin                               --  PUT_DICTIONARY_FORM
-               if WORDS_MODE(DO_DICTIONARY_FORMS)  then
-                 if WORDS_MDEV(DO_PEARSE_CODES) then
-                   TEXT_IO.PUT(OUTPUT, "02 ");
-                   HIT := TRUE;
-                end if;
-                if DICTIONARY_FORM(DE)'LENGTH /= 0  then
-                  TEXT_IO.PUT(OUTPUT, DICTIONARY_FORM(DE) & "  ");
-                  HIT := TRUE;
-                end if;
-               end if;
-     
-               
-                    
-               if WORDS_MDEV(SHOW_DICTIONARY_CODES) and then
-                  DE.PART.POFS not in XONS              then
-                  TEXT_IO.PUT(OUTPUT, " [");
-                 AGE_TYPE_IO.PUT(OUTPUT, DE.TRAN.AGE);
-                 AREA_TYPE_IO.PUT(OUTPUT, DE.TRAN.AREA);
-                 GEO_TYPE_IO.PUT(OUTPUT, DE.TRAN.GEO);
-                 FREQUENCY_TYPE_IO.PUT(OUTPUT, DE.TRAN.FREQ);
-                 SOURCE_TYPE_IO.PUT(OUTPUT, DE.TRAN.SOURCE);
-                 TEXT_IO.PUT(OUTPUT, "]  ");
-                 HIT := TRUE;
-               end if;
-               
-                        
-               if WORDS_MDEV(SHOW_DICTIONARY) then
-                 TEXT_IO.PUT(OUTPUT, EXT(DM.D_K) & ">");
-                 HIT := TRUE;
-              end if;
-               
-               
-               if WORDS_MDEV(SHOW_DICTIONARY_LINE)  then
-                 if DICTIONARY_LINE_NUMBER > 0  then
-                   TEXT_IO.PUT(OUTPUT, "(" 
-                         & TRIM(INTEGER'IMAGE(DICTIONARY_LINE_NUMBER)) & ")");
-                   HIT := TRUE;
-                  end if;
-               end if;
-            
-         
-            
-               PUT_DICTIONARY_FLAGS;       
-            
-            
-               if HIT   then
-                  TEXT_IO.NEW_LINE(OUTPUT);
-               end if;
-            
-            --end if;
-         
-         end PUT_DICTIONARY_FORM;
-      
-     
+--         procedure PUT_DICTIONARY_FORM(OUTPUT : TEXT_IO.FILE_TYPE;
+--                                       DM     : DICTIONARY_MNPC_RECORD) is
+--             HIT : BOOLEAN := FALSE;   --  Is anything on this line
+--             DICTIONARY_LINE_NUMBER : INTEGER := INTEGER(DM.MNPC);
+--             DE : DICTIONARY_ENTRY := DM.DE;
+--             
+--       
+--         begin                               --  PUT_DICTIONARY_FORM
+--               if WORDS_MODE(DO_DICTIONARY_FORMS)  then
+--                 if WORDS_MDEV(DO_PEARSE_CODES) then
+--                   TEXT_IO.PUT(OUTPUT, "02 ");
+--                   HIT := TRUE;
+--                end if;
+--                if DICTIONARY_FORM(DE)'LENGTH /= 0  then
+--                  TEXT_IO.PUT(OUTPUT, DICTIONARY_FORM(DE) & "  ");
+--                  HIT := TRUE;
+--                end if;
+--               end if;
+--     
+--               
+--                    
+--               if WORDS_MDEV(SHOW_DICTIONARY_CODES) and then
+--                  DE.PART.POFS not in XONS              then
+--                  TEXT_IO.PUT(OUTPUT, " [");
+--                 AGE_TYPE_IO.PUT(OUTPUT, DE.TRAN.AGE);
+--                 AREA_TYPE_IO.PUT(OUTPUT, DE.TRAN.AREA);
+--                 GEO_TYPE_IO.PUT(OUTPUT, DE.TRAN.GEO);
+--                 FREQUENCY_TYPE_IO.PUT(OUTPUT, DE.TRAN.FREQ);
+--                 SOURCE_TYPE_IO.PUT(OUTPUT, DE.TRAN.SOURCE);
+--                 TEXT_IO.PUT(OUTPUT, "]  ");
+--                 HIT := TRUE;
+--               end if;
+--               
+--                        
+--               if WORDS_MDEV(SHOW_DICTIONARY) then
+--                 TEXT_IO.PUT(OUTPUT, EXT(DM.D_K) & ">");
+--                 HIT := TRUE;
+--              end if;
+--               
+--               
+--               if WORDS_MDEV(SHOW_DICTIONARY_LINE)  then
+--                 if DICTIONARY_LINE_NUMBER > 0  then
+--                   TEXT_IO.PUT(OUTPUT, "(" 
+--                         & TRIM(INTEGER'IMAGE(DICTIONARY_LINE_NUMBER)) & ")");
+--                   HIT := TRUE;
+--                  end if;
+--               end if;
+--            
+--         
+--            
+--               PUT_DICTIONARY_FLAGS(DM, HIT);       
+--            
+--            
+--               if HIT   then
+--                  TEXT_IO.NEW_LINE(OUTPUT);
+--               end if;
+--            
+--            --end if;
+--         
+--         end PUT_DICTIONARY_FORM;
+--      
+--     
          
          procedure PUT_FORM(SR : STEM_INFLECTION_RECORD; 
-                            DM  : DICTIONARY_MNPC_RECORD) is
+                            DM : DICTIONARY_MNPC_RECORD) is
          --  Handles PEARSE_CODES and DICTIONARY_FORM (which has FLAGS) and D_K
          --  The Pearse 02 is handled in PUT_DICTIONARY_FORM
         begin
            if (SR.IR.QUAL.POFS not in XONS)  and
               (DM.D_K in GENERAL..UNIQUE)           then
-             
-               PUT_DICTIONARY_FORM(OUTPUT, DM);
-          
+--DICTIONARY_ENTRY_IO.PUT(DM.DE);
+                 PUT_DICTIONARY_FORM(OUTPUT, DM.D_K, DM.MNPC, DM.DE);
            end if;
          end PUT_FORM;
         
@@ -430,7 +546,9 @@ end PRINT_MODIFIED_QUAL;
          function TRIM_BAR(S : STRING) return STRING is
          --  Takes vertical bars from begining of MEAN and TRIMs
          begin
-           if S'LENGTH >2  and then S(S'FIRST..S'FIRST+2) = "|||"  then
+           if S'LENGTH >3  and then S(S'FIRST..S'FIRST+3) = "||||"  then
+             return TRIM(S(S'FIRST+4.. S'LAST));
+           elsif S'LENGTH >2  and then S(S'FIRST..S'FIRST+2) = "|||"  then
              return TRIM(S(S'FIRST+3.. S'LAST));
            elsif S'LENGTH > 1  and then  S(S'FIRST..S'FIRST+1) = "||"  then
              return TRIM(S(S'FIRST+2.. S'LAST));
@@ -449,6 +567,7 @@ end PRINT_MODIFIED_QUAL;
       --  Handles the MM screen line limit and TRIM_BAR, then TRIMs
                                        
       begin
+        
         TEXT_IO.PUT(OUTPUT, TRIM(HEAD(TRIM_BAR(RAW_MEANING), MM)));
       end PUT_MEANING;
                       
@@ -460,20 +579,20 @@ end PRINT_MODIFIED_QUAL;
         N : INTEGER := 0;
       begin
         if DM.DE.PART.POFS = NUM  then
-          N := DM.DE.KIND.NUM_VALUE;
+          N := DM.DE.PART.NUM.VALUE;
           if SR.IR.QUAL.POFS = NUM  then    --  Normal parse 
             case SR.IR.QUAL.NUM.SORT is
               when CARD  =>
-                S := HEAD(INTEGER'IMAGE(N) &  " - (CARD answers 'how many')", MAX_MEANING_SIZE);
+                S := HEAD(INTEGER'IMAGE(N) &  " - (CARD answers 'how many');", MAX_MEANING_SIZE);
               when ORD   =>
                 S := HEAD(INTEGER'IMAGE(N) & "th - (ORD, 'in series'); (a/the)" & INTEGER'IMAGE(N) &
-                                             "th (part) (fract w/pars?)", MAX_MEANING_SIZE);
+                                             "th (part) (fract w/pars?);", MAX_MEANING_SIZE);
               when DIST  =>
                 S := HEAD(INTEGER'IMAGE(N) & " each/apiece/times/fold/together/at a time - 'how many each'; by " &
-                          INTEGER'IMAGE(N) & "s ", MAX_MEANING_SIZE);
+                          INTEGER'IMAGE(N) & "s; ", MAX_MEANING_SIZE);
               when ADVERB =>
                 S := HEAD(INTEGER'IMAGE(N) & " times, on" & INTEGER'IMAGE(N) &
-                                             " occasions - (ADVERB answers 'how often')", MAX_MEANING_SIZE);
+                                             " occasions - (ADVERB answers 'how often');", MAX_MEANING_SIZE);
               when others =>
                 null;
             end case;  
@@ -492,53 +611,83 @@ end PRINT_MODIFIED_QUAL;
             procedure PUT_MEANING_LINE(SR : STEM_INFLECTION_RECORD;
                                        DM  : DICTIONARY_MNPC_RECORD) is
             begin
-              if DM.D_K not in XXX..PPP  then
+              if DM.D_K not in ADDONS..PPP  then
                   
                            if WORDS_MDEV(DO_PEARSE_CODES) then
                               TEXT_IO.PUT(OUTPUT, "03 ");
                            end if;
-                           if DM.DE.PART.POFS = NUM  and then DM.DE.KIND.NUM_VALUE > 0  then   
-                             TEXT_IO.PUT_LINE(OUTPUT, CONSTRUCTED_MEANING(SR, DM));    --  Constructed MEANING
+                           if DM.DE.PART.POFS = NUM  and then DM.DE.PART.NUM.VALUE > 0  then   
+                              TEXT_IO.PUT_LINE(OUTPUT, CONSTRUCTED_MEANING(SR, DM));    --  Constructed MEANING
+                           elsif DM.D_K = UNIQUE  then
+                              PUT_MEANING(OUTPUT, UNIQUES_DE(DM.MNPC).MEAN); 
+                              TEXT_IO.NEW_LINE(OUTPUT);
                            else
-                               PUT_MEANING(OUTPUT, TRIM_BAR(DM.DE.MEAN)); 
-                               TEXT_IO.NEW_LINE(OUTPUT);
+                              PUT_MEANING(OUTPUT, TRIM_BAR(DM.DE.MEAN)); 
+                              TEXT_IO.NEW_LINE(OUTPUT);
                            end if;
                else
-                  if DM.D_K = RRR  and then RRR_MEANING /= NULL_MEANING_TYPE   then
-                     --PUT_DICTIONARY_FLAGS;
-                     if WORDS_MDEV(DO_PEARSE_CODES) then
-                       TEXT_IO.PUT(OUTPUT, "03 ");
-                     end if;
-                     PUT_MEANING(OUTPUT, RRR_MEANING);      --  Roman Numeral
-                     RRR_MEANING := NULL_MEANING_TYPE;
-                  elsif DM.D_K = NNN and then NNN_MEANING /= NULL_MEANING_TYPE  then
-                     --PUT_DICTIONARY_FLAGS;
-                     if WORDS_MDEV(DO_PEARSE_CODES) then
-                       TEXT_IO.PUT(OUTPUT, "03 ");
-                     end if;
-                     PUT_MEANING(OUTPUT, NNN_MEANING);  --  Unknown Name
-                     NNN_MEANING := NULL_MEANING_TYPE;
-                  elsif DM.D_K = XXX and then XXX_MEANING /= NULL_MEANING_TYPE  then
-                     if WORDS_MDEV(DO_PEARSE_CODES) then
-                       TEXT_IO.PUT(OUTPUT, "06 ");
-                     end if;
-                     PUT_MEANING(OUTPUT, XXX_MEANING);  --  TRICKS
-                     XXX_MEANING := NULL_MEANING_TYPE;
-                  elsif DM.D_K = YYY and then YYY_MEANING /= NULL_MEANING_TYPE  then
-                     if WORDS_MDEV(DO_PEARSE_CODES) then
-                       TEXT_IO.PUT(OUTPUT, "06 ");
-                     end if;
-                     PUT_MEANING(OUTPUT, YYY_MEANING);  --  Syncope
-                     YYY_MEANING := NULL_MEANING_TYPE;
-                  elsif DM.D_K = PPP and then PPP_MEANING /= NULL_MEANING_TYPE  then
-                     if WORDS_MDEV(DO_PEARSE_CODES) then
-                       TEXT_IO.PUT(OUTPUT, "06 ");
+                  if DM.D_K = RRR  then 
+                    if RRR_MEANING /= NULL_MEANING_TYPE   then
+                      --PUT_DICTIONARY_FLAGS;
+                      if WORDS_MDEV(DO_PEARSE_CODES) then
+                        TEXT_IO.PUT(OUTPUT, "03 ");
                       end if;
-                     PUT_MEANING(OUTPUT, PPP_MEANING); --  Compounds
-                     PPP_MEANING := NULL_MEANING_TYPE;
-                  end if;
+                      PUT_MEANING(OUTPUT, RRR_MEANING);      --  Roman Numeral
+                      RRR_MEANING := NULL_MEANING_TYPE;
+                      TEXT_IO.NEW_LINE(OUTPUT);
+                    end if;
                   
-                  TEXT_IO.NEW_LINE(OUTPUT);
+                  elsif DM.D_K = NNN then 
+                    if NNN_MEANING /= NULL_MEANING_TYPE  then
+                     --PUT_DICTIONARY_FLAGS;
+                      if WORDS_MDEV(DO_PEARSE_CODES) then
+                        TEXT_IO.PUT(OUTPUT, "03 ");
+                      end if;
+                      PUT_MEANING(OUTPUT, NNN_MEANING);  --  Unknown Name
+                      NNN_MEANING := NULL_MEANING_TYPE;
+                      TEXT_IO.NEW_LINE(OUTPUT);
+                    end if;
+              
+                      elsif DM.D_K = XXX  then 
+                       if XXX_MEANING /= NULL_MEANING_TYPE  then
+                         if WORDS_MDEV(DO_PEARSE_CODES) then
+                           TEXT_IO.PUT(OUTPUT, "06 ");
+                         end if;
+                         PUT_MEANING(OUTPUT, XXX_MEANING);  --  TRICKS
+                         XXX_MEANING := NULL_MEANING_TYPE;
+                         TEXT_IO.NEW_LINE(OUTPUT);
+                       end if;
+                       
+                     elsif DM.D_K = YYY  then 
+                       if YYY_MEANING /= NULL_MEANING_TYPE  then
+                         if WORDS_MDEV(DO_PEARSE_CODES) then
+                           TEXT_IO.PUT(OUTPUT, "06 ");
+                         end if;
+                         PUT_MEANING(OUTPUT, YYY_MEANING);  --  Syncope
+                         YYY_MEANING := NULL_MEANING_TYPE;
+                         TEXT_IO.NEW_LINE(OUTPUT);
+                       end if;
+                       
+                     elsif DM.D_K = PPP  then 
+                       if PPP_MEANING /= NULL_MEANING_TYPE  then
+                         if WORDS_MDEV(DO_PEARSE_CODES) then
+                           TEXT_IO.PUT(OUTPUT, "06 ");
+                         end if;
+                         PUT_MEANING(OUTPUT, PPP_MEANING); --  Compounds
+                         PPP_MEANING := NULL_MEANING_TYPE;
+                         TEXT_IO.NEW_LINE(OUTPUT);
+                       end if;
+                       
+                       
+                     elsif DM.D_K = ADDONS  then 
+                        if WORDS_MDEV(DO_PEARSE_CODES) then
+                           TEXT_IO.PUT(OUTPUT, "06 ");
+                         end if;
+                         PUT_MEANING(OUTPUT, MEANS(INTEGER(DM.MNPC))); 
+                         TEXT_IO.NEW_LINE(OUTPUT);
+                       
+                    end if;
+                  
                end if;
             end PUT_MEANING_LINE;
 
@@ -564,12 +713,15 @@ end PRINT_MODIFIED_QUAL;
 --PARSE_RECORD_IO.PUT(PA(I)); TEXT_IO.NEW_LINE;
 --end loop;
       
-         if (TEXT_IO.NAME(TEXT_IO.CURRENT_OUTPUT) = 
+
+         if (TEXT_IO.NAME(OUTPUT) = 
              TEXT_IO.NAME(TEXT_IO.STANDARD_OUTPUT))  then
            MM := MAX_MEANING_PRINT_SIZE;   --  to keep from overflowing screen line
-         else
+                                           --  or even adding blank line
+        else
            MM := MAX_MEANING_SIZE;
-         end if;
+       
+        end if;
       
       -------  The gimick of adding an ADV if there is only ADJ VOC  ----
 --TEXT_IO.PUT_LINE("About to do the ADJ -> ADV kludge");
@@ -582,7 +734,7 @@ end PRINT_MODIFIED_QUAL;
       
 --TEXT_IO.PUT_LINE("In the ADJ -> ADV kludge  Checked to see if there is an ADV");
      
-         if not THERE_IS_AN_ADVERB  then
+         if ((not THERE_IS_AN_ADVERB) and (WORDS_MODE(DO_FIXES)))  then
 --TEXT_IO.PUT_LINE("In the ADJ -> ADV kludge  There is no ADV");
             for I in reverse PA'FIRST..PA_LAST  loop
             
@@ -652,17 +804,16 @@ end PRINT_MODIFIED_QUAL;
             end loop;
          
          end if;           --  not THERE_IS_AN_ADVERB
- --TEXT_IO.PUT_LINE("In the ADJ -> ADV kludge  FINISHED");
+-- TEXT_IO.PUT_LINE("In the ADJ -> ADV kludge  FINISHED");
      
-      
          LIST_SWEEP(PA(1..PA_LAST), PA_LAST);   
    
---         
+         
 --TEXT_IO.PUT_LINE("PA after leaving LIST_SWEEP    PA_LAST = "  & INTEGER'IMAGE(PA_LAST));
 --for I in 1..PA_LAST  loop
 --PARSE_RECORD_IO.PUT(PA(I)); TEXT_IO.NEW_LINE;
 --end loop;
- 
+-- 
          
                
 
@@ -672,39 +823,39 @@ end PRINT_MODIFIED_QUAL;
               
 --               --  Does STATS
 --      
-----TEXT_IO.PUT_LINE("Before STATING FIXES");
---     if  WORDS_MDEV(WRITE_STATISTICS_FILE)    then      --  Omit rest of output
---            
---       for I in 1..PA_LAST  loop                       --  Just to PUT_STAT
---         if (PA(I).D_K = ADDONS)  then
---           if PA(I).IR.QUAL.POFS = PREFIX  then
---             PUT_STAT("ADDON PREFIX at "
---                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
---                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM);
---           elsif PA(I).IR.QUAL.POFS = SUFFIX  then
---             PUT_STAT("ADDON SUFFIX at "
---                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
---                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM);
---           elsif PA(I).IR.QUAL.POFS = TACKON  then
---             PUT_STAT("ADDON TACKON at "
---                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
---                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM);
---           end if;
---         end if;
---       end loop;
---         
---       
+--TEXT_IO.PUT_LINE("Before STATING FIXES");
+     if  WORDS_MDEV(WRITE_STATISTICS_FILE)    then      --  Omit rest of output
+            
+       for I in 1..PA_LAST  loop                       --  Just to PUT_STAT
+         if (PA(I).D_K = ADDONS)  then
+           if PA(I).IR.QUAL.POFS = PREFIX  then
+             PUT_STAT("ADDON PREFIX at "
+                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
+                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM & "  " & INTEGER'IMAGE(INTEGER(PA(I).MNPC)));
+           elsif PA(I).IR.QUAL.POFS = SUFFIX  then
+             PUT_STAT("ADDON SUFFIX at "
+                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
+                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM & "  " & INTEGER'IMAGE(INTEGER(PA(I).MNPC)));
+           elsif PA(I).IR.QUAL.POFS = TACKON  then
+             PUT_STAT("ADDON TACKON at "
+                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
+                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM & "  " & INTEGER'IMAGE(INTEGER(PA(I).MNPC)));
+           end if;
+         end if;
+       end loop;
+         
+       
 ----    --  Just to find the words with long/complicated output at the LIST level 
 ----    --  This is done with the final PA_LAST, after SWEEP
 ----       if PA_LAST > FINAL_PA_LAST_MAX   then
 ----         PUT_STAT("$FINAL_PA_LAST_MAX    for RAW_WORD " & HEAD(RAW_WORD, 24) & "   = " & INTEGER'IMAGE(PA_LAST));
 ----         FINAL_PA_LAST_MAX := PA_LAST;
 ----       end if;
---       
---     end if;
---                  
---         
---         
+       
+     end if;
+                  
+--TEXT_IO.PUT_LINE("After STATING FIXES");
+         
          
        
          
@@ -722,7 +873,19 @@ CYCLE_OVER_PA:
 while I <= PA_LAST  loop       --  I cycles over full PA array
 --TEXT_IO.PUT_LINE("Starting loop for I    I = " & INTEGER'IMAGE(I));
 ODM := NULL_DICTIONARY_MNPC_RECORD;
-  
+
+if PA(I).D_K = UNIQUE  then
+  J := J + 1;
+  SRAA(J)(1) := (PA(I).STEM, PA(I).IR);
+--TEXT_IO.PUT_LINE("UNIQUE   I = " & INTEGER'IMAGE(I) & "  J = " & INTEGER'IMAGE(J)); 
+  DM := NULL_DICTIONARY_MNPC_RECORD;
+  DM.D_K := UNIQUE;
+  DM.MNPC := PA(I).MNPC;  
+  DM.DE := UNIQUES_DE(PA(I).MNPC);  
+  DMA(J) := DM;
+  I := I + 1;
+else
+    
 case PA(I).IR.QUAL.POFS  is
   
 when N  =>  
@@ -748,7 +911,7 @@ when N  =>
     else
       K := K + 1;              --  K indexes within the MNPCA array  - Next MNPC
 --TEXT_IO.PUT_LINE("Continuing IRA for N  I = " & INTEGER'IMAGE(I) & "   K = " & INTEGER'IMAGE(K)
---                                                                      & "   J = " & INTEGER'IMAGE(J));
+--                                                                 & "   J = " & INTEGER'IMAGE(J));
       SRAA(J)(K) := (PA(I).STEM, PA(I).IR);
     end if;
 
@@ -812,6 +975,7 @@ when PRON  =>
   --DM := NULL_DICTIONARY_MNPC_RECORD;
   while PA(I).IR.QUAL.POFS = ADJ   and
         I <= PA_LAST                   loop
+--TEXT_IO.PUT_LINE("SRAA - ADJ");
     if PA(I).MNPC  /= ODM.MNPC  then   --  Encountering new MNPC
       OSRA := SRA;
       K := 1;                  --  K indexes within the MNPCA array --  Initialize
@@ -826,7 +990,7 @@ when PRON  =>
       K := K + 1;              --  K indexes within the MNPCA array  - Next MNPC
       SRAA(J)(K) := (PA(I).STEM, PA(I).IR);
     end if;
-
+--TEXT_IO.PUT_LINE("SRAA  + ADJ");
     I := I + 1;              --  I cycles over full PA array
     end loop;
     
@@ -907,6 +1071,7 @@ when PRON  =>
     
     
   when others  =>  
+--TEXT_IO.PUT_LINE("Others");
   OSRA := NULL_SRA;
   ODMA := NULL_DMA;
   --ODM := NULL_DICTIONARY_MNPC_RECORD;
@@ -922,8 +1087,12 @@ when PRON  =>
   --TEXT_IO.PUT_LINE("Shifting J for OTHER I = " & INTEGER'IMAGE(I) & "   J = " & INTEGER'IMAGE(J));
     SRAA(J)(K) := (PA(I).STEM, PA(I).IR);
       if PA(I).MNPC /= NULL_MNPC  then
-        DICT_IO.SET_INDEX(DICT_FILE(PA(I).D_K), PA(I).MNPC); 
-        DICT_IO.READ(DICT_FILE(PA(I).D_K), DEA);
+        if PA(I).D_K = ADDONS  then
+          DEA :=  NULL_DICTIONARY_ENTRY;   --  Fix for ADDONS in MEANS, not DICT_IO
+        else
+          DICT_IO.SET_INDEX(DICT_FILE(PA(I).D_K), PA(I).MNPC); 
+          DICT_IO.READ(DICT_FILE(PA(I).D_K), DEA);
+        end if;
       else                       --  Has no dictionary to read
         DEA:= NULL_DICTIONARY_ENTRY;
       end if;
@@ -939,20 +1108,18 @@ when PRON  =>
     exit;                    --  Since Other is only one, don't loop
   end loop;    
  
-    
   end case;
-      
---      
+
+  end if;      
 --  --  This just for developer test, will be commented out   
---  if J > SRAA_MAX  then 
---    SRAA_MAX := J;
---PUT_STAT("*SRAA_MAX  for RAW_WORD " & HEAD(RAW_WORD, 24) & "   = " & INTEGER'IMAGE(SRAA_MAX));
+--  if K > SRA_MAX  then 
+--    SRA_MAX := K;
+--PUT_STAT("*SRA_MAX for RAW_WORD " & HEAD(RAW_WORD, 26) & "   = " & INTEGER'IMAGE(SRA_MAX));
 --  end if;
---  if K > DMA_MAX  then 
---    DMA_MAX := K;
---PUT_STAT("*SMNPCA_MAX for RAW_WORD " & HEAD(RAW_WORD, 24) & "   = " & INTEGER'IMAGE(DMA_MAX));
+--  if J > DMA_MAX  then 
+--    DMA_MAX := J;
+--PUT_STAT("*DMA_MAX for RAW_WORD " & HEAD(RAW_WORD, 26) & "   = " & INTEGER'IMAGE(DMA_MAX));
 --  end if;
---  
   
 end loop CYCLE_OVER_PA;
 
@@ -963,7 +1130,7 @@ end loop CYCLE_OVER_PA;
 
 
    
---
+
 --TEXT_IO.PUT_LINE("QA ARRAYS   FFFFFF  ======================================");
 --     for J in 1..DICTIONARY_MNPC_ARRAY_SIZE  loop
 --       if DMA(J) /= NULL_DICTIONARY_MNPC_RECORD  then
@@ -992,8 +1159,8 @@ end loop CYCLE_OVER_PA;
   --  Sets + if capitalized      
       --  Strangely enough, it may enter LIST_STEMS with PA_LAST /= 0
       --  but be weeded and end up with no parse after LIST_SWEEP  -  PA_LAST = 0      
-      if PA_LAST = 0  or else --  WORD failed
-         (DMA(1).D_K in ADDONS..YYY  and then TRIM(DMA(1).DE.STEMS(1)) /= "que")  then  --  or used FIXES/TRICKS
+      if PA_LAST = 0  then  --  WORD failed
+   --????      (DMA(1).D_K in ADDONS..YYY  and then TRIM(DMA(1).DE.STEMS(1)) /= "que")  then  --  or used FIXES/TRICKS
            if WORDS_MODE(IGNORE_UNKNOWN_NAMES)  and CAPITALIZED  then
              NNN_MEANING := HEAD(
                "Assume this is capitalized proper name/abbr, under MODE IGNORE_UNKNOWN_NAME ",
@@ -1022,38 +1189,38 @@ end loop CYCLE_OVER_PA;
       end if;
    
 
-                --  Does STATS
-      
---TEXT_IO.PUT_LINE("Before STATING FIXES");
-     if  WORDS_MDEV(WRITE_STATISTICS_FILE)    then      --  Omit rest of output
-            
-       for I in 1..PA_LAST  loop                       --  Just to PUT_STAT
-         if (PA(I).D_K = ADDONS)  then
-           if PA(I).IR.QUAL.POFS = PREFIX  then
-             PUT_STAT("ADDON PREFIX at "
-                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
-                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM);
-           elsif PA(I).IR.QUAL.POFS = SUFFIX  then
-             PUT_STAT("ADDON SUFFIX at "
-                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
-                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM);
-           elsif PA(I).IR.QUAL.POFS = TACKON  then
-             PUT_STAT("ADDON TACKON at "
-                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
-                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM);
-           end if;
-         end if;
-       end loop;
-         
-       
---    --  Just to find the words with long/complicated output at the LIST level 
---    --  This is done with the final PA_LAST, after SWEEP
+--                --  Does STATS
+--      
+----TEXT_IO.PUT_LINE("Before STATING FIXES");
+--     if  WORDS_MDEV(WRITE_STATISTICS_FILE)    then      --  Omit rest of output
+----            
+----       for I in 1..PA_LAST  loop                       --  Just to PUT_STAT
+----         if (PA(I).D_K = ADDONS)  then
+----           if PA(I).IR.QUAL.POFS = PREFIX  then
+----             PUT_STAT("ADDON PREFIX at "
+----                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
+----                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM);
+----           elsif PA(I).IR.QUAL.POFS = SUFFIX  then
+----             PUT_STAT("ADDON SUFFIX at "
+----                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
+----                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM);
+----           elsif PA(I).IR.QUAL.POFS = TACKON  then
+----             PUT_STAT("ADDON TACKON at "
+----                     & HEAD(INTEGER'IMAGE(LINE_NUMBER), 8) & HEAD(INTEGER'IMAGE(WORD_NUMBER), 4)
+----                     & "   " & HEAD(W, 20) & "   "  & PA(I).STEM);
+----           end if;
+----         end if;
+----       end loop;
+--         
+--       
+----    --  Just to find the words with long/complicated output at the LIST level 
+----    --  This is done with the final PA_LAST, after SWEEP
 --       if PA_LAST > FINAL_PA_LAST_MAX   then
 --         PUT_STAT("$FINAL_PA_LAST_MAX    for RAW_WORD " & HEAD(RAW_WORD, 24) & "   = " & INTEGER'IMAGE(PA_LAST));
 --         FINAL_PA_LAST_MAX := PA_LAST;
 --       end if;
-       
-     end if;
+--       
+--     end if;
                   
          
       
@@ -1111,7 +1278,7 @@ if PA_LAST = 0   then
              LIST_NEIGHBORHOOD(OUTPUT, RAW_WORD);     
              LIST_NEIGHBORHOOD(UNKNOWNS, RAW_WORD);     
            elsif (NAME(CURRENT_INPUT) = NAME(STANDARD_INPUT))  then
-             LIST_NEIGHBORHOOD(CURRENT_OUTPUT, RAW_WORD); 
+             LIST_NEIGHBORHOOD(OUTPUT, RAW_WORD); 
           end if; 
         end if;
       end if;
@@ -1133,8 +1300,7 @@ if PA_LAST = 0   then
            return;
          end if;
    
- 
-        
+
 --TEXT_IO.PUT_LINE("PUTting INFLECTIONS");         
         J := 1;
         OSRA := NULL_SRA;
@@ -1146,15 +1312,15 @@ if PA_LAST = 0   then
          PUT_INFLECTION_ARRAY_J:
           for K in SRAA(J)'RANGE loop
             exit when SRAA(J)(K) = NULL_STEM_INFLECTION_RECORD;
-            PUT_INFLECTION(SRAA(J)(K), DMA(J));
+           PUT_INFLECTION(SRAA(J)(K), DMA(J));
             if SRAA(J)(K).STEM(1..3) = "PPL"  then
               TEXT_IO.PUT_LINE(OUTPUT, HEAD(PPP_MEANING, MM));
             end if;
           end loop PUT_INFLECTION_ARRAY_J;
           OSRA := SRAA(J);
           end if;
-           
-
+          
+--TEXT_IO.PUT_LINE("PUTting FORM");         
           PUTTING_FORM:
           begin
             if J = 1  or else
@@ -1165,7 +1331,8 @@ if PA_LAST = 0   then
           end PUTTING_FORM;
       
   
-          PUTTING_MEANING:
+--TEXT_IO.PUT_LINE("PUTting MEANING");         
+         PUTTING_MEANING:
           begin
             if (DMA(J).D_K in GENERAL..UNIQUE)  then
               if (DMA(J).DE.MEAN /= DMA(J+1).DE.MEAN)  then
@@ -1180,9 +1347,9 @@ if PA_LAST = 0   then
             
             
         
-          DO_PAUSE:
+         DO_PAUSE:
           begin
-            if I = PA_LAST  then
+             if I = PA_LAST  then
               TEXT_IO.NEW_LINE(OUTPUT);
             elsif (INTEGER(TEXT_IO.LINE(OUTPUT)) >
                    SCROLL_LINE_NUMBER + OUTPUT_SCREEN_SIZE)  then
@@ -1197,7 +1364,7 @@ if PA_LAST = 0   then
         end loop OUTPUT_LOOP;
  --TEXT_IO.PUT_LINE("Finished OUTPUT_LOOP");
         
- if TRIMMED  THEN
+ if TRIMMED  then
      PUT(OUTPUT, '*');
  end if;
  TEXT_IO.NEW_LINE(OUTPUT);
@@ -1212,20 +1379,31 @@ if PA_LAST = 0   then
 end LIST_STEMS;
 
       
-      
-         
-     procedure LIST_NEIGHBORHOOD(OUTPUT : TEXT_IO.FILE_TYPE; 
-                              INPUT_WORD : STRING) is
      
-         D_K : constant DICTIONARY_KIND := GENERAL;
-         DE : DICTIONARY_ENTRY;
-         UNK_MNPC : DICT_IO.COUNT; 
+    procedure LIST_ENTRY(OUTPUT   : TEXT_IO.FILE_TYPE;
+                         D_K      : DICTIONARY_KIND;
+                         MN       : DICT_IO.COUNT) is
+      DE : DICTIONARY_ENTRY;
+    begin
+      DICT_IO.READ(DICT_FILE(D_K), DE, MN);
+      TEXT_IO.PUT(OUTPUT, "=>  ");
+      --TEXT_IO.PUT_LINE(OUTPUT, DICTIONARY_FORM(DE));
+      PUT_DICTIONARY_FORM(OUTPUT, D_K, MN, DE);
+      TEXT_IO.PUT_LINE(OUTPUT, 
+                       TRIM(HEAD(DE.MEAN, MM)));  --  so it wont line wrap/put CR
 
-       procedure UNKNOWN_SEARCH(UNKNOWN       :  in STRING;
-                                UNKNOWN_COUNT : out DICT_IO.COUNT) is
+    end LIST_ENTRY;
+          
+    
+   
+   
+   
+    procedure UNKNOWN_SEARCH(UNKNOWN       :  in STRING;
+                             UNKNOWN_COUNT : out DICT_IO.COUNT) is
      
          use STEM_IO;
          
+         D_K : constant DICTIONARY_KIND := GENERAL;
          J, J1, J2, JJ : STEM_IO.COUNT := 0;
 
          INDEX_ON : constant STRING := UNKNOWN;
@@ -1364,35 +1542,44 @@ end LIST_STEMS;
          end UNKNOWN_SEARCH;
 
                            
-                                
+
+   
+   
+    procedure LIST_NEIGHBORHOOD(OUTPUT : TEXT_IO.FILE_TYPE; 
+                              INPUT_WORD : STRING) is
+     
+         D_K : constant DICTIONARY_KIND := GENERAL;
+         DE : DICTIONARY_ENTRY;
+         UNK_MNPC : DICT_IO.COUNT; 
+
+                                       
                                                            
                                 
      begin
 --TEXT_IO.PUT_LINE("Entering LIST_NEIGHBORHOOD");
          
-         if (TEXT_IO.NAME(TEXT_IO.CURRENT_OUTPUT) = 
+       if (TEXT_IO.NAME(OUTPUT) = 
              TEXT_IO.NAME(TEXT_IO.STANDARD_OUTPUT))  then
            MM := MAX_MEANING_PRINT_SIZE;   --  to keep from overflowing screen line
-         else
+       else
            MM := MAX_MEANING_SIZE;
-         end if;
+       end if;
          
-         UNKNOWN_SEARCH(INPUT_WORD, UNK_MNPC);
+         UNKNOWN_SEARCH(HEAD(INPUT_WORD, MAX_STEM_SIZE), UNK_MNPC);
 --TEXT_IO.PUT_LINE("UNK_MNPC = " & INTEGER'IMAGE(INTEGER(UNK_MNPC)));
-      TEXT_IO.PUT_LINE(OUTPUT, 
-        "----------  Entries in GENEAL Dictionary around the UNKNOWN  ----------");
-       PAUSE(OUTPUT);
-         for I in DICT_IO.COUNT(INTEGER(UNK_MNPC)-6).. 
-                 DICT_IO.COUNT(INTEGER(UNK_MNPC)+2)  loop
-         DICT_IO.READ(DICT_FILE(D_K), DE, I);
-         TEXT_IO.PUT(OUTPUT, "=>  ");
-         TEXT_IO.PUT_LINE(OUTPUT, DICTIONARY_FORM(DE));
+       if INTEGER(UNK_MNPC) > 0  then
          TEXT_IO.PUT_LINE(OUTPUT, 
-            TRIM(HEAD(DE.MEAN, MM)));  --  so it wont line wrap/put CR
---TEXT_IO.PUT('.');
-        end loop;
+        "----------  Entries in GENEAL Dictionary around the UNKNOWN  ----------");
+         PAUSE(OUTPUT);
+         for MN in DICT_IO.COUNT(INTEGER(UNK_MNPC)-5).. 
+                  DICT_IO.COUNT(INTEGER(UNK_MNPC)+3)  loop
+           LIST_ENTRY(OUTPUT, D_K, MN);
+
+         end loop;
+       end if;
        
 --TEXT_IO.PUT_LINE("Leaving LIST_NEIGHBORHOOD");
-    end LIST_NEIGHBORHOOD;
+     
+     end LIST_NEIGHBORHOOD;
       
    end LIST_PACKAGE;

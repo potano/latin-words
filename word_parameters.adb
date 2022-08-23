@@ -48,15 +48,19 @@ package body WORD_PARAMETERS is
 
 TRIM_OUTPUT_HELP : constant HELP_TYPE :=  (
    "This option instructs the program to remove from the output list of   ",
-   "possible constructs those which are least likely.  At the present     ",
-   "stage, there is not much trimming except for removing Uncommon and    ",
+   "possible constructs those which are least likely.  There is now a fair",
+   "amount of trimming, killing LOC and VOC plus removing Uncommon and    ",
    "non-classical (Archaic/Medieval) when more common results are found   ",
-   "and this action is requested (MDEV), however, if the program grows    ",
-   "more powerful this may be a useful option.  A newly added trim is to  ",
-   "ignore enclitics if a normal word is found.  This may be excessive.   ",
+   "and this action is requested (turn it off in MDV (!) parameters).     ",
+   "When a TRIM has been done, output is usually followed by asterix (*). ",
+   "The asterix may be missing depending on where the TRIM is done.       ",
    "There certainly is no absolute assurence that the items removed are   ",
    "not correct, just that they are statistically less likely.            ",
-   "                      Since little is now done, the default is Y(es)  " );
+   "Note that poets are likely to employ unusual words and inflections for",
+   "various reasons.  These may be trimmed out if this parameter in on.   ",
+   "When in English mode, trim just reduces the output to the top six     ",
+   "results, if there are that many.  Asterix means there are more        ",
+   "                                                The default is Y(es)  " );
 
 
 HAVE_OUTPUT_FILE_HELP : constant HELP_TYPE :=  (
@@ -77,7 +81,8 @@ WRITE_OUTPUT_TO_FILE_HELP : constant HELP_TYPE :=  (
    "This option may be turned on and off during running of the program,   ",
    "thereby capturing only certain desired results.  If the option        ",
    "HAVE_OUTPUT_FILE is off, the user will not be given a chance to turn  ",
-   "this one on.  Only for INTERACTIVE running.         Default is N(o).  " );
+   "this one on.  Only for INTERACTIVE running.         Default is N(o).  ",
+   "This works in English mode, but output in somewhat diffeent so far.   " );
 
 DO_UNKNOWNS_ONLY_HELP : constant HELP_TYPE :=  (
    "This option instructs the program to only output those words that it  ",
@@ -91,8 +96,9 @@ DO_UNKNOWNS_ONLY_HELP : constant HELP_TYPE :=  (
    "MINIMIZE_OUTPUT option, just producing a list.  Another use is to run ",
    "without MINIMIZE to an output file.  This gives a list of the input   ",
    "text with the unknown words, by line.  This functions as a spelling   ",
-   "checker for Latin.  The default is N(o).                              " );
-
+   "checker for Latin texts.  The default is N(o).                        ",
+   "This does not work in English mode, but may in the future.            " );
+   
 WRITE_UNKNOWNS_TO_FILE_HELP : constant HELP_TYPE :=  (
    "This option instructs the program to write all unresolved words to a  ",
    "UNKNOWNS file named " & UNKNOWNS_FULL_NAME
@@ -104,8 +110,8 @@ WRITE_UNKNOWNS_TO_FILE_HELP : constant HELP_TYPE :=  (
    "on, the UNKNOWNS file is written, destroying any file from a previous ",
    "run.  However, the write may be turned on and off during a single run ",
    "without destroying the information written in that run.               ",
-   "This option is for specialized use, so its default is N(o).           " );
-
+   "This option is for specialized use, so its default is N(o).           ",
+   "This does not work in English mode, but may in the future.            " );
 
 IGNORE_UNKNOWN_NAMES_HELP : constant HELP_TYPE :=  (
    "This option instructs the program to assume that any capitalized word ",
@@ -201,16 +207,9 @@ DO_ONLY_MEANINGS_HELP : constant HELP_TYPE :=  (
 DO_STEMS_FOR_UNKNOWN_HELP : constant HELP_TYPE :=  (
    "This option instructs the program, when it is unable to find a proper ",
    "match in the dictionary, and after various prefixes and suffixes, to  ",
-   "try even dirtier tricks, specifically to try all the dictionary stems ",
-   "that it finds that fit the letters, independent of whether the endings",
-   "match the parts of speech to which the stems are assigned.  This will ",
+   "list the dictionary entries around the unknown.  This will likely     ",
    "catch a substantive for which only the ADJ stem appears in dictionary,",
-   "an ADJ for which there is only a N stem, etc.  It will also list the  ",
-   "various endings that match the end of the input word.  A certain      ",
-   "amount of weeding has been done, so only reasonably common endings    ",
-   "are quoted, and these are lumped together masking declension, etc.    ",
-   "Only N, ADJ, and V endings are given, LOC and VOC omitted, etc.       ",
-   "The user can then make his own judgement.      This option should     ",
+   "an ADJ for which there is only a N stem, etc.  This option should     ",
    "probably only be used with individual UNKNOWN words, and off-line     ",
    "from full translations, therefore the default choice is N(o).         ",
    "This processing can be turned on with the choice of Y(es).            " );
@@ -289,7 +288,7 @@ SAVE_PARAMETERS_HELP : constant HELP_TYPE :=  (
     GET_LINE(L1, LL);
     if LL /= 0  then
       if TRIM(L1(1..LL)) = ""  then
-        PUT_LINE("Blank input, skipping the reat of CHANGE_PARAMETERS");
+        PUT_LINE("Blank input, skipping the rest of CHANGE_PARAMETERS");
         raise BLANK_INPUT;                 
       elsif L1(1) = '?'  then
         PUT(HELP);
@@ -432,7 +431,9 @@ SAVE_PARAMETERS_HELP : constant HELP_TYPE :=  (
 
   end CHANGE_PARAMETERS;
 
-procedure INITIALIZE_WORD_PARAMETERS is
+  
+     
+  procedure INITIALIZE_WORD_PARAMETERS is
 begin
   WORDS_MODE := DEFAULT_MODE_ARRAY;
 --TEXT_IO.PUT_LINE("Initializing WORD_PARAMETERS");
@@ -459,10 +460,11 @@ begin
       WORDS_MODE := DEFAULT_MODE_ARRAY;
     end DO_MODE_FILE;
 
-  if (METHOD = INTERACTIVE)  and then
+  if ((METHOD = INTERACTIVE) or (METHOD = COMMAND_LINE_INPUT)) and then
      (not TEXT_IO.IS_OPEN(OUTPUT)) and then
      (WORDS_MODE(HAVE_OUTPUT_FILE))  then
     TEXT_IO.CREATE(OUTPUT, TEXT_IO.OUT_FILE, OUTPUT_FULL_NAME);
+    --TEXT_IO.PUT_LINE("WORD.OUT Created at Initialization");
     PREFACE.PUT_LINE("WORD.OUT Created at Initialization");
   end if;
   if not TEXT_IO.IS_OPEN(UNKNOWNS) and then WORDS_MODE(WRITE_UNKNOWNS_TO_FILE)  then

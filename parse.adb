@@ -12,7 +12,10 @@ with WORD_PACKAGE; use WORD_PACKAGE;
 with LIST_PACKAGE; use LIST_PACKAGE;
 with TRICKS_PACKAGE; use TRICKS_PACKAGE;
 with CONFIG; use CONFIG;
+with PREFACE;
 with PUT_STAT;
+with ENGLISH_SUPPORT_PACKAGE; use ENGLISH_SUPPORT_PACKAGE;
+with SEARCH_ENGLISH;
 pragma Elaborate(WORD_PARAMETERS);
 procedure PARSE(COMMAND_LINE : STRING := "") is
   use INFLECTIONS_PACKAGE.INTEGER_IO;
@@ -22,12 +25,13 @@ procedure PARSE(COMMAND_LINE : STRING := "") is
   STORAGE_ERROR_COUNT : INTEGER := 0;
 
   J, K, L : INTEGER := 0;
-  LINE : STRING(1..2500) := (others => ' ');
+  LINE, BLANK_LINE : STRING(1..2500) := (others => ' ');
   --INPUT : TEXT_IO.FILE_TYPE;
 
   
   PA : PARSE_ARRAY(1..100) := (others => NULL_PARSE_RECORD);
   SYNCOPE_MAX : constant := 20;
+  NO_SYNCOPE : BOOLEAN := FALSE;
   TRICKS_MAX : constant := 40;
   SYPA : PARSE_ARRAY(1..SYNCOPE_MAX) := (others => NULL_PARSE_RECORD);
   TRPA : PARSE_ARRAY(1..TRICKS_MAX) := (others => NULL_PARSE_RECORD);
@@ -133,8 +137,42 @@ procedure PARSE(COMMAND_LINE : STRING := "") is
           W(I+1) := 'U';
         end if;
       end loop;
-      
 
+      
+if LANGUAGE = ENGLISH_TO_LATIN  then
+   
+PARSE_LINE_ENGLISH_TO_LATIN:  
+--  Since we do only one English word per line
+declare
+  INPUT_WORD : constant STRING := W(J..K);
+  POFS : PART_OF_SPEECH_TYPE := X;
+begin
+
+--  Extract from the rest of the line
+--  Should do AUX here !!!!!!!!!!!!!!!!!!!!!!!!
+EXTRACT_POFS:
+begin
+  PART_OF_SPEECH_TYPE_IO.GET(LINE(K+1..L), POFS, L);
+--TEXT_IO.PUT_LINE("In EXTRACT   " & LINE(K+1..L));
+exception
+  when others =>
+    POFS := X;
+end EXTRACT_POFS;
+--PART_OF_SPEECH_TYPE_IO.PUT(POFS); 
+--TEXT_IO.NEW_LINE;
+
+SEARCH_ENGLISH(INPUT_WORD, POFS);
+
+exit OVER_LINE;
+
+end PARSE_LINE_ENGLISH_TO_LATIN;
+
+      
+      
+              
+elsif LANGUAGE = LATIN_TO_ENGLISH  then
+  
+PARSE_WORD_LATIN_TO_ENGLISH:  
 declare
 INPUT_WORD : constant STRING := W(J..K);
 ENTERING_PA_LAST : INTEGER := 0;
@@ -149,8 +187,10 @@ procedure ENCLITIC is
   SAVE_DO_FIXES  : BOOLEAN := WORDS_MODE(DO_FIXES);
   SAVE_DO_ONLY_FIXES  : BOOLEAN := WORDS_MDEV(DO_ONLY_FIXES);
   ENCLITIC_LIMIT : INTEGER := 4;
+  TRY : constant STRING := LOWER_CASE(INPUT_WORD);
 begin
 --TEXT_IO.PUT_LINE("Entering ENCLITIC  HAVE DONE = " & BOOLEAN'IMAGE(HAVE_DONE_ENCLITIC));
+    --if WORDS_MODE(TRIM_OUTPUT)  and (PA_LAST > 0)  then    return;   end if;
     if HAVE_DONE_ENCLITIC  then    return;   end if;
      
     ENTERING_PA_LAST := PA_LAST;
@@ -161,23 +201,52 @@ begin
       REMOVE_A_TACKON:
       declare
         LESS : constant STRING :=
-               SUBTRACT_TACKON(INPUT_WORD, TACKONS(I));
-      begin
+               SUBTRACT_TACKON(TRY, TACKONS(I));
+               --SUBTRACT_TACKON(INPUT_WORD, TACKONS(I));
+        SAVE_PA_LAST  : INTEGER := 0;
+    begin
 --TEXT_IO.PUT_LINE("In ENCLITIC     LESS/TACKON  = " & LESS & "/" & TACKONS(I).TACK); 
-       if LESS  /= INPUT_WORD  then       --  LESS is less
+       if LESS  /= TRY  then       --  LESS is less
           --WORDS_MODE(DO_FIXES) := FALSE;
           WORD_PACKAGE.WORD(LESS, PA, PA_LAST);
 --TEXT_IO.PUT_LINE("In ENCLITICS after WORD NO_FIXES  LESS = " & LESS & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+
+
+if PA_LAST = 0  then
+
+          SAVE_PA_LAST := PA_LAST;
           TRY_SLURY(LESS, PA, PA_LAST, LINE_NUMBER, WORD_NUMBER);
---TEXT_IO.PUT_LINE("In ENCLITICS after SLURY  LESS = " & LESS & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+          if SAVE_PA_LAST /= 0   then     
+            if (PA_LAST - 1) - SAVE_PA_LAST = SAVE_PA_LAST  then
+              PA_LAST := SAVE_PA_LAST;
+            end if;
+          end if;
+          
+ end if;         
+          
+          --  Do not SYNCOPE if there is a verb TO_BE or compound already there
+         --  I do this here and below, it might be combined but it workd now
+        for I in 1..PA_LAST  loop
+ --PARSE_RECORD_IO.PUT(PA(I)); TEXT_IO.NEW_LINE;
+          if PA(I).IR.QUAL.POFS = V and then
+              PA(I).IR.QUAL.V.CON = (5, 1)  then 
+             NO_SYNCOPE := TRUE;
+           end if;
+         end loop;
+
+         
+         --TEXT_IO.PUT_LINE("In ENCLITICS after SLURY  LESS = " & LESS & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
           SYPA_LAST := 0;
+if WORDS_MDEV(DO_SYNCOPE)  and not NO_SYNCOPE  then
           SYNCOPE(LESS, SYPA, SYPA_LAST);  --  Want SYNCOPE second to make cleaner LIST
 --TEXT_IO.PUT_LINE("In ENCLITIC after SYNCOPE  LESS = " & LESS & "   SYPA_LAST = " & INTEGER'IMAGE(SYPA_LAST));
           PA_LAST := PA_LAST + SYPA_LAST;   --  Make syncope another array to avoid PA_LAST = 0 problems
           PA(1..PA_LAST) := PA(1..PA_LAST-SYPA_LAST) & SYPA(1..SYPA_LAST);  --  Add SYPA to PA
           SYPA(1..SYNCOPE_MAX) := (1..SYNCOPE_MAX => NULL_PARSE_RECORD);   --  Clean up so it does not repeat
           SYPA_LAST := 0;
-          --  Restore FIXES
+ end if;
+             NO_SYNCOPE := FALSE;
+         --  Restore FIXES
           --WORDS_MODE(DO_FIXES) := SAVE_DO_FIXES;
           
           WORDS_MDEV(DO_ONLY_FIXES) := TRUE;
@@ -192,7 +261,7 @@ begin
                        PA(ENTERING_PA_LAST+1..PA_LAST-1);
               PA(ENTERING_PA_LAST+1) := (TACKONS(I).TACK,
                       ((TACKON, NULL_TACKON_RECORD), 0, NULL_ENDING_RECORD, X, X),
-                        ADDONS, TACKONS(I).MNPC);
+                        ADDONS, DICT_IO.COUNT(TACKONS(I).MNPC));
                         
             HAVE_DONE_ENCLITIC := TRUE;
           end if;
@@ -204,8 +273,12 @@ begin
   
     
   procedure TRICKS_ENCLITIC is
+    TRY : constant STRING := LOWER_CASE(INPUT_WORD);
   begin
---TEXT_IO.PUT_LINE("Entering TRICKS_ENCLITIC");
+--TEXT_IO.PUT_LINE("Entering TRICKS_ENCLITIC    PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+    --if WORDS_MODE(TRIM_OUTPUT)  and (PA_LAST > 0)  then    return;   end if;
+    if HAVE_DONE_ENCLITIC  then    return;   end if;
+    
     ENTERING_TRPA_LAST := TRPA_LAST;
     LOOP_OVER_ENCLITIC_TACKONS:
     for I in 1..4  loop   --  que, ne, ve, (est) 
@@ -213,10 +286,11 @@ begin
       REMOVE_A_TACKON:
       declare
         LESS : constant STRING :=
-               SUBTRACT_TACKON(INPUT_WORD, TACKONS(I));
+               --SUBTRACT_TACKON(LOWER_CASE(INPUT_WORD), TACKONS(I));
+               SUBTRACT_TACKON(TRY, TACKONS(I));
       begin
 --TEXT_IO.PUT_LINE("In TRICKS_ENCLITIC     LESS/TACKON  = " & LESS & "/" & TACKONS(I).TACK); 
-       if LESS  /= INPUT_WORD  then       --  LESS is less
+       if LESS  /= TRY  then       --  LESS is less
           --PASS(LESS);
           TRY_TRICKS(LESS, TRPA, TRPA_LAST, LINE_NUMBER, WORD_NUMBER);
  --TEXT_IO.PUT_LINE("In TRICKS_ENCLITICS after TRY_TRICKS  LESS = " & LESS & "   TRPA_LAST = " & INTEGER'IMAGE(TRPA_LAST));
@@ -226,7 +300,7 @@ begin
                        TRPA(ENTERING_TRPA_LAST+1..TRPA_LAST-1);
               TRPA(ENTERING_TRPA_LAST+1) := (TACKONS(I).TACK,
                       ((TACKON, NULL_TACKON_RECORD), 0, NULL_ENDING_RECORD, X, X),
-                        ADDONS, TACKONS(I).MNPC);
+                        ADDONS, DICT_IO.COUNT(TACKONS(I).MNPC));
           end if;
           exit LOOP_OVER_ENCLITIC_TACKONS;
         end if;
@@ -236,6 +310,7 @@ begin
 
 procedure PASS(INPUT_WORD : STRING) is
 --  This is the core logic of the program, everything else is details
+  SAVE_PA_LAST  : INTEGER := 0;
   SAVE_DO_FIXES  : BOOLEAN := WORDS_MODE(DO_FIXES);
   SAVE_DO_ONLY_FIXES  : BOOLEAN := WORDS_MDEV(DO_ONLY_FIXES);
   SAVE_DO_TRICKS : BOOLEAN := WORDS_MODE(DO_TRICKS);
@@ -243,17 +318,62 @@ begin
 --TEXT_IO.PUT_LINE("Entering PASS with >" & INPUT_WORD);
   --  Do straight WORDS without FIXES/TRICKS, is the word in the dictionary
   WORDS_MODE(DO_FIXES) := FALSE;
+  ROMAN_NUMERALS(INPUT_WORD, PA, PA_LAST);  
   WORD(INPUT_WORD, PA, PA_LAST);
-  TRY_SLURY(INPUT_WORD, PA, PA_LAST, LINE_NUMBER, WORD_NUMBER);
---TEXT_IO.PUT_LINE("1  PASS_BLOCK for  " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+  
+--TEXT_IO.PUT_LINE("SLURY-   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+--for JK in 1..PA_LAST  loop
+-- f PARSE_RECORD_IO.PUT(PA(JK)); TEXT_IO.NEW_LINE;
+--end loop;
+
+
+  if PA_LAST = 0  then
+    TRY_SLURY(INPUT_WORD, PA, PA_LAST, LINE_NUMBER, WORD_NUMBER);
+  end if;
+ 
+  
+          --  Do not SYNCOPE if there is a verb TO_BE or compound already there
+         for I in 1..PA_LAST  loop
+ --PARSE_RECORD_IO.PUT(PA(I)); TEXT_IO.NEW_LINE;
+          if PA(I).IR.QUAL.POFS = V and then
+              PA(I).IR.QUAL.V.CON = (5, 1)  then 
+             NO_SYNCOPE := TRUE;
+           end if;
+         end loop;
+ 
+   
+-- --  WITH THE DICTIONARY BETTER, LET US FORGET THIS - a and c DONE, e and i STILL BUT NOT MANY
+--  SAVE_PA_LAST := PA_LAST;
+--  --  BIG PROBLEM HERE
+--  --  If I do SLURY everytime, then each case where there is an aps- and abs- in dictionary 
+--  --  will show up twice, straight and SLURY, in the ourout - For either input
+--  --  But if I only do SLURY if there is no hit, then some incomplete pairs will not
+--  --  fully express (illuxit has two entries, inluxit has only one of them) (inritas)
+--  --  So I will do SLURY and if it produces only 2 more PR (XXX and GEN), kill it, otherwise use it only
+--  --  Still have a problem if there are other intervening results, not slurried.
+--  --  Or if there is syncope
+--  TRY_SLURY(INPUT_WORD, PA, PA_LAST, LINE_NUMBER, WORD_NUMBER);
+----TEXT_IO.PUT_LINE("SLURY+   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+--  if SAVE_PA_LAST /= 0   then     
+--    if (PA_LAST - 2) = SAVE_PA_LAST  then
+--      PA_LAST := SAVE_PA_LAST;
+--      XXX_MEANING := NULL_MEANING_TYPE;
+----TEXT_IO.PUT_LINE("SLURY!   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
+--    end if;
+--  end if;
+----TEXT_IO.PUT_LINE("1  PASS_BLOCK for  " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
           
   --  Pure SYNCOPE
      SYPA_LAST := 0;
+if WORDS_MDEV(DO_SYNCOPE)  and not NO_SYNCOPE  then
      SYNCOPE(INPUT_WORD, SYPA, SYPA_LAST);  
      PA_LAST := PA_LAST + SYPA_LAST;   --  Make syncope another array to avoid PA-LAST = 0 problems
      PA(1..PA_LAST) := PA(1..PA_LAST-SYPA_LAST) & SYPA(1..SYPA_LAST);  --  Add SYPA to PA
      SYPA(1..SYNCOPE_MAX) := (1..SYNCOPE_MAX => NULL_PARSE_RECORD);   --  Clean up so it does not repeat
      SYPA_LAST := 0;
+end if;
+             NO_SYNCOPE := FALSE;
+
 --TEXT_IO.PUT_LINE("2  PASS_BLOCK for  " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
      
      --  There may be a vaild simple parse, if so it is most probable
@@ -272,12 +392,16 @@ begin
       WORD(INPUT_WORD, PA, PA_LAST);
  --TEXT_IO.PUT_LINE("3b PASS_BLOCK for  " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
       SYPA_LAST := 0;
-       SYNCOPE(INPUT_WORD, SYPA, SYPA_LAST);  
+ if WORDS_MDEV(DO_SYNCOPE)  and not NO_SYNCOPE  then
+      SYNCOPE(INPUT_WORD, SYPA, SYPA_LAST);  
  --TEXT_IO.PUT_LINE("3c PASS_BLOCK for  " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
       PA_LAST := PA_LAST + SYPA_LAST;   --  Make syncope another array to avoid PA-LAST = 0 problems
        PA(1..PA_LAST) := PA(1..PA_LAST-SYPA_LAST) & SYPA(1..SYPA_LAST);  --  Add SYPA to PA
        SYPA(1..SYNCOPE_MAX) := (1..SYNCOPE_MAX => NULL_PARSE_RECORD);   --  Clean up so it does not repeat
        SYPA_LAST := 0;
+end if;
+             NO_SYNCOPE := FALSE;
+
 --TEXT_IO.PUT_LINE("4  PASS_BLOCK for  " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
        ENCLITIC;
    
@@ -285,7 +409,7 @@ begin
        WORDS_MDEV(DO_ONLY_FIXES) := SAVE_DO_ONLY_FIXES;
      end if;
 --TEXT_IO.PUT_LINE("6  PASS_BLOCK for  " & INPUT_WORD & "   PA_LAST = " & INTEGER'IMAGE(PA_LAST));
-  ROMAN_NUMERALS(INPUT_WORD, PA, PA_LAST);  
+--  ROMAN_NUMERALS(INPUT_WORD, PA, PA_LAST);  
      
      --  If Pure WORDS and ENCLITICS found something OK, otherwise proceed
 --    if PA_LAST = 0  or        --  If no go, try syncope, fixes
@@ -366,7 +490,7 @@ begin   --  PARSE
 
       if PA_LAST > 0   then    --  But PA may be killed by ALLOW in LIST_STEMS
 if WORDS_MODE(DO_COMPOUNDS)  and
-   not (CONFIGURATION = MEANINGS)  then
+   not (CONFIGURATION = ONLY_MEANINGS)  then
 COMPOUNDS_WITH_SUM:
 declare
   NW : STRING(1..2500) := (others => ' ');
@@ -802,7 +926,11 @@ exception
            & "   " & HEAD(INPUT_WORD, 28) & "   "  & INPUT_LINE);
     raise;
 
-end;
+end PARSE_WORD_LATIN_TO_ENGLISH;
+
+
+end if;
+
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 
@@ -841,15 +969,40 @@ exception
           TEXT_IO.PUT_LINE(UNKNOWNS, "    ========   ERROR      ");
         end if;
       PA_LAST := 0;
-end PARSE_LINE;
+end PARSE_LINE;     
+
+
+--procedure CHANGE_LANGUAGE(C : CHARACTER) is
+--begin
+--  if UPPER_CASE(C) = 'L'  then
+--    LANGUAGE := LATIN_TO_ENGLISH;
+--    PREFACE.PUT_LINE("Language changed to " & LANGUAGE_TYPE'IMAGE(LANGUAGE));
+--  elsif UPPER_CASE(C) = 'E'  then  
+--    if ENGLISH_DICTIONARY_AVAILABLE(GENERAL)  then
+--      LANGUAGE:= ENGLISH_TO_LATIN;
+--      PREFACE.PUT_LINE("Language changed to " & LANGUAGE_TYPE'IMAGE(LANGUAGE));
+--      PREFACE.PUT_LINE("Input a single English word (+ part of speech - N, ADJ, V, PREP, ...)");
+--    else
+--      PREFACE.PUT_LINE("No English dictionary available");
+--    end if;
+--  else
+--    PREFACE.PUT_LINE("Bad LANGAUGE input - no change, remains " & LANGUAGE_TYPE'IMAGE(LANGUAGE));
+--  end if;
+--exception 
+--  when others  =>
+--    PREFACE.PUT_LINE("Bad LANGAUGE input - no change, remains " & LANGUAGE_TYPE'IMAGE(LANGUAGE));
+--end CHANGE_LANGUAGE;
+--    
+--  
+
 
 begin              --  PARSE
 --  All Rights Reserved   -   William Armstrong Whitaker
 
-  INITIALIZE_WORD_PARAMETERS;
-  INITIALIZE_DEVELOPER_PARAMETERS;
-  INITIALIZE_WORD_PACKAGE;
-
+--  INITIALIZE_WORD_PARAMETERS;
+--  INITIALIZE_DEVELOPER_PARAMETERS;
+--  INITIALIZE_WORD_PACKAGE;
+--
   if METHOD = COMMAND_LINE_INPUT  then
     if TRIM(COMMAND_LINE) /= ""  then
       PARSE_LINE(COMMAND_LINE);
@@ -858,14 +1011,14 @@ begin              --  PARSE
   else
 
   PREFACE.PUT_LINE(
-"Copyright (c) 1993-2001 - Free for your use - Version 1.97");
+"Copyright (c) 1993-2005 - Free for your use - Version 1.97Ed");
   PREFACE.PUT_LINE(
-"Updates every few months at http://www.erols.com/whitaker/words.htm");
+"For updates and latest version check http://www.erols.com/whitaker/words.htm");
   PREFACE.PUT_LINE(
 "Comments? William Whitaker, Box 3036, McLean VA 22103 USA - whitaker@erols.com");
   PREFACE.NEW_LINE;
   PREFACE.PUT_LINE(
-"Input a word or line of Latin to get the forms and meanings");
+"Input a word or line of Latin and ENTER to get the forms and meanings");
   PREFACE.PUT_LINE("    Or input " & START_FILE_CHARACTER &
            " and the name of a file containing words or lines");
   PREFACE.PUT_LINE("    Or input " & CHANGE_PARAMETERS_CHARACTER &
@@ -873,10 +1026,25 @@ begin              --  PARSE
   PREFACE.PUT_LINE("    Or input " & HELP_CHARACTER &
            " to get help wherever available on individual parameters");
   PREFACE.PUT_LINE(
-"An empty line (just a RETURN/ENTER) from the keyboard exits the program");
+"Two empty lines (just a RETURN/ENTER) from the keyboard exits the program");
 
+  if ENGLISH_DICTIONARY_AVAILABLE(GENERAL)  then
+    PREFACE.PUT_LINE("English-to-Latin available");
+    PREFACE.PUT_LINE(
+                   CHANGE_LANGUAGE_CHARACTER & "E changes to English-to-Latin, " &
+                   CHANGE_LANGUAGE_CHARACTER & "L changes back     [tilda E]");
+  end if;
   
+  if CONFIGURATION = ONLY_MEANINGS  then
+    PREFACE.PUT_LINE(
+          "THIS VERSION IS HARDCODED TO GIVE DICTIONARY FORM AND MEANINGS ONLY");
+    PREFACE.PUT_LINE(
+        "IT CANNOT BE MODIFIED BY CHANGING THE DO_MEANINGS_ONLY PARAMETER");
+  end if;
+
+  GET_INPUT_LINES:
   loop
+    GET_INPUT_LINE:
     begin                    --  Block to manipulate file of lines
       if (NAME(CURRENT_INPUT) = NAME(STANDARD_INPUT))  then
         SCROLL_LINE_NUMBER := INTEGER(TEXT_IO.LINE(TEXT_IO.STANDARD_OUTPUT));
@@ -884,20 +1052,26 @@ begin              --  PARSE
         PREFACE.PUT("=>");
       end if;
 
+      LINE := BLANK_LINE;
       GET_LINE(LINE, L);
       if (L = 0) or else (TRIM(LINE(1..L)) = "")  then
-        if (NAME(CURRENT_INPUT) = NAME(STANDARD_INPUT))  then
-          exit;
-        else
-          LINE_NUMBER := LINE_NUMBER + 1;  --  Count blank lines of file
+        --LINE_NUMBER := LINE_NUMBER + 1;  --  Count blank lines 
+        if (NAME(CURRENT_INPUT) = NAME(STANDARD_INPUT))  then   --  INPUT is keyboard
+          PREFACE.PUT("Blank exits =>");
+          GET_LINE(LINE, L);             -- Second try
+          if (L = 0) or else (TRIM(LINE(1..L)) = "")  then  -- Two in a row
+            exit;
+          end if;
+        else                 --  INPUT is file
+          --LINE_NUMBER := LINE_NUMBER + 1;   --  Count blank lines in file
           if END_OF_FILE(CURRENT_INPUT) then
             SET_INPUT(STANDARD_INPUT);
             CLOSE(INPUT);
           end if;
         end if;
-
-      else
-
+      end if;
+      
+      if (TRIM(LINE(1..L)) /= "")  then  -- Not a blank line so L(1) (in file input)
         if LINE(1) = START_FILE_CHARACTER  then    --  To begin file of words
           if (NAME(CURRENT_INPUT) /= NAME(STANDARD_INPUT)) then
             TEXT_IO.PUT_LINE("Cannot have file of words (@FILE) in an @FILE");
@@ -909,6 +1083,11 @@ begin              --  PARSE
               (NAME(CURRENT_INPUT) = NAME(STANDARD_INPUT)) and then
               not CONFIG.SUPPRESS_PREFACE  then
           CHANGE_PARAMETERS;
+        elsif LINE(1) = CHANGE_LANGUAGE_CHARACTER  then
+           -- (NAME(CURRENT_INPUT) = NAME(STANDARD_INPUT)) and then
+           --   not CONFIG.SUPPRESS_PREFACE  then
+  --TEXT_IO.PUT_LINE("CHANGE CHARACTER   " & TRIM(LINE));
+         CHANGE_LANGUAGE(LINE(2));
         elsif --  CONFIGURATION = DEVELOPER_VERSION  and then    --  Allow anyone to do it
               LINE(1) = CHANGE_DEVELOPER_MODES_CHARACTER  and then
               (NAME(CURRENT_INPUT) = NAME(STANDARD_INPUT)) and then
@@ -925,11 +1104,11 @@ begin              --  PARSE
               TEXT_IO.PUT_LINE(OUTPUT, LINE(1..L));
             end if;
           end if;
-          LINE_NUMBER := LINE_NUMBER + 1;  --  Count only lines to be parsed
+          LINE_NUMBER := LINE_NUMBER + 1;  --  Count lines to be parsed
           PARSE_LINE(LINE(1..L));
         end if;
-
       end if;
+  
     exception
       when NAME_ERROR | USE_ERROR =>
         if (NAME(CURRENT_INPUT) /= NAME(STANDARD_INPUT))  then
@@ -949,9 +1128,9 @@ begin              --  PARSE
         end if;
       when STATUS_ERROR =>      --  The end of the input file resets to CON:
           PUT_LINE("Raised STATUS_ERROR");
-    end;                     --  end Block to manipulate file of lines
+    end GET_INPUT_LINE;                     --  end Block to manipulate file of lines
 
-  end loop;          --  Loop on lines
+  end loop GET_INPUT_LINES;          --  Loop on lines
 
   end if;     --  On command line input
 

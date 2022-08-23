@@ -25,7 +25,7 @@ package DEVELOPER_PARAMETERS is
   STATS_FULL_NAME : constant STRING := "WORD.STA";
 
   type MDEV_TYPE is (   
-     --               HAVE_DEBUG_FILE,      
+     --               HAVE_DEBUG_FILE,      --  No longer in use
      --               WRITE_DEBUG_FILE,     
 
                       HAVE_STATISTICS_FILE, 
@@ -39,18 +39,19 @@ package DEVELOPER_PARAMETERS is
                       DO_ONLY_INITIAL_WORD, 
                       FOR_WORD_LIST_CHECK,  
 
-                      UPDATE_LOCAL_DICTIONARY,
-                      UPDATE_MEANINGS,       
-
                       DO_ONLY_FIXES,         
                       DO_FIXES_ANYWAY,       
                       USE_PREFIXES,          
                       USE_SUFFIXES,       
                       USE_TACKONS,       
 
-                      DO_MEDIEVAL_TRICKS,    
+                      DO_MEDIEVAL_TRICKS,   
+                       
                       DO_SYNCOPE,            
+                      DO_TWO_WORDS,            
                       INCLUDE_UNKNOWN_CONTEXT,
+                      NO_MEANINGS,
+                      
                       
                       OMIT_ARCHAIC,        
                       OMIT_MEDIEVAL,    
@@ -62,6 +63,9 @@ package DEVELOPER_PARAMETERS is
                       PAUSE_IN_SCREEN_OUTPUT, 
                       NO_SCREEN_ACTIVITY,   
                         
+                      UPDATE_LOCAL_DICTIONARY,
+                      UPDATE_MEANINGS,       
+
                       MINIMIZE_OUTPUT         );
 
   package MDEV_TYPE_IO is new TEXT_IO.ENUMERATION_IO(MDEV_TYPE); 

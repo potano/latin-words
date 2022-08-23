@@ -7,9 +7,9 @@ procedure MAKEINFL is
   package INTEGER_IO is new TEXT_IO.INTEGER_IO(INTEGER);
   use TEXT_IO;
   use INTEGER_IO;
+  use STEM_KEY_TYPE_IO;
   use INFLECTION_RECORD_IO;
   use QUALITY_RECORD_IO;
-  --use STEM_KEY_TYPE_IO;
   use ENDING_RECORD_IO;
   use AGE_TYPE_IO;
   use FREQUENCY_TYPE_IO;
@@ -321,7 +321,7 @@ PUT("LINE_INFLECTIONS finds "); PUT(M); PUT_LINE(" inflections"); NEW_LINE;
 
 
 for I in Character range ' '..' '  loop
-PUT(0); PUT("    "); PUT(I); PUT("    "); PUT(BELF(0, I));
+INTEGER_IO.PUT(0); PUT("    "); PUT(I); PUT("    "); PUT(BELF(0, I));
         PUT("  ");   PUT(BELL(0, I));
         PUT("    "); PUT(BELL(0, I) - BELF(0, I) + 1); NEW_LINE;
 end loop;

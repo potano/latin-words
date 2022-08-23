@@ -1,16 +1,43 @@
    with TEXT_IO;
    with LATIN_FILE_NAMES; use LATIN_FILE_NAMES;
    with STRINGS_PACKAGE; use STRINGS_PACKAGE;
+   with CONFIG;  use CONFIG;
    with UNIQUES_PACKAGE; use UNIQUES_PACKAGE;
    with ADDONS_PACKAGE; use ADDONS_PACKAGE;
    with WORD_PARAMETERS; use WORD_PARAMETERS;
    with PREFACE;
    with DEVELOPER_PARAMETERS; use DEVELOPER_PARAMETERS;
    with LINE_STUFF; use LINE_STUFF;
-   package body WORD_PACKAGE is
+   with ENGLISH_SUPPORT_PACKAGE; use ENGLISH_SUPPORT_PACKAGE;
+ package body WORD_PACKAGE is
 
       INFLECTIONS_SECTIONS_FILE : LEL_SECTION_IO.FILE_TYPE;
 
+       procedure PAUSE(OUTPUT : TEXT_IO.FILE_TYPE) is
+            use CONFIG;
+            PAUSE_LINE : STRING(1..300);
+            PAUSE_LAST : INTEGER := 0;
+         begin
+         if WORDS_MDEV(PAUSE_IN_SCREEN_OUTPUT)  then
+          if METHOD = INTERACTIVE  then
+           if TEXT_IO.NAME(OUTPUT) =
+                  TEXT_IO.NAME(TEXT_IO.STANDARD_OUTPUT)  then
+                     TEXT_IO.PUT_LINE(TEXT_IO.STANDARD_OUTPUT,
+                 "                          MORE - hit RETURN/ENTER to continue");
+                     TEXT_IO.GET_LINE(TEXT_IO.STANDARD_INPUT, PAUSE_LINE, PAUSE_LAST);
+                  end if;
+               elsif METHOD = COMMAND_LINE_INPUT  then
+                  TEXT_IO.PUT_LINE(TEXT_IO.STANDARD_OUTPUT,
+                                   "                          MORE - hit RETURN/ENTER to continue");
+                  TEXT_IO.GET_LINE(TEXT_IO.STANDARD_INPUT, PAUSE_LINE, PAUSE_LAST);
+               elsif METHOD = COMMAND_LINE_FILES  then
+                  null;                       --  Do not PAUSE
+               end if;
+            end if;
+          exception
+           when others  =>
+             TEXT_IO.PUT_LINE("Unexpected exception in PAUSE");
+         end PAUSE;
 
       function MIN(A, B : INTEGER) return INTEGER is
       begin
@@ -499,6 +526,8 @@
                            
                               if EQU(LOWER_CASE(DS.STEM), SSA(K))  then
                                  JJ := I;
+--TEXT_IO.PUT_LINE("PDL STEM   " & DS.STEM & "  " & INTEGER'IMAGE(INTEGER(DS.MNPC)));
+
                                  LOAD_PDL;
 
                               else
@@ -512,6 +541,7 @@
                            
                               if EQU(LOWER_CASE(DS.STEM), SSA(K))  then
                                 JJ := I;
+--TEXT_IO.PUT_LINE("PDL STEM   " & DS.STEM & "  " & INTEGER'IMAGE(INTEGER(DS.MNPC)));
 
                                  LOAD_PDL;
 
@@ -529,8 +559,8 @@
                   end if;               --  On LOCAL check
                end if;               --  On LENGTH > 1 
             end loop STEM_ARRAY_LOOP;
-         end if;
-      --TEXT_IO.PUT_LINE("Leaving DICTIONARY_SEARCH PDL_INDEX = " & INTEGER'IMAGE(PDL_INDEX));
+            end if;
+--TEXT_IO.PUT_LINE("Leaving DICTIONARY_SEARCH PDL_INDEX = " & INTEGER'IMAGE(PDL_INDEX));
       --    exception
       --      when others  =>
       --TEXT_IO.PUT_LINE("exception DICTIONARY_SEARCH PDL_INDEX = " & INTEGER'IMAGE(PDL_INDEX));
@@ -613,8 +643,30 @@
 
       --TEXT_IO.PUT_LINE("Leaving SEARCH_DICTIONARY PDL_INDEX = " & INTEGER'IMAGE(PDL_INDEX));
 
-      end SEARCH_DICTIONARIES;
-
+                                 end SEARCH_DICTIONARIES;
+                                 
+                                 
+ procedure CHANGE_LANGUAGE(C : CHARACTER) is
+ begin  if UPPER_CASE(C) = 'L'  then
+    LANGUAGE := LATIN_TO_ENGLISH;
+    PREFACE.PUT_LINE("Language changed to " & LANGUAGE_TYPE'IMAGE(LANGUAGE));
+  elsif UPPER_CASE(C) = 'E'  then  
+    if ENGLISH_DICTIONARY_AVAILABLE(GENERAL)  then
+      LANGUAGE:= ENGLISH_TO_LATIN;
+      PREFACE.PUT_LINE("Language changed to " & LANGUAGE_TYPE'IMAGE(LANGUAGE));
+      PREFACE.PUT_LINE("Input a single English word (+ part of speech - N, ADJ, V, PREP, ...)");
+    else
+      PREFACE.PUT_LINE("No English dictionary available");
+    end if;
+  else
+    PREFACE.PUT_LINE("Bad LANGAUGE input - no change, remains " & LANGUAGE_TYPE'IMAGE(LANGUAGE));
+  end if;
+exception 
+  when others  =>
+    PREFACE.PUT_LINE("Bad LANGAUGE input - no change, remains " & LANGUAGE_TYPE'IMAGE(LANGUAGE));
+end CHANGE_LANGUAGE;
+    
+  
 
 
       procedure WORD(RAW_WORD : in STRING;
@@ -1269,7 +1321,7 @@
                         PA(PA_LAST).IR :=
                               ((PREFIX, NULL_PREFIX_RECORD), 0, NULL_ENDING_RECORD, X, X);
                         PA(PA_LAST).STEM := HEAD(PREFIXES(I).FIX, MAX_STEM_SIZE);
-                        PA(PA_LAST).MNPC := PREFIXES(I).MNPC;
+                        PA(PA_LAST).MNPC := DICT_IO.COUNT(PREFIXES(I).MNPC);
                         PA(PA_LAST).D_K  := ADDONS;
                         exit;      --  Because we accept only one prefix                  
                      end if;
@@ -1331,7 +1383,7 @@
                         PA(PA_LAST).STEM := HEAD(
                                                 SUFFIXES(SUFFIX_HIT).FIX, MAX_STEM_SIZE);
                      --  Maybe it would better if suffix.fix was of stem size
-                        PA(PA_LAST).MNPC := SUFFIXES(SUFFIX_HIT).MNPC;
+                        PA(PA_LAST).MNPC := DICT_IO.COUNT(SUFFIXES(SUFFIX_HIT).MNPC);
                      --PUT("SUFFIX MNPC  "); PUT(SUFFIXES(SUFFIX_HIT).MNPC); NEW_LINE;
                         PA(PA_LAST).D_K  := ADDONS;
                      ---
@@ -1358,7 +1410,7 @@
                               ((SUFFIX, NULL_SUFFIX_RECORD), 0, NULL_ENDING_RECORD, X, X);
                         PA(PA_LAST).STEM := HEAD(
                                                 SUFFIXES(SUFFIX_HIT).FIX, MAX_STEM_SIZE);
-                        PA(PA_LAST).MNPC := SUFFIXES(SUFFIX_HIT).MNPC;
+                        PA(PA_LAST).MNPC := DICT_IO.COUNT(SUFFIXES(SUFFIX_HIT).MNPC);
                      --PUT("SUFFIX MNPC  "); PUT(SUFFIXES(SUFFIX_HIT).MNPC); NEW_LINE;
                         PA(PA_LAST).D_K  := ADDONS;
 
@@ -1612,7 +1664,7 @@
                                                             ((TACKON, NULL_TACKON_RECORD), 0,
                                                               NULL_ENDING_RECORD, X, X),
                                                          ADDONS,
-                                                            (PACKONS(K).MNPC));
+                                                            DICT_IO.COUNT((PACKONS(K).MNPC)));
                                        PACKON_FIRST_HIT := FALSE;
 
                                     end if;                          
@@ -1759,10 +1811,10 @@
             DE : DICTIONARY_ENTRY := NULL_DICTIONARY_ENTRY;
             MEAN : MEANING_TYPE := NULL_MEANING_TYPE;
             ENTERING_PA_LAST : INTEGER := PA_LAST;
-            START_OF_LOOP : INTEGER := 5;              --  Hard number  !!!!!!!!!!!!!!!
+            START_OF_LOOP : INTEGER := 5;    --  4 enclitics     --  Hard number  !!!!!!!!!!!!!!!
             END_OF_LOOP : INTEGER := NUMBER_OF_TACKONS;
          begin
---TEXT_IO.PUT_LINE("TRYing TACKONS   *******************************************  ");  
+--TEXT_IO.PUT_LINE("TRYing TACKONS   ***************  INPUT_WORD = " & INPUT_WORD);  
 
          LOOP_OVER_TACKONS:
             for I in START_OF_LOOP..END_OF_LOOP  loop
@@ -1842,8 +1894,15 @@
 --TEXT_IO.NEW_LINE;
                              --  check PART                              
                                 case TACKONS(I).ENTR.BASE.POFS is
-                                  --when N       =>
-                                    when PRON    =>              --  Only one we have other than X
+                                     when N       =>
+                                       if (PA(J).IR.QUAL.N.DECL <=
+                                           TACKONS(I).ENTR.BASE.N.DECL)  then
+                                         --  Ignore GEN and KIND
+                                         TACKON_HIT := TRUE;
+                                         TACKON_ON  := TRUE;
+                                       end if;
+                                      
+                                     when PRON    =>              --  Only one we have other than X
                                     --PUT("TACK/PA DECL "); PUT(PA(J).IR.QUAL.PRON.DECL); PUT("  -  "); 
                                     --PUT(TACKONS(I).ENTR.BASE.PRON.DECL); NEW_LINE;
                                     --PUT("TACK/PA KIND "); PUT(PA(J).IR.QUAL.PRON.KIND); PUT("  -  "); 
@@ -1909,7 +1968,7 @@
                                                          ((TACKON, NULL_TACKON_RECORD), 0,
                                                           NULL_ENDING_RECORD, X, X),
                                                       ADDONS,
-                                                         (TACKONS(I).MNPC));
+                                                         DICT_IO.COUNT((TACKONS(I).MNPC)));
                         --PUT("PA_LAST = "); PUT(PA_LAST); PUT("  "); 
                         --PUT("I = "); PUT(I); PUT("  TACKONS(I).TACK = "); PUT(TACKONS(I).TACK);
                         --PUT_LINE("TACKON added");
@@ -1980,7 +2039,7 @@
                         PA(PA_LAST).STEM := HEAD(TICKONS(I).FIX, MAX_STEM_SIZE);
                         PA(PA_LAST).IR := ((PREFIX, NULL_PREFIX_RECORD), 0, NULL_ENDING_RECORD, X, X);
                         PA(PA_LAST).D_K  := ADDONS;
-                        PA(PA_LAST).MNPC := TICKONS(I).MNPC;
+                        PA(PA_LAST).MNPC := DICT_IO.COUNT(TICKONS(I).MNPC);
                      end if;
                      
 
@@ -2127,24 +2186,39 @@
                when others  =>
                   DICTIONARY_AVAILABLE(LOCAL) := FALSE;
          end LOAD_LOCAL;
+     
+         LOAD_UNIQUES(UNQ, UNIQUES_FULL_NAME);
 
+         LOAD_ADDONS(ADDONS_FULL_NAME);
+--TEXT_IO.PUT_LINE("Loaded ADDONS");
+         LOAD_BDL_FROM_DISK;
+--TEXT_IO.PUT_LINE("BDL loaded");
          if not (DICTIONARY_AVAILABLE(GENERAL)  or
                  DICTIONARY_AVAILABLE(SPECIAL)  or
                  DICTIONARY_AVAILABLE(LOCAL))  then
-            PREFACE.PUT_LINE("There are no dictionaries - program will not do much");
+            PREFACE.PUT_LINE("There are no main dictionaries - program will not do much");
             PREFACE.PUT_LINE("Check that there are dictionary files in this subdirectory");
             PREFACE.PUT_LINE("Except DICT.LOC that means DICTFILE, INDXFILE, STEMFILE");
          end if;
 
+--TEXT_IO.PUT_LINE("Ready to load English");
 
-
-         LOAD_UNIQUES(UNQ, UNIQUES_FULL_NAME);
-
-         LOAD_ADDONS(ADDONS_FULL_NAME);
-
-         LOAD_BDL_FROM_DISK;
-
-      --put_line("WORD_PACKAGE INITIALIZED");
+         TRY_TO_LOAD_ENGLISH_WORDS:
+         begin 
+           ENGLISH_DICTIONARY_AVAILABLE(GENERAL) := FALSE;
+           EWDS_DIRECT_IO.OPEN(EWDS_FILE, EWDS_DIRECT_IO.IN_FILE, "EWDSFILE.GEN");
+  
+           ENGLISH_DICTIONARY_AVAILABLE(GENERAL) := TRUE;
+     
+         exception
+            when others  =>
+               PREFACE.PUT_LINE("No English available");
+               ENGLISH_DICTIONARY_AVAILABLE(GENERAL) := FALSE;
+         end TRY_TO_LOAD_ENGLISH_WORDS;
+         
+         
+      
+         --put_line("WORD_PACKAGE INITIALIZED");
       end INITIALIZE_WORD_PACKAGE;
 
    end WORD_PACKAGE;
