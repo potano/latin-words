@@ -78,7 +78,7 @@
     X,      --  General or unknown or too common to say
     A,      
     B,      --  C.H.Beeson, A Primer of Medieval Latin, 1925 (Bee)
-    C,      --  Charles Beard, Cassell's Latin Dictionary 1892 (CAS)       
+    C,      --  Charles Beard, Cassell's Latin Dictionary 1892 (Cas)       
     D,      --  J.N.Adams, Latin Sexual Vocabulary, 1982 (Sex)
     E,      --  L.F.Stelten, Dictionary of Eccles. Latin, 1995 (Ecc)
     F,      --  Roy J. Deferrari, Dictionary of St. Thomas Aquinas, 1960 (DeF)
@@ -88,31 +88,34 @@
     J,      --  Bracton: De Legibus Et Consuetudinibus Angliæ
     K,      --  Calepinus Novus, modern Latin, by Guy Licoppe (Cal)
     L,      --  Lewis, C.S., Elementary Latin Dictionary 1891
-    M,      --  Latham, Revised Medieval Word List, 1980
+    M,      --  Latham, Revised Medieval Word List, 1980 (Latham)
     N,      --  Lynn Nelson, Wordlist (Nel)
     O,      --  Oxford Latin Dictionary, 1982 (OLD)
-    P,      --  Souter, A Glossary of Later Latin to 600 A.D., Oxford 1949
+    P,      --  Souter, A Glossary of Later Latin to 600 A.D., Oxford 1949 (Souter)
     Q,      --  Other, cited or unspecified dictionaries
     R,      --  Plater + White, A Grammar of the Vulgate, Oxford 1926 (Plater)
     S,      --  Lewis and Short, A Latin Dictionary, 1879 (L+S)
     T,      --  Found in a translation  --  no dictionary reference
-    U,      --  Du Cange            
+    U,      --              
     V,      --  Vademecum in opus Saxonis - Franz Blatt (Saxo)
-    W,      --  My personal guess   
+    W,      --  My personal guess, mostly obvious extrapolation (Whitaker or W)   
     Y,      --  Temp special code
     Z       --  Sent by user --  no dictionary reference
             --  Mostly John White of Blitz Latin
 
     --  Consulted but used only indirectly
-    --  Liddell + Scott Greek-English Lexicon
-                            
+    --  Liddell + Scott Greek-English Lexicon (Lid)
+    --  Oxford English Dictionary 2002 (OED) 
+                        
     --  Consulted but used only occasionally, seperately referenced
     --  D.A. Kidd, Collins Latin Gem Dictionary, 1957 (Col)
     --  Allen + Greenough, New Latin Grammar, 1888 (A+G)
     --  Harrington/Pucci/Elliott, Medieval Latin 2nd Ed 1997 (Harr)
     --  C.C./C.L. Scanlon Latin Grammar/Second Latin, TAN 1976 (SCANLON)
     --  W. M. Lindsay, Short Historical Latin Grammar, 1895 (Lindsay)
-      
+    --  Du Cange
+    --  Oxford English Dictionary (OED)
+           
     --  Note that the WORDS dictionary is not just a copy of source info, but the      
     --  indicated SOURCE is a main reference/check point used to derive the entry
       

@@ -1011,11 +1011,11 @@ begin              --  PARSE
   else
 
   PREFACE.PUT_LINE(
-"Copyright (c) 1993-2005 - Free for your use - Version 1.97Ed");
+"Copyright (c) 1993-2006 - Free for any use - Version 1.97F");
   PREFACE.PUT_LINE(
 "For updates and latest version check http://www.erols.com/whitaker/words.htm");
   PREFACE.PUT_LINE(
-"Comments? William Whitaker, Box 3036, McLean VA 22103 USA - whitaker@erols.com");
+"Comments? William Whitaker, Box 51225  Midland  TX  79710  USA - whitaker@erols.com");
   PREFACE.NEW_LINE;
   PREFACE.PUT_LINE(
 "Input a word or line of Latin and ENTER to get the forms and meanings");

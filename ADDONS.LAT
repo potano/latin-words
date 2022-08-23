@@ -238,6 +238,9 @@ PREFIX dis
 V V 
 - apart, in different directions;
 PREFIX di
+N N  
+two-;
+PREFIX di
 V V 
 - apart, in different directions;
 PREFIX duode
@@ -668,7 +671,7 @@ V 2 N 2 2 N t  0
 makes abstract noun of the verb; place/instrument/result of verb action; 
 SUFFIX i  
 ADJ 2 ADJ 0 0 COMP 3
--er, makes adjective comparitive;
+-er, makes adjective comparative;
 SUFFIX i  
 V   4 ADJ 0 0 COMP 3
 makes a verb PERF PPL into an adjective COMP (amat.ior => more loved);
@@ -824,10 +827,10 @@ N 2 ADJ 1 1 POS 0
 -an, -ain; of, pertaining/belonging to; connected with; derived/coming from;
 SUFFIX en
 N 2 ADJ 1 1 POS 0
--en, -ene; of, pertaining/belonging to; connected with; derived/coming from
+-en, -ene; of, pertaining/belonging to; connected with; derived/coming from;
 SUFFIX in
 N 2 ADJ 1 1 POS 0
--ine; -in; of, pertaining/belonging to; connected with; derived/coming from
+-ine; -in; of, pertaining/belonging to; connected with; derived/coming from;
 SUFFIX in
 N 2 N 1 1 F t 0
 -ing; art or craft (medic.ina = art of doctoring);
@@ -863,10 +866,16 @@ V 2 ADV POS 1
 -abaly;
 SUFFIX ibiliter
 V 2 ADV POS 1
--abaly;
+-ibaly;
 SUFFIX aliter
 N 2 ADV POS 1
 -ality, -ally; 
+SUFFIX anter
+V 1 ADV POS 1
+-ingly;
+SUFFIX enter
+V 1 ADV POS 1
+-ingly;
 SUFFIX ester
 N 2 ADJ 1 1 POS 1
 -urnal, -ily, -y, -ing; of, belonging to  (esp. of place and time);
@@ -1047,16 +1056,16 @@ X 2 ADJ 3 1 POS 1
 --
 --
 --  TACKON is a fragment added to the end of a word, after inflection
---  has been applied.  Just removing the tackon can give a reasonable word.
---  "doer of the action" (vincere = conquer, vic-tor = conqueror).  This 
---  does not impact the addition of inflections on the end of the word.
+--  has been applied.  Just removing the tackon will give a reasonable word.
+--  This does not impact the addition of inflections,
+--  as opposed to SUFFIX, which is applied before the inflection.
 --
 --  Each TACKON entry leads off with the identifier "TACKON".
 --
 --  This is followed (separated by a space) by the tackon itself.
 --  
 --  The second line gives a PART_ENTRY, information on where this is tacked.
---  A TACKON does not change the part of speech or case from ist base.
+--  A TACKON does not change the part of speech or case from its base.
 --
 --  The third line gives the meaning, using 78 characters or less.
 --
@@ -1103,19 +1112,22 @@ PRON 3 1 ADJECT
 TACKON w/hic this;
 TACKON modi          
 PRON 3 1 ADJECT
-TACKON w/GEN of ~ kind, sort, nature; w/hic, (huiusmodi = of this sort);
+TACKON w/GEN of ~ kind, sort, nature; (w/hic); [huiusmodi => of this sort];
 TACKON modi          
 PRON 4 1 PERS
-TACKON w/GEN of ~ kind, sort, nature; w/his, our, your (eiusmodi = of his sort);
+TACKON w/GEN of ~ kind/sort/nature; w/his/our/your [eiusmodi => of his sort];
 TACKON dem           
 PRON 4 2 DEMONS
 TACKON w/i-ea-id   idem => same;
 TACKON cum           
 PRON 5 0 PERS 
 TACKON with (enclitic with PRON 5 0); [w/ABL  mecum => at my house/with me]; 
+TACKON vis           
+ADJ  1 1 POS 
+TACKON (what)-ever (w/quantus) [quantusvis => of whatever size you like]; 
 TACKON met           
 PRON 5 0 PERS   
-TACKON w/personal self, own; on subst PERS (meamet=my own, egomet=myself);
+TACKON w/personal self, own; on subst PERS [meamet/egomet => my own/myself];
 TACKON familias           
 N  3 0 C P   
 TACKON of the family/household; (archaic GEN); [pater~ => head of household];

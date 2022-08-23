@@ -104,7 +104,7 @@
          Fc := Line(1);
          Sc := Line(2);
          Ds.Stem := Line(1..Max_Stem_Size);
-      --PUT_LINE("#" & LINE(MAX_STEM_SIZE+1..LAST)); 
+--PUT_LINE("#" & LINE(MAX_STEM_SIZE+1..LAST)); 
          Get(Line(Max_Stem_Size+1..Last), Ds.Part, Ll); 
       --PUT(DS.PART); NEW_LINE;
       --PUT_LINE("#" & LINE(LL+1..LAST));

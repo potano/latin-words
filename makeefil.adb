@@ -21,12 +21,12 @@
 -- EWDS_RECORD_IO.PUT(EWDS); NEW_LINE;
 -- EWDS_RECORD_IO.PUT(NEW_EWDS); NEW_LINE;
               
-           if EWDS.KIND < NEW_EWDS.KIND  then  --  Small KIND = high priority
+           if EWDS.KIND > NEW_EWDS.KIND  then  --  Large KIND = high priority
              null;
-           elsif EWDS.KIND > NEW_EWDS.KIND  then 
+           elsif EWDS.KIND < NEW_EWDS.KIND  then 
              EWDS := NEW_EWDS;
            elsif EWDS.KIND = NEW_EWDS.KIND  then 
-             if EWDS.SEMI < NEW_EWDS.SEMI  then
+             if EWDS.SEMI > NEW_EWDS.SEMI  then
                EWDS := NEW_EWDS;
              end if;
            end if;

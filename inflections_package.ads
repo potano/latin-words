@@ -610,7 +610,7 @@ type INTERJECTION_RECORD is
     B,   --  early       --  Early Latin, pre-classical, used for effect/poetry
     C,   --  classical   --  Limited to classical (~150 BC - 200 AD)
     D,   --  late        --  Late, post-classical (3rd-5th centuries)
-    E,   --  later       --  Latin not in use in Classical times (6-10) Christian
+    E,   --  later       --  Latin not in use in Classical times (6-10), Christian
     F,   --  medieval    --  Medieval (11th-15th centuries)
     G,   --  scholar     --  Latin post 15th - Scholarly/Scientific   (16-18)
     H    --  modern      --  Coined recently, words for new things (19-20)
@@ -628,7 +628,7 @@ type INTERJECTION_RECORD is
     F,    --  very rare   --  Having only single citation in OLD or L+S
     I,    --  inscription --  Only citation is inscription
     M,    --  graffiti    --  Presently not much used
-    N     --  Pliny       --  Things that appear only in Pliny Natural History
+    N     --  Pliny       --  Things that appear (almost) only in Pliny Natural History
                            );
   
   --  For inflections, the same type is used with different weights
@@ -676,7 +676,7 @@ type INTERJECTION_RECORD is
   subtype INFLECTIONS_SECTION_4 is CHARACTER range 't'..'u';
 
   SIZE_OF_BLANK_INFLECTIONS   : constant INTEGER :=  80;    --  ############
-  SIZE_OF_INFLECTIONS_SECTION : constant INTEGER := 540;    --  ############
+  SIZE_OF_INFLECTIONS_SECTION : constant INTEGER := 570;    --  ############
 
   type INFLECTION_ARRAY is array (POSITIVE range <>) of INFLECTION_RECORD;
   subtype LEL_SECTION is INFLECTION_ARRAY(1..SIZE_OF_INFLECTIONS_SECTION);

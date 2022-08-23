@@ -1,5 +1,5 @@
  package body ENGLISH_SUPPORT_PACKAGE is
-   use EWDS_DIRECT_IO;
+   --use EWDS_DIRECT_IO;
    use TEXT_IO;    
    
  package body EWDS_RECORD_IO is
@@ -9,7 +9,8 @@
   use TEXT_IO;
   use INTEGER_IO;
   SPACER : CHARACTER := ' ';
-
+  NWIDTH : constant := 5;
+   
   procedure GET(F : in TEXT_IO.FILE_TYPE; P : out EWDS_RECORD) is
   begin
     GET(F, P.W);
@@ -25,6 +26,8 @@
     GET(F, P.SEMI);
     GET(F, SPACER);
     GET(F, P.KIND);
+    GET(F, SPACER);
+    GET(F, P.RANK);
 end GET;
 
   procedure GET(P : out EWDS_RECORD) is
@@ -42,6 +45,8 @@ end GET;
     GET(P.SEMI);
     GET(SPACER);
     GET(P.KIND);
+    GET(SPACER);
+    GET(P.RANK);
 end GET;
 
   procedure PUT(F : in TEXT_IO.FILE_TYPE; P : in EWDS_RECORD) is
@@ -56,9 +61,11 @@ end GET;
     PUT(F, ' ');
     PUT(F, P.FREQ);
     PUT(F, ' ');
-    PUT(F, P.SEMI, 2);
+    PUT(F, P.SEMI, NWIDTH);
     PUT(F, ' ');
-    PUT(F, P.KIND, 2);
+    PUT(F, P.KIND, NWIDTH);
+    PUT(F, ' ');
+    PUT(F, P.RANK, NWIDTH);
  end PUT;
 
   procedure PUT(P : in EWDS_RECORD) is
@@ -73,9 +80,11 @@ end GET;
     PUT(' ');
     PUT(P.FREQ);
     PUT(' ');
-    PUT(P.SEMI, 2);
+    PUT(P.SEMI, NWIDTH);
     PUT(' ');
-    PUT(P.KIND, 2);
+    PUT(P.KIND, NWIDTH);
+    PUT(' ');
+    PUT(P.RANK, NWIDTH);
 end PUT;
 
   procedure GET(S : in STRING; P : out EWDS_RECORD; LAST : out INTEGER) is
@@ -93,7 +102,9 @@ end PUT;
     L := L + 1;           
     GET(S(L+1..S'LAST), P.SEMI, L);
     L := L + 1;           
-    GET(S(L+1..S'LAST), P.KIND, LAST);
+    GET(S(L+1..S'LAST), P.KIND, L);
+    L := L + 1;           
+    GET(S(L+1..S'LAST), P.RANK, LAST);
   end GET;
 
     
@@ -119,10 +130,13 @@ end PUT;
     PUT(S(L+1..M), P.FREQ);
     S(L) :=  ' ';
     M := L + PRIORITY_WIDTH;
-    PUT(S(L+1..M), P.SEMI, 2);
+    PUT(S(L+1..M), P.SEMI, NWIDTH);
     S(L) :=  ' ';
     M := L + PRIORITY_WIDTH;
-    PUT(S(L+1..M), P.KIND, 2);
+    PUT(S(L+1..M), P.KIND, NWIDTH);
+    S(L) :=  ' ';
+    M := L + PRIORITY_WIDTH;
+    PUT(S(L+1..M), P.RANK, NWIDTH);
 
     
     

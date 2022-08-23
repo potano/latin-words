@@ -16,7 +16,7 @@
       NULL_EWORD : EWORD := (others => ' ');
       subtype AUXWORD is STRING(1..AUX_WORD_SIZE);
       NULL_AUXWORD : AUXWORD := (others => ' ');
-      subtype PRIORITY_TYPE is INTEGER range 0..30;
+      subtype PRIORITY_TYPE is INTEGER range 0..99;
       
       NUMBER_OF_EWORDS : INTEGER := 0;
        
@@ -29,10 +29,11 @@
           FREQ : FREQUENCY_TYPE := X;
           SEMI : INTEGER := 0;
           KIND : INTEGER := 0;
+          RANK : INTEGER := 0;
         end record;
       
       NULL_EWDS_RECORD : EWDS_RECORD := ((others => ' '), 
-                         (others => ' '), 0, X, X, 0, 0);
+                         (others => ' '), 0, X, X, 0, 0, 0);
      
       type EWDS_ARRAY is array (POSITIVE range <>) of EWDS_RECORD;
      

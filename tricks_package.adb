@@ -653,15 +653,18 @@
          --  will be called from a point where the first letter is established
             PA_SAVE : INTEGER := PA_LAST;
          begin
-            if S'LENGTH >= X1'LENGTH+2  and then
-            S(S'FIRST..S'FIRST+X1'LENGTH-1) = X1   then
+--TEXT_IO.PUT_LINE("FLIP_FLOP called    " & X1 & "  " & X2);
+             if S'LENGTH >= X1'LENGTH+2  and then
+              S(S'FIRST..S'FIRST+X1'LENGTH-1) = X1   then
                PA_LAST := PA_LAST + 1;
                PA(PA_LAST) := (HEAD("Word mod " & X1 & "/" & X2, MAX_STEM_SIZE),
                                  NULL_INFLECTION_RECORD,
                                  XXX, NULL_MNPC);
+ --TEXT_IO.PUT_LINE("Trying " & X2 & S(S'FIRST+X1'LENGTH..S'LAST));
                TWORD(X2 & S(S'FIRST+X1'LENGTH..S'LAST), PA, PA_LAST);
                if (PA_LAST > PA_SAVE + 1)   and then
                   (PA(PA_LAST-1).IR.QUAL.POFS /= TACKON)  then
+ --TEXT_IO.PUT_LINE("FLIPF worked");
                   if EXPLANATION = ""  then
                      XXX_MEANING := HEAD(
                                         "An initial '" & X1 & "' may be rendered by '" & X2 & "'"
@@ -676,19 +679,27 @@
                else
                   PA_LAST := PA_SAVE;
                end if;
-            
-            elsif S'LENGTH >= X2'LENGTH+2  and then
+            end if;
+ --TEXT_IO.PUT_LINE("FLIPF failed");
+ --TEXT_IO.PUT_LINE("Try FFLOP");
+           
+          
+              
+            if S'LENGTH >= X2'LENGTH+2  and then
             S(S'FIRST..S'FIRST+X2'LENGTH-1) = X2   then
+ --TEXT_IO.PUT_LINE("Trying FFLOP");
                PA_LAST := PA_LAST + 1;
                PA(PA_LAST) := (HEAD("Word mod " & X2 & "/" & X1, MAX_STEM_SIZE),
                                  NULL_INFLECTION_RECORD,
                                  XXX, NULL_MNPC);
-               TWORD(X1 & S(S'FIRST+X2'LENGTH..S'LAST), PA, PA_LAST);
+  --TEXT_IO.PUT_LINE("Trying " & X1 & S(S'FIRST+X2'LENGTH..S'LAST));
+              TWORD(X1 & S(S'FIRST+X2'LENGTH..S'LAST), PA, PA_LAST);
                if (PA_LAST > PA_SAVE + 1)   and then
                   (PA(PA_LAST-1).IR.QUAL.POFS /= TACKON)  then
+ --TEXT_IO.PUT_LINE("FFLOP worked");
                   if EXPLANATION = ""  then
                      XXX_MEANING := HEAD(
-                                        "An initial '" & X1 & "' may be rendered by '" & X2 & "'"
+                                        "An initial '" & X2 & "' may be rendered by '" & X1 & "'"
                                         , MAX_MEANING_SIZE);
                   else
                      XXX_MEANING := HEAD(EXPLANATION, MAX_MEANING_SIZE);
@@ -702,6 +713,7 @@
                end if;
             
             end if;
+ --TEXT_IO.PUT_LINE("FFLIP failed");
             PA_LAST := PA_SAVE;
          end FLIP_FLOP;
       
@@ -942,7 +954,7 @@
                return;
             end if;
          
-            I := 3;    --  Smallest is re-publica, but that killed by PREFIX
+            I := 2;    --  Smallest is re-publica, but that killed by PREFIX, meipsum
          OUTER_LOOP:
             while I < S'LENGTH - 2  loop
             
@@ -1066,7 +1078,8 @@
       
       begin
       --  These things might be genericized, at least the PA(1) assignments 
-      
+--TEXT_IO.PUT_LINE("TRICKS called");
+
      XXX_MEANING := NULL_MEANING_TYPE;
       
       
@@ -1074,9 +1087,9 @@
       
       --  If there is no satisfaction from above, we will try further
       
+       case S(S'FIRST) is      
       
-      
-         if S(S'FIRST) = 'a'  then
+         when 'a'  =>
          
          
          --FLIP_FLOP("abs", "aps");   if PA_LAST > 0  then return; end if;
@@ -1119,7 +1132,7 @@
          
          
          
-         --elsif S(S'FIRST) = 'c'  then
+         --  when 'c'  =>
          
          --FLIP("circum" , "circun");   if PA_LAST > 0  then return; end if;
          --FLIP_FLOP("con", "com");   if PA_LAST > 0  then return; end if;
@@ -1128,15 +1141,26 @@
          --FLIP_FLOP("conl" , "coll");   if PA_LAST > 0  then return; end if;
          
          
-         elsif S(S'FIRST) = 'd'  then
+         when 'd'  =>
          
-           FLIP("dampn" , "damn");   if PA_LAST > 0  then return; end if;
+           FLIP("dampn" , "damn");   
+           if PA_LAST > 0  then 
+             return; end if;
+           FLIP_FLOP("dij"  , "disj");       --  OLD p.543
+           if PA_LAST > 0  then 
+             return; end if;    
            FLIP_FLOP("dir"  , "disr");       --  OLD p.556
-            if PA_LAST > 0  then 
-               return; end if;    
+           if PA_LAST > 0  then 
+             return; end if;    
+           FLIP_FLOP("dir"  , "der");        --  OLD p.547
+           if PA_LAST > 0  then 
+             return; end if;    
+           FLIP_FLOP("del"  , "dil");        --  OLD p.507/543
+           if PA_LAST > 0  then 
+             return; end if;    
                
                
-         elsif S(S'FIRST) = 'e'  then
+         when 'e'  =>
          
             FLIP_FLOP("ecf" , "eff");  
             if PA_LAST > 0  then 
@@ -1161,9 +1185,21 @@
             if PA_LAST > 0  then 
                return; end if;
          
-         elsif S(S'FIRST) = 'f'  then
+         when 'f'  =>
+         
+            FLIP_FLOP("faen" , "fen");  
+            if PA_LAST > 0  then 
+               return; end if;
          
             FLIP_FLOP("faen" , "foen");  
+            if PA_LAST > 0  then 
+               return; end if;
+         
+            FLIP_FLOP("fed" , "foed");  
+            if PA_LAST > 0  then 
+               return; end if;
+         
+            FLIP_FLOP("fet" , "foet");  
             if PA_LAST > 0  then 
                return; end if;
          
@@ -1171,13 +1207,13 @@
             if PA_LAST > 0  then 
                return; end if;  -- Try lead then all
          
-         elsif S(S'FIRST) = 'g'  then
+         when 'g'  =>
          
             FLIP("gna",  "na");   
             if PA_LAST > 0  then 
                return; end if;
          
-         elsif S(S'FIRST) = 'h'  then
+         when 'h'  =>
          
             FLIP("har",  "ar");   
             if PA_LAST > 0  then 
@@ -1199,7 +1235,7 @@
                return; end if;
          
          
-         elsif S(S'FIRST) = 'i'  then
+         when 'i'  =>
          
          
          --SLUR("in");            if PA_LAST > 1 then return; end if;
@@ -1234,7 +1270,7 @@
          
          
          
-         elsif S(S'FIRST) = 'k'  then
+         when 'k'  =>
          
             FLIP("k",  "c");   
             if PA_LAST > 0  then 
@@ -1244,7 +1280,7 @@
                return; end if;
          
          
-         elsif S(S'FIRST) = 'l'  then
+         when 'l'  =>
          
          
             FLIP_FLOP("lub", "lib");    
@@ -1252,7 +1288,7 @@
                return; end if;
          
          
-         elsif S(S'FIRST) = 'm'  then
+         when 'm'  =>
          
          
             FLIP_FLOP("mani", "manu");    
@@ -1261,7 +1297,7 @@
          
          
          
-         elsif S(S'FIRST) = 'n'  then
+         when 'n'  =>
          
          
             FLIP("na",  "gna");   
@@ -1276,7 +1312,7 @@
          
          
          
-         elsif S(S'FIRST) = 'o'  then
+         when 'o'  =>
          
          --SLUR("ob");           if PA_LAST > 0  then return; end if;
             FLIP_FLOP("obt", "opt");    
@@ -1297,7 +1333,7 @@
          
          
          
-         elsif S(S'FIRST) = 'p'  then
+         when 'p'  =>
          
          
             FLIP("ph",  "f");   
@@ -1308,13 +1344,13 @@
                return; end if;
          
          
-         --elsif S(S'FIRST) = 'q'  then
+         --  when 'q'  =>
          
          
          --FLIP_FLOP("quadri",  "quadru");   if PA_LAST > 0  then return; end if;
          
          
-            elsif S(S'FIRST) = 's'  then
+         when 's'  =>
               
                
          --  From Oxford Latin Dictionary p.1835 "sub-"
@@ -1343,7 +1379,7 @@
                return; end if;
          
          
-         elsif S(S'FIRST) = 't'  then
+         when 't'  =>
          
          
             FLIP_FLOP("transv",  "trav");   
@@ -1356,7 +1392,7 @@
          
          
          
-         elsif S(S'FIRST) = 'u'  then
+         when 'u'  =>
          
             FLIP("ul",  "hul");   
             if PA_LAST > 0  then 
@@ -1367,14 +1403,21 @@
          
          
          
-         elsif S(S'FIRST) = 'y'  then
+         when 'y'  =>
          
             FLIP("y",  "i");   
             if PA_LAST > 0  then 
                return; end if;
          
+         when 'z'  =>
          
-         end if;   --  if on first letter
+            FLIP("z",  "di");   
+            if PA_LAST > 0  then 
+               return; end if;
+         
+         when others  =>  null;
+         
+       end case;   --  case on first letter
       
       
       
@@ -1408,6 +1451,10 @@
          if PA_LAST > 0  then 
             return; end if;
       
+      
+         INTERNAL("oe",  "e");   
+         if PA_LAST > 0  then 
+            return; end if;
       
          INTERNAL("vul",  "vol");   
          if PA_LAST > 0  then 
@@ -1633,7 +1680,15 @@
                                "Exception in TRY_TRICKS processing " & W);
       end TRY_TRICKS;
    
-   
+
+      
+      
+      
+      
+      
+      
+      
+         
       procedure TRY_SLURY(W : STRING;
                           PA : in out PARSE_ARRAY; PA_LAST : in out INTEGER;
                           LINE_NUMBER : INTEGER; WORD_NUMBER : INTEGER) is

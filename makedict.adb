@@ -50,7 +50,7 @@
       L, LL, LAST : INTEGER := 0;
       J : DICT_IO.COUNT := 0;
       MEAN_TO_BE : constant MEANING_TYPE := 
-         HEAD("to be, exist; also used to form verb perfect passive tenses" &
+         HEAD("be; exist; (also used to form verb perfect passive tenses)" &
               " with NOM PERF PPL", MAX_MEANING_SIZE);
    
    begin
