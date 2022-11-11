@@ -1,0 +1,648 @@
+// Copyright © 2022 Michael Thompson
+// SPDX-License-Identifier: FSFAP
+:toc:
+:toc-placement: manual
+
+The scripts included in this repository are designed for use in a POSIX 
+environment to build and install the WORDS program and optional tools.  This
+process works for all seven versions of WORDS contained in this repo.  These
+build scripts work with
+
+* Linux distros that have a GNU userland (viz. most Linux distros)
+* BSD distros for which Ravenports is available
+* Microsoft Windows using MSYS2 as a build environment
+
+The build process uses the familiar 'configure' / 'make' / 'make install'
+steps.  In order to run these, the user must first prepare the system for
+the build process.  Setup instructions are given below for a number of
+target systems.  Next, go to <<build_scenarios,Build scenarios>> to see the
+supported installation scenarios.
+
+An alternative approach is available for users of Gentoo Linux via Portage
+and a local overlay.
+Skip down to <<with_portage,Gentoo Linux using Portage>>.
+
+toc::[]
+
+== Setup needed for Linux systems
+
+The build scripts require `gnatmake` (a helper executable supplied with
+GNAT), a Bourne Shell (typically `bash`), and GNU `make` plus tools almost
+always present in a Linux system: `cp`, `install`, `sed`, `tar`, `tr`, and
+`rm`.  _Git_ is also required unless the user works exclusively with a
+distribution tarball.  The sections below indicate which packages that each
+distro family requires along with an example of a command line which would
+install them.  The build scripts have been confirmed to work correctly with
+all of the distros named in this section.
+
+=== Arch Linux and derivatives (including Manjaro)
+
+Package manager: pacman
+
+* package for 'make': *make*
+* package for 'gnatmake': *gcc-ada*
+* package for 'git': *git*
+
+ pacman -S make gcc-ada git
+
+=== Debian GNU/Linux and derivatives (including Ubuntu and Linux Mint)
+
+Package manager: dpkg (using the `apt` command)
+
+* package for 'make': *make*
+* package for 'gnatmake': *gnat*
+* package for 'git': *git*
+
+ apt install make gnat git
+
+=== Fedora Linux and derivatives
+
+Package manager: RPM (using the `dnf` command)
+
+* package for 'make': *make*
+* package for 'gnatmake': *gcc-gnat*
+* package for 'git': *git*
+
+ dnf install make gcc-gnat git
+
+=== Gentoo Linux
+
+Package manager: Portage (using the `emerge` command)
+
+* 'make' is included in the base Gentoo installation
+* package for 'gnatmake': *dev-lang/gnat-gpl*
+* package for 'git': *dev-vcs/git*
+
+ emerge gnat-gpl dev-vcs/git
+
+The *gnat-gpl* ebuild is actually a *sys-devel/gcc* ebuild modified to
+bootstrap an Ada compiler along with a C compiler.  The underlying GCC
+version for *gnat-gpl* is not allowed to occupy the same package slot as an
+already installed GCC version.  The Gentoo Ada project is working to move
+GNAT fully into the standard *sys-devel/gcc* package.  When that happens,
+the separate *dev-lang/gnat-gpl* will go away and GNAT will be available in
+the same slot as the main GCC when the `ada` USE flag is set.
+
+In the meantime, users have to deal with the fact that the active GCC
+version generally does not offer GNAT.  The easiest workaround is to set
+the slotted `gnatmake` directly into the PATH.  The directory has a
+name like `/usr/x86_64-pc-linux-gnu/gcc-bin/10.3.0` (substitute the actual
+GCC version in place of `10.3.0` and the architecture as shown from the
+`uname -m` command for `x86_64`).  Add this directory to the PATH in the
+current shell to build WORDS.
+
+=== Open SUSE and derivatives
+
+Package manager: ZYpp (using the `zypper` command)
+
+* package for 'make': *make*
+* package for 'gnatmake': *gcc-ada*
+* package for 'git': *git*
+
+ zypper install make gcc-ada git
+
+=== Slackware Linux
+
+Slackware installs its entire package collection by default; the user
+decides what _not_ to install.  Be sure these packages and their
+dependencies are installed:
+
+* *bash*
+* *sed*
+* *make*
+* *gcc-gnat*
+* *git*
+
+== Setup needed for BSD systems (FreeBSD, NetBSD, and Dragonfly BSD)
+
+We have to obtain GNAT from a third party since GNAT is no longer available
+among the standard BSD packages.  The Ravenports package manager includes
+GNAT in its internal package-building toolchain, which Ravenports can
+rebuild from source.  Ravenports is designed so that this toolchain is
+available only for its own package-building processes, but accessing this
+toolchain from the outside requires simply the setting of two environment
+variables.  We do not use the Ravenports build framework or packaging
+system.  Indeed, Ravenports includes a port for WORDS, but its `words` runs
+incorrectly since it lacks the needed patches for ADDONS and UNIQUES.
+
+A Ravenports installation must be tailored to the BSD disribution on which
+it runs.  There are separate tarballs for each supported distribution as
+well as distinct sets of installation instructions.  *Ravenports is not
+available for OpenBSD or Darwin (MacOS)*.  It _may_ be possible to use one
+of the other Ravenports tarballs to build WORDS on OpenBSD or Darwin. I did
+not attempt this.
+
+Proceed through the next three sections to prepare the setup to build WORDS.
+
+==== Install tools from the distro's package manager
+
+The build scripts will not work with BSD 'make'; the require GNU 'make'.
+The BSD distros call this package 'gmake'; this is also the name of the
+executable.  Download 'git' if needed.  Note that the default DragonFly
+installation already includes 'git-lite'.
+
+Command needed to install these depends on the distro:
+
+. FreeBSD: `pkg install gmake git`
+. NetBSD: `pkgin install gmake git`
+. DragonFly BSD: `pkg install gmake`
+
+==== Install Ravenports
+
+To install Ravenports, go to https://www.ravenports.com and follow the
+instructions in the Quick Start page for your BSD distribution.  For the
+purposes of building WORDS, it is necessary to follow those instructions
+only up to the "Install Ravenports metaport" section.
+
+Hint: if the Ravenports installation fails at some point (as it did for me
+when `ravensw` segfaulted in the setup for DragonFly BSD), you might try
+installing an older version for the _same_ distro.
+
+==== Environment-variable setup
+
+Now log in as a regular user and enter a Bourne Shell.  (The `configure`
+script won't work with csh or tcsh.)  A few adjustments to the build
+environment are needed in order to build WORDS.
+
+All the Makefile targets except `make clean` require 'gmake'.  The default
+target (which builds WORDS) requires a setup of the PATH and LD_LIBARY_PATH
+environment variables:
+
+. PATH must include the Ravenports-toolchain `bin/` directories.
+. LD_LIBRARY_PATH must be set to refer to the Ravenports-toolchain `lib/`
+directories.
+
+Since the exact paths vary according to the BSD flavor and the Ravenports
+version, we do not indicate their exact settings here.  Use this command to
+display what must be added to the PATH variable:
+
+ find /raven/share/raven/toolchain -name bin -type d | xargs echo | tr ' ' :
+
+Likewise this command prints what must be set into LD_LIBRARY_PATH:
+
+ find /raven/share/raven/toolchain -name lib -type d | xargs echo | tr ' ' :
+
+It is helpful to set up a 'make' script in a local directory along these
+lines:
+
+----
+#!/bin/sh
+export PATH="<ravenpath bin directories>:$PATH"
+LD_LIBRARY_PATH="<ravenpath lib directories>" gmake $@
+----
+
+Be sure to mark the file as executable, for example:
+
+ chmod +x bin/make
+
+Call this script when the instructions direct you to use the default `make`
+target to build the package.  You may use `gmake` for other targets,
+particularly the `install` target.  Example:
+
+----
+.configure
+~/bin/make
+# Then, as root
+cd ~user/latin-words
+gmake install
+----
+
+Extra points for setting `$HOME/bin` early in the PATH.  Remember to use
+`gmake` when installing as _root_
+.
+
+== Setup needed for Microsoft Windows
+
+There are several ways to set up the needed build environment;
+assuming the common case for desktops and laptops (Windows 10 or later on an
+AMD64/Intel64 processor), this way appears to be the best.
+
+Download and install MSYS2 from https://www.msys2.org.  Close any
+command-prompt window the installer may have opened and open the
+correct one for our purpose:  click on the newly installed shortcut
+labelled MSYS2 UCRT64.  Now we may install the needed dependencies:
+
+* mingw-w64-ucrt-x86_64-make
+* mingw-w64-ucrt-x86_64-gcc-ada
+* git
+
+Run these commands to install the dependencies:
+
+----
+pacman -Fy
+pacman -S mingw-w64-ucrt-x86_64-make mingw-w64-ucrt-x86_64-gcc-ada git
+----
+
+Finish the setup with these commands to work around a couple of glitches:
+
+----
+cd /ucrt64/bin; ln -s mingw32-make.exe make.exe; cd -
+git config --global core.ignorecase true
+----
+
+[NOTE]
+====
+This note explains why we recommend the above setup.  Those not interested
+may skip ahead. 
+
+The build scripts in this repo almost certainly would not work with
+Microsoft's native build systems. To use this repo we need an environment
+that provides GNU _make_.  I went with MSYS2 since not only does it let
+Makefiles be unconcerned about whether executable files have an _.exe_
+extension but also that it generates executables that can run on other
+Windows machines without having to install special libraries.
+
+MSYS2 is a bit confusing to use since it includes multiple distinct
+toolchains, each based on its own combination of base Windows C library
+('msvcrt', 'ucrt', or 'cygwin'), compilers, and tools.  The MSYS2
+documentation refers to these toolchains as _environments_, each with its
+own path prefix.  MSYS2 provides a start-menu icon for each environment.
+
+Just as with any Linux distro, MSYS2 offers packages the user may install.
+Many of packages in the MSYS2 ecosystem have environment-specific variants,
+though other packages are environment-agnostic.  This is what gives rise to
+the cumbersome package names.  It is up to the user to install the correct
+flavor of any given package.
+
+The AMD64 GNAT system is available in only two MSYS2 environments, MINGW64
+and UCRT64.  The latter uses the 'ucrt' Windows library, which is the one
+that Microsoft promotes for current and future versions of Windows.  The
+above instructions reflect that choice.
+
+To use MINGW64 instead of UCRT64, install these libraries in a MING64 window.
+
+* mingw-w64-x86_64-make
+* mingw-w64-x86_64-gcc-ada
+* git
+
+The glitch-fix commands become
+
+ cd /mingw64/bin; ln -s mingw32-make.exe make.exe; cd -
+ git config --global core.ignorecase true
+
+Similar adjustments are necessary for Windows on ARM processors.
+====
+
+[[build_scenarios]]
+== Build scenarios
+
+Now that the system is prepared for the build process, be logged in as a
+normal user and do one of the following:
+
+* Clone the https://github.com/potano/latin-words repo with Git and `cd` to
+the `latin-words` directory.  Check out an older version of WORDS if
+desired.
+* Download and untar a distribution tarball and `cd` into the directory just
+created.
+
+Examples of these:
+
+----
+# To clone the Git repo
+git clone https://github.com/potano/latin-words
+cd latin-words
+----
+
+----
+# To untar a distribution tarball
+tar xzf latin-words-1.97.12.tar.gz
+cd latin-words-1.97.12
+----
+
+Now run `configure` and `make` as needed.  The sections below detail some
+typical use cases.  Remember to use any variant of the `make` command that
+distro-specific instructions may have directed you to use.
+
+[NOTE]
+====
+The WORDS program is designed to load its dictionary files from the current
+directory when the program starts.  That means that either a GUI icon or
+a small script should be set up to switch to that directory and then start
+`words`.  Traditionally, `words` and any other executable such as `meanings`
+is installed in the same directory as the dictionary files; we follow that
+pattern here.
+
+Typically, these build scripts install these to
+`/usr/local/lib/latin-words/` and the startup script as
+`/usr/local/bin/words`.  The setup scenarios may alter this.
+====
+
+=== Basic install
+
+The basic steps build the `words` binary and its dictionary files, install
+them in the `/usr/local/lib/latin-words/` directory, and installs the script
+`/usr/local/bin/words` in the PATH.
+
+----
+./configure
+make
+----
+
+Then as _root_ `cd` into the build directory and run this:
+
+----
+make install
+----
+
+=== Building `meanings` along with `words`
+
+Most versions of the WORDS sources include the source file for the
+`meanings` executable.  Intended as an aid to be provided to test-takers, it
+displays the meanings of words but not an analysis of their inflections.
+Adding the `--enable-meanings` switch to the `./configure` command builds
+`meanings` alongside `words` and likewise installs a script in the PATH to
+run the main `meanings` program.
+
+----
+./configure --enable-meanings
+# ...
+----
+
+=== Building the optional tools
+
+In May, 2005 (in time for the 1.97Ed release, v1.97.7), Col. Whitaker
+published the sources for tools he used to construct the dictionaries.  He
+revised these in January, 2007.  Adding the `--enable-tools` switch to the
+`./configure` command line builds these tools plus the few tools that have
+always been present in the main 'wordsall.zip' used to process the
+dictionary files at build time.  (For versions earlier than v1.97.7, this
+option installs only those make-dictionary programs.)  These tools are
+installed in the same directory as the other executables.  No startup
+scripts are installed for these.
+
+----
+./configure --enable-tools
+# ...
+----
+
+=== Building with a different prefix
+
+The `--prefix=` switch of the `./configure` command alters the base location
+of the dictionary/binary directory and the script directory, which by
+default is `/usr/local`.  MSYS2 and Gentoo Portage set this automatically to
+directories more apt for their purposes.
+
+An important application of this is building and installing WORDS directly
+in the user's own HOME directory tree.  For example, this installs the WORDS
+data in `~/lib/latin-words` and the startup script in `~/bin`.  This time it
+is the user, not _root_, who runs `make install`.
+
+----
+./configure --prefix=$HOME
+make
+make install
+----
+
+=== Changing the startup-script name
+
+Normally the startup script is installed under the name `words` in a
+directory configured to be in the PATH.  The `WORDS_CMD_NAME=` argument of
+`./configure` sets the command name.
+
+For example, this sets the command to run WORDS to be `whitakers-words`:
+
+----
+./configure WORDS_CMD_NAME=whitakers-words
+# ...
+----
+
+Likewise the `MEANINGS_CMD_NAME=` argument sets the name of the startup
+script for `meanings`.  You still need to use the `--enable-meanings` switch
+to build the meanings executable.
+
+=== Split installation
+
+All of the above build scenarios involve modifying the arguments of the
+`configure` script.  In all these cases, a `make uninstall` would remove all
+of the installed files because their locations would be baked into the
+Makefile.
+
+By applying arguments to the `make` command we can install WORDS in
+non-standard ways.
+
+The `MAINDIR=` argument of the `make` command overrides the default
+_prefix_`/lib/latin-words` location.  If applied both to the default `make`
+command and the `make install`, the result is a startup script installed
+in a directory determined by the prefix and a main directory not
+determined by the prefix.
+
+In this example, we install the `words` startup script in `~/bin` and the
+main directory at `~/misc/latin-words`.
+
+----
+./configure --prefix=$HOME
+make MAINDIR="$HOME/misc/latin-words"
+main MAINDIR="$HOME/misc/latin-words" install
+----
+
+=== Words version zoo
+
+We can combine the above techniques to set up a "zoo" of WORDS versions.
+This makes it so that the user may issue a command like `words_v1.95.0` to
+start the version under a name determined by the Git tag.  Assuming that `~/bin` is in the
+user's path, we can use this block of commands:
+
+----
+git tag | while read tag; do
+  git checkout $tag
+  ./configure --prefix="$HOME" WORDS_CMD_NAME="words_$tag"
+  make MAINDIR="$HOME/zoo/$tag"
+  make MAINDIR="$HOME/zoo/$tag" install
+  make clean
+done
+----
+
+This builds all the WORDS versions in the repo, sets each up in a separate
+directory under `~/zoo/`, and makes a startup script in the user's `bin`
+directory with a separate startup script for each version.
+
+=== WORDS without a startup script
+
+It is possible to install only the main directory without a startup script.
+The main use case for this is to prepare a WORDS installation for access
+via a GUI.
+
+The `install-main` target installs just the main directory
+containing the `words` executable, the dictionaries, and, if selected, the
+tools and/or `meanings`.  The target also accepts the `MAINDIR=`
+command-line argument.
+
+This example installs the `words` executable and dictionaries, along with
+program icon that Col. Whitaker included in the Windows-binary .zip files,
+into the directory `~/staging`.
+
+----
+./configure
+make
+make MAINDIR="$HOME/staging" install-main
+cp assets/SPQR.ICO ~/staging
+----
+
+=== Preparing binary packages
+
+None of the `make` targets install documentation.  The build process gathers
+the principal documentation that Col. Whitaker wrote into the `docs/`
+subdirectory.  Packagers may want to copy the documentation from there.
+
+The `assets/` subdirectory contains `SPQR.ICO`, the icon file that Col.
+Whitaker included in Windows binary-package .zip files.
+
+Of interest to Linux and BSD distro maintainers:  the Makefile respects the
+`DESTDIR` _make_-command argument, the standard
+mechanism in the _autotools_ world to specify an offset path to a staging
+directory.
+
+For packaging WORDS for Windows it would be more helpful to use the
+`MAINDIR=` argument as described above.
+
+Issues like the preparation of a Windows package installer are left as an
+exercise for the reader.
+
+=== Preparing source-distribution tarballs
+
+The `make dist` target generates a distribution tarball for the checked-out
+version and leaves it in the `distrib/` subdirectory.  Likewise, the
+`make ebuild` target generates the corresponding Gentoo ebuild in the same
+directory.
+
+Both the tarball and the ebuild reflect the version number.
+
+
+== Reference: options for `configure` and `make`
+
+=== `configure` command
+
+The 'configure' command may be run with any combination of these arguments:
+
+--prefix=`directory`:: set pathname prefix for target 'bin/' and 'lib/'
+directories (default: '/usr/local/')
+
+--libdir=`directory`:: set pathname of the directory for executable library
+files (default: [prefix]'/lib/').  Normally the main files (dictionaries
+and main executables) are installed in the `latin-words` directory within
+this library directory.
+
+--execdir=`directory`:: name of the directory for executable files available
+from the command line (default: [prefix]`/bin/`).  The startup-script files
+are installed here.
+
+--enable-meanings:: build and install the 'meanings' executable
+
+--enable-tools:: build and install dictonary-file-management tools
+
+WORDS_CMD_NAME='name':: set name of command to run the main WORDS program
+(default: 'words')
+
+MEANINGS_CMD_NAME='name':: set name of command to run the meanings-only
+program (default: 'meanings')
+
+
+=== 'make' command
+
+The `make` command line has the form `make` [options] [<target>]
+
+The make target must be one or more of the following.
+
+`all` (or no target given):: Build the main program(s) (`words` always
+and `meanings` if configured), helper programs, architecture-specific
+data files (using the helper programs), additional tools (if configured),
+and the startup scripts.  Also collects the HTML and text documents into
+the `docs/` directory within the project.
+
+`install`:: Install the executables and data files to the configured
+directories.  The actions of this target are available separately as the
+`install-main` and `install-exec` for use cases where only one of these is
+needed.  See below for details.
+
+`install-main`:: Install the main binary executables and data files to the
+main directory (either the `latin-words` directory relative to the
+configured --libdir or the directory selected by the MAINDIR= `make`
+option.
+
+`install-exec`:: Install the startup script(s) into the directory configured
+by the --prefix or --bindir `configure` option or the `bindir=` make option.
+
+`uninstall`:: Uninstall the files from the configured main directory and the
+startup scripts from the configured binary directory.
+
+`clean`:: Delete all generated files and directories within the project
+directory.
+
+`dist`:: Generate a distribution tarball for the currently checked-out
+version.  Writes the tarball in the `distrib/` directory within the project
+directory.
+
+`ebuild`:: Generate a Gentoo Portage ebuild for the currently checked-out
+version.  Writes the file in the `distrib/` directory within the project.
+
+In addition to the normal `make` option arguments, the following are
+supported for building WORDS.
+
+GNATMAKE=_name_:: Specify the name of the `gnatmake` executable
+
+GMFLAGS=_flags_:: Specify the GNAT compiler options for building tools and
+the dictionary-building helpers (default: `-gnat95`)
+
+libdir=_path_:: Specify the library directory (default: [prefix]`/lib`)
+
+MAINDIR=_path_:: Specify the directory to hold the dictionary files and main
+executables  (default: [libdir]`/latin-words`)
+
+MAINPROG_GMFLAGS=_flags_:: Specify the GNAT compiler options for building
+the main program(s) (default: `-O3 $(GMFLAGS)`)
+
+
+[[with_portage]]
+== Gentoo Linux using Portage
+
+Gentoo Linux users intent on installing WORDS on their systems are advised
+to use Portage for the purpose.  This makes it so that the program is known
+to the package manager just like any other normally installed package.
+Intrepid users of other distros _could_ choose to use Portage also via
+https://wiki.gentoo.org/wiki/Project:Prefix[Gentoo Prefix], but for most
+non-Gentoo users, it would be easier to use the main instructions given
+above for `configure` and `make`.
+
+=== Setting up the package in a local overlay
+
+It would be safe to assume that you are reading this section because the
+package is not available in the Portage tree or a published overlay.  If
+you have not yet set up an overlay, follow the instructions in the
+Gentoo-wiki page https://wiki.gentoo.org/wiki/Creating_an_ebuild_repository[
+Creating an ebuild repository] to set one up.
+
+When the overlay is ready, follow these steps:
+
+. Create the directory `app-dicts/latin-words` at the root directory of the
+overlay, `cd` to that directory, and copy the ebuild there.
+. If you have the distribution tarball, copy it to the distribution-file
+directory.  The `DISTDIR` variable of `make.conf` sets this location, which
+is typically `/var/cache/distfiles`.  If you do not have tarball on hand,
+the `ebuild` command in the next step will fetch the file for you.
+. Run the command `ebuild latin-words-1.97.12 manifest` where the second
+argument is the name of the file containing the ebuild.  Tab completion can
+help you here..
+. Add an entry for `app-dicts/latin-words` to the `package.accept_keywords`
+file either in `/etc/portage/` or the profile directory of the overlay.
+
+=== USE flags
+
+These USE flags are available:
+
+`meanings`:: build the `meanings` executable and make it accessible via the
+`meanings` command
+`tools`:: build the optional WORDS dictionary tools and install them in the
+WORDS main directory (`/usr/lib64/latin-words`).
+
+Note that the ebuild takes advantage of the `ada` eclass and thereby avoids
+the need for you to enable the correct GCC slot for GNAT.  See the
+https://wiki.gentoo.org/wiki/Project:Ada[Gentoo Ada Project] page for more
+details.
+
+At this point you should be able to do the normal emerge operations on
+the package such as
+
+----
+emerge -va latin-words
+----
+

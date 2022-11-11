@@ -1,0 +1,256 @@
+# Copyright © 2022 Michael Thompson
+# SPDX-License-Identifier: FSFAP
+
+
+History of files in William Whitaker's website
+(http://users.erols.com/whitaker)
+
+This comprehensive file history is gathered mostly from archive.org's scans
+of the website.  All the files are in a single directory.  Dates shown here
+are the dates the spider read them, not the dates the files were actually
+modified.
+
+The Wayback-Machine spider is selective in what it scans.  It prefers to scan
+files that have had a lot of updates and makes only infrequent scans of of
+other files.  The list below may exclude some updates because of this.
+
+Files not present in an scan I made of the site in March 2013 have entries
+which indicate the date by which the files were removed.
+
+This list is supplemented by two other sources:  the mentioned scan of the
+site in 2013 and the .zip files containing Windows binaries.  These .zip
+files include one or more HTML files (words.htm, wordsdoc.htm, wordsw95.htm)
+that were also posted to the website.  In these cases, the date shown is the
+date recorded in the .zip file.
+
+Entries for all the files in this list are contained in the web/ directory.
+The files are as the were contained on the website--except that
+  * Trailing whitespace and ^Z characters are removed from the HTML files
+  * Small descriptive placeholder files are substituted these large files:
+    - Self-extracting .exe files for Windows and DOS binaries
+    - Source-code distribution files wordsall.zip and tools.zip
+  * Uppercased files are not stored here when they duplicate other files
+
+
+197edwin.exe
+   2005-10-01:  3209728 bytes (new file)
+   2006-04-08:  removed file
+
+197fcwin.exe
+   2007-02-26:  3346432 bytes (new file)
+
+197fwin.exe
+   2006-12-10:  3330048 bytes (new file)
+
+LISTALL.ZIP         (not stored; it duplicates listall.zip)
+   2003-12-25:  2414239 bytes (new file)
+   2007-09-26:  removed file
+
+adadot.gif
+   2002-08-25:  2468 bytes (new file)
+
+dict195a.exe
+   2001-06-29:  952285 bytes (new file)
+
+dictpage.htm
+   2005-02-25:  3749896 bytes (new file)
+   2005-04-21:  3761393 bytes (+11497)
+
+dictpage.zip
+   2006-12-18:  1046092 bytes (new file)
+   2007-02-26:  1157637 bytes (+111545)
+
+disk1197.exe
+   2001-09-03:  1123447 bytes (new file)
+   2005-10-31:  removed file
+
+disk1w95.exe
+   2001-04-18:  1102421 bytes (new file)
+
+disk2197.exe
+   2001-11-16:  1054647 bytes (new file)
+   2005-10-31:  removed file
+
+disk2w95.exe
+   2001-04-18:  982036 bytes (new file)
+
+dk1dos.exe
+   2001-11-16:  826394 bytes (new file)
+
+dk2dos.exe
+   2001-11-16:  1096315 bytes (new file)
+
+freq.htm
+   2005-02-12:  112981 bytes (new file)
+
+freqappx.htm
+   2005-02-12:  12754 bytes (new file)
+   2006-02-03:  12756 bytes (+2)
+
+freqbibl.htm
+   2005-02-12:  4344 bytes (new file)
+
+freqreq.htm
+   2005-02-05:  109346 bytes (new file)  Directly from users.erols.com
+
+freqvita.htm
+   2006-02-03:  2722 bytes (new file)
+
+freqvoc.htm
+   2005-02-12:  152531 bytes (new file)
+
+listall.zip
+   2003-12-25:  2414239 bytes (new file)
+
+p1446.htm
+   2000-10-10:  558 bytes (new file)
+
+percents.jpg
+   2006-02-03:  83813 bytes (new file)
+
+prog195a.exe
+   2001-06-29:  1044271 bytes (new file)
+
+readme.lux
+   2000-09-19:  6146 bytes (new file)
+
+tools.ZIP         (not stored; it duplicates tools.zip)
+   2005-12-10:  36675 bytes (new file)
+
+tools.zip
+   2005-12-10:  36675 bytes (new file)
+   2007-01-09:  29446 (-7229)  Directly from users.erols.com
+
+word194w.exe
+   2000-09-19:  1048314 bytes (new file)
+
+word195w.exe
+   2002-02-18:  1536966 bytes (new file)
+
+words.htm
+   1999-10-22:  5807 bytes (new file)
+   2000-03-01:  6344 bytes (+537)
+   2000-04-25:  9088 bytes (+2744)  Extracted from prog195a.exe
+   2000-05-10:  10252 bytes (+1164)
+   2000-10-15:  12007 bytes (+1755)  Extracted from disk1w95.exe
+   2000-12-03:  12003 bytes (-4)
+   2001-10-31:  13275 bytes (+1272)
+   2002-04-08:  13358 bytes (+83)
+   2002-06-06:  13361 bytes (+3)
+   2002-10-01:  14105 bytes (+744)
+   2003-04-10:  14440 bytes (+335)
+   2003-08-01:  14261 bytes (-179)
+   2003-10-01:  14101 bytes (-160)
+   2003-12-04:  14431 bytes (+330)
+   2004-06-12:  13740 bytes (-691)
+   2004-09-26:  14023 bytes (+283)
+   2005-01-01:  11788 bytes (-2235)
+   2005-01-07:  11895 bytes (+107)
+   2005-01-21:  11730 bytes (-165)
+   2005-02-07:  11822 bytes (+92)
+   2005-03-31:  12041 bytes (+219)
+   2005-04-27:  12740 bytes (+699)
+   2005-05-07:  12421 bytes (-319)
+   2005-08-13:  12352 bytes (-69)  Extracted from 197edwin.exe
+   2005-08-15:  12467 bytes (+115)
+   2005-08-30:  12612 bytes (+145)  Extracted from 197fwin.exe
+   2006-12-06:  12730 bytes (+118)
+   2006-12-31:  12799 bytes (+69)  Extracted from 197fcwin.exe
+   2007-01-02:  12944 bytes (+145)
+   2007-01-07:  12946 bytes (+2)
+
+wordsall.zip
+   2000-09-19:  1048323 bytes (new file)  Only 1308056 bytes transferred
+   2001-11-27:  1422533 bytes (+374210)
+   2002-01-02:  1443967 bytes (+21434)
+   2005-10-13:  2674477 bytes (+1230510)
+   2006-12-30:  2870959 bytes (+196482)
+   2007-02-26:  2879824 bytes (+8865)
+
+wordsdev.htm
+   1999-08-28:  4545 bytes (new file)
+   2000-08-23:  4558 bytes (+13)
+   2001-11-15:  6107 bytes (+1549)
+   2002-02-10:  6573 bytes (+466)
+   2002-10-15:  7103 bytes (+530)
+   2003-04-21:  7236 bytes (+133)
+   2005-02-07:  9561 bytes (+2325)
+   2005-10-13:  9486 bytes (-75)
+   2006-12-30:  9801 bytes (+315)
+   2007-01-12:  10044 bytes (+243)
+
+wordsdoc.htm
+   1999-06-20:  124471 bytes (new file)  Extracted from word194w.exe
+   1999-10-09:  143522 bytes (+19051)  Extracted from word195w.exe
+   2000-04-25:  146432 bytes (+2910)  Extracted from prog195a.exe
+   2000-09-11:  147877 bytes (+1445)  Extracted from disk1w95.exe
+   2001-08-26:  148979 bytes (+1102)  Extracted from disk1197.exe
+   2002-06-06:  150421 bytes (+1442)
+   2003-06-08:  151827 bytes (+1406)
+   2005-01-19:  191588 bytes (+39761)
+   2005-02-07:  194635 bytes (+3047)
+   2005-06-01:  202415 bytes (+7780)
+   2005-08-13:  204283 bytes (+1868)  Extracted from 197edwin.exe
+   2006-09-31:  213917 bytes (+9634)  Extracted from 197fwin.exe
+   2006-12-31:  213918 bytes (+1)  Extracted from 197fcwin.exe
+   2007-01-08:  214260 bytes (+342)  From wordsall.zip; not posted to website
+
+wordsdos.htm
+   1999-08-28:  4853 bytes (new file)
+   2001-04-10:  5808 bytes (+955)
+   2001-11-15:  5714 bytes (-94)
+   2002-08-15:  5527 bytes (-187)
+   2003-04-21:  5517 bytes (-10)
+   2007-01-12:  5669 bytes (+152)
+
+wordslux.htm
+   1999-08-28:  2361 bytes (new file)
+   2000-05-19:  2987 bytes (+626)
+   2000-11-21:  3158 bytes (+171)
+   2001-11-15:  3271 bytes (+113)
+   2002-10-15:  3958 bytes (+687)
+   2003-04-14:  3725 bytes (-233)
+   2004-10-19:  3855 bytes (+130)
+   2007-05-15:  3919 bytes (+64)
+
+wordsmac.htm
+   2002-10-15:  2501 bytes (new file)
+   2003-04-21:  2825 bytes (+324)
+   2005-02-07:  2532 bytes (-293)
+
+wordsos2.htm
+   2002-08-15:  3855 bytes (new file)
+   2003-04-21:  3875 bytes (+20)
+
+wordsoth.htm
+   2005-02-12:  1724 bytes (new file)
+   2005-04-26:  3163 bytes (+1439)
+   2006-12-06:  3085 bytes (-78)
+   2007-01-12:  3361 bytes (+276)
+
+wordsw95.htm
+   1999-06-21:  3640 bytes (new file)  Extracted from word194w.exe
+   1999-08-28:  3644 bytes (+4)
+   1999-10-08:  3340 bytes (-304)  Extracted from word195w.exe
+   2000-03-02:  3301 bytes (-39)
+   2000-04-25:  3456 bytes (+155)  Extracted from prog195a.exe
+   2000-05-10:  3691 bytes (+235)
+   2000-09-12:  3552 bytes (-139)  Extracted from disk1w95.exe
+   2001-01-22:  3545 bytes (-7)
+   2001-08-30:  3564 bytes (+19)  Extracted from disk1197.exe
+   2001-11-15:  5807 bytes (+2243)
+   2002-04-16:  5902 bytes (+95)
+   2002-10-01:  5917 bytes (+15)
+   2003-04-18:  5830 bytes (-87)
+   2005-01-07:  4916 bytes (-914)
+
+wordswin.htm
+   2005-01-17:  4775 bytes (new file)
+   2005-01-24:  5139 bytes (+364)
+   2005-02-07:  5139 bytes (+0)
+   2005-05-25:  5147 bytes (+8)
+   2005-07-24:  5240 bytes (+93)
+   2006-09-21:  5363 bytes (+123)  Extracted from 197fwin.exe
+   2006-12-31:  5335 bytes (-28)  Extracted from 197fcwin.exe
+   2007-01-07:  5802 bytes (+467)
+

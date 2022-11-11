@@ -1,0 +1,491 @@
+// Copyright © 2022, Michael Thompson
+//
+// Copying and distribution of this file, with or without modification, are
+// permitted in any medium without royalty, provided they copyright notice
+// and this notice are preserved.  This file is offered as-is, without any
+// warranty.
+
+= William Whitaker's Words
+A Latin-word parser and dictionary with an English-to-Latin mode.
+
+The _WORDS_ program has been of considerable interest to Latin students
+and scholars since it was introduced in the 1990's.  It is a console-mode
+program with a simple interface:  type in a Latin word, press Enter, and
+see an analysis of the word's function and a listing of the word's meanings.
+
+Given its simple user interface and its being written in a highly portable
+programming language, the _WORDS_ program runs on many operating systems
+and machine architectures.
+
+The program outlived its author, Col. William Whitaker (USAF), who died
+in 2010. Though the program is complicated and is accompanied by several
+tools that aid in updating the data files for new words and parsing forms,
+the instructions he wrote for building the program are easy to follow and
+produce good work with little effort--even more than a decade after the
+author's death.
+
+A web search reveals several sites where the sources of the WORDS program
+are available.  The current repository differs from those in that it
+presents a history of Col. Whitaker's work on the project as I could glean
+from files the Wayback Machine spidered from the product's website
+(http://users.erols.com/whitaker) plus files I downloaded from the site
+while the project was still active.  The history is presented as a series
+of Git commits.  Included in this repository:
+
+. Updates to the HTML pages as they were made on project's website.  The Git
+commit timestamps for these are generally the same as the times the Wayback
+Machine spidered them, not the actual times they were uploaded.
+
+. Source-code-file revisions for the main WORDS program and supplemental
+tools.  The Git-commit timestamps are those recorded in the metadata of the
+respective ZIP files which contain them (_wordsall.zip_ and _tools.zip_).
+
+. Augmentation of Col. Whitaker's version-numbering scheme to account for
+the fact that he sometimes released multiple versions without changing the
+version number.  All the available source-code releases are tagged in the
+Git repo with these augmented version-numbers.
+
+. An autoconf-generated configure script that works with all seven source
+versions in the repo.  The resulting Makefiles handle the variances among
+the program's versions and in the build-host environment.
+
+. Patches which correct a few runtime bugs--some platform-specific, some
+version-specific.  The Makefile applies these patches at build time; the
+original sources remain unaltered.
+
+. Installation instructions that cover many Linux and BSD distros plus
+Microsoft Windows.  All seven versions of WORDS have been tested and run
+successfully on all the systems where instructions are given.
+
+This repo aimed at two main audiences:
+
+* Software-package maintainers who prepare packages for Linux or BSD
+distributions or Microsoft Windows.
+
+* Developers wishing to explore the history of the WORDS project on the way
+to developing future versions.
+
+Though the latest version needs no source-code patches, it does need an
+adjustment of line endings in its data files when deployed on Unix systems.
+The Makefile accounts for this.  In addition, the Makefile is friendly to
+GNU tooling.
+
+The `configure` script is committed to the first version of the main branch
+so as to make it available to all the versions in the repo.
+
+A source tarball with the most recent release is posted to Github along with
+a Gentoo ebuild for the same release.
+
+== Background
+
+William Whitaker was a colonel in the U.S. Air Force.
+He chaired the DARPA working group that managed the effort that resulted in
+the specification and initial development of the Ada programming language.
+Col. Whitaker also had a strong interest in the Latin language.
+After he retired, he wrote _WORDS_ using his new programming language to
+help him understand the ancient language he long admired.
+
+As is often the case among software developers, he found his project
+to be useful and went on to make it available to others.
+
+The program bears several marks of a personal project, especially one
+starting more than 20 years ago.
+
+* It was written for his own consumption: everything he did in the project
+lives in pretty much the same directory where he edited the source files,
+built the program, and ran it.
+Indeed, he likely used DOS, which has no concept of users and permissions.
+Filename extensions are never longer than three characters.
+
+* Tools we consider commonplace today either didn't exist on the systems to
+which he had access or were rudimentary: revision-control systems, _make_,
+text-file processors, and testing frameworks, among others.
+The World Wide Web was in its infancy.
+
+* Some data files have what remains of last-sector padding with ^Z
+characters, a vestige of CP/M.
+
+* Version numbers were fluid: he often announced changes, including
+impactful ones, which resulted in no change in version.
+
+* He was unconcerned with license texts; he asserted a copyright but
+dedicated his work to the public domain.
+
+Through it all, though, he was generous with his time and quick to answer
+people's questions and address problems. He took pains to credit work
+that was not his own. He delighted in every new port of his program to a
+new system.
+
+Indeed, when I encountered his program in 2000 I found it very easy to build
+and run on my operating system of choice at the time, OS/2.
+I interacted with him a couple of years later when I built a new version
+and posted the binary to an OS/2 download site.
+He graciously posted a link to my work and included my OS-specific page on
+his website.
+
+== Version history
+
+Version numbers are a Big Deal. They help users, developers, and
+distributors know where they are when they track down an issue.
+Linux distributions, in particular, use version numbers to make
+decisions of the stability of a given package.
+
+Any version history of _WORDS_ has to be reconstructed.
+Col. Whitaker made no mention of a revision-control system or even a set of
+backups.  Indeed, if he had had such backups, they could have saved him when
+suffered a disk crash in 2003.
+
+The current repository reconstructs as much of this history as possible
+from two sources: crawls of the Wayback Machine on his website
+(http://users.erols.com/whitaker/) and my own much less extensive copying
+from that site while it was still active. From these I have hundreds of
+views from 1999 to 2007, when he stopped work on the program.
+
+A third source of website changes is a bit less obvious:  updates to HTML
+files included in the .zip files posted to the site.  Oftentimes a
+subsequent spider run captured those changes, but sometimes not:  a file
+may have had a second update before the spider looked to it anew.  This is
+sometimes evident in a scan of the history.
+
+After using a script to detect the points at which each of the files was
+introduced or changed, I characterized the website changes at each point in
+order to write commit messages for a script to use when committing to the
+Git repo.
+
+What results is a reconstruction of the website and program history that is
+probably as good as we can get.
+It diverges from complete binary fidelity in these respects:
+
+. HTML files have whitespace trimmed from the ends of lines and use Unix
+line terminations (a single linefeed character).
+Website updates often added or removed trailing whitespace; leaving that
+unaltered would signficantly clutter the files' history.
+
+. Large binary files (.zip and .exe files) are replaced by small text files
+describing what they were.
+The only exceptions are the word-list archives _dictpage.zip_ and
+_listall.zip_; these are carried unchanged.
+Users interested in finding the originals may look for them on archive.org.
+
+. Program sources contained in _wordsall.zip_ and _tools.zip_ are copied
+unchanged into their respective directories (_wordsall/_ and _tools/_) just
+as if Col. Whitaker had committed them to revision control.
+
+. The small counter-maintenance pages _count.htm_ and _counter.htm_, which
+contain links to a CGI script, are omitted.
+
+. Where pairs of files have the same contents but the names differ in case
+(like listall.zip/LISTALL.ZIP), I retain only the all-lowercase version.
+
+The Wayback Machine is selective in what it spiders; it concentrates on
+text files, especially those which it judges to change often.  Also, there
+is necessarily a delay between the time a change is posted to the site and
+the time the spider sees it. Some files it fails to see at all; it other
+cases it is slow to look for updates of binary files.
+In a few cases I moved the update timestamp of a file in the Git history
+when I had access to the file-modification timestamp (via .zip-file
+directories or my own spidering of the site when it was still available.)
+
+=== Version numbers
+
+Col. Whitaker's version-number scheme presents a couple of difficulties for
+anyone trying to track the version history and wanting to publish the
+results for Linux distributions.
+Changes were often made to the codebase without altering the version number.
+Indeed, I have a pair of wordsall.zip files that are different but both
+report a version number of 1.97.
+The other issue is that a number of version-number schemes have no way to
+deal with version-number suffixes like Ec, Ed, or FC.
+Schemes having such difficulties include those of Gentoo Linux,
+Debian GNU/Linux, and https://semver.org[Semantic Versioning].
+
+I resolved this by adding a dot-number group to the minor version number.
+This restores compatibility with the Gentoo and Debian schemes and satisfies
+the minimal requirements of Semantic Versioning.
+Despite the fact that Semantic Versioning would demand the increment of
+the minor version number in several instances, in all cases I retain Col.
+Whitaker's original minor version number.
+
+=== Version history details
+
+This is the program's version history I have been able to reconstruct by
+following
+https://web.archive.org/web/20220000000000*/http://users.erols.com/whitaker[
+the Wayback Machine].
+
+[options="header",cols="3*<,^,<4"]
+|=======
+|Release Date|Version|Tag Ver|Have Sources?|Notes
+|?           |1.93   |1.93.0 |     -    |mentioned in the oldest available wordsw95.htm
+|?           |1.94   |1.94.0 |     -    |mentioned as the predecessor of 1.94.1
+|1999-06-21  |1.94a  |1.94.1 |     -    |improvement to Windows version
+|1999-10-19  |1.95   |1.95.0 |    yes   |larger dictionary, improved output, AGE and FREQUENCY
+|2000-04-25  |1.95a  |1.95.1 |     -    |larger dictionary, improved output
+|2000-09-10  |1.96   |1.96.0 |  partial |added medieval and ecclesiatical words, refactored
+|2000-10-15  |1.96   |1.96.1 |     -    |fixed regression w/o version-number change
+|2001-08-30  |1.97   |1.97.0 |    yes   |output changes, source-file renames
+|2001-08-31  |1.97   |(same) |     -    |improved presentation, dictionary has >30000 entries
+|2001-09-15  |1.97   |(same) |     -    |Linux and DOS binaries for 1.97
+|2002-01-01  |1.97   |1.97.1 |    yes   |bugfixes without version-number change
+|2002-07-13  |1.97   |1.97.2 |     -    |added words, fixed output, ENTER twice to exit; same version
+|2004-12     |1.97E  |1.97.3 |     -    |English-to-Latin mode, many new dictionary entries
+|2005-01-19  |1.97E  |1.97.4 |     -    |corrections without change in version
+|2005-03     |1.97Ec |1.97.5 |     -    |corrections; no change in dictionary
+|2005-04     |1.97Ed |1.97.6 |     -    |corrections to program and dictionary
+|2005-08-14  |1.97Ed |1.97.7 |    yes   |corrections plus 1000 more dictionary entries; same version
+|2006-09     |1.97F  |1.97.8 |     -    |corrections plus 1000 new words
+|2006-09     |1.97F  |1.97.9 |     -    |corrections without change in version
+|2006-10-22  |1.97F  |1.97.10|    yes   |corrections to dictionary without version-number change
+|2006-12-31  |1.97FC |1.97.11|     -    |corrections including to English spellings; Windows release
+|2007-01-09  |1.97FC |1.97.12|    yes   |small fixes
+|=======
+
+The "Version" column shows the version number the program reports, the
+"Tag Ver" column shows the identifier by which I refer to the version,
+and "Have Sources?" shows the versions for which the sources are available
+in this repo.
+
+I see two trends in the way he assigns version numbers.  The first is to
+mark big changes with some semantic marker in the version number while
+smaller changes merely modify that marker; the second is to avoid
+three-digit minor-version numbers.
+Evidence: in 2004 he worked out an English-to-Latin mode, a major new
+function that five years earlier he said he didn't think was possible to
+implement.  He did not mark it as 1.98 but 1.97 with an ''E'' suffix.
+Subsequent corrections resulted in changes to the ''E'': ''Ec'' and ''Ed''.
+The ''F'' series seemed only to expand on ''E''.
+
+Following the big-change hypothesis and given the fact that he asserts a
+first copyright date of 1993, it seems likely that version 1.93 was indeed
+the first released version of the program.
+
+Information about the  source versions I have been able to find:
+
+[options="header",cols="3*,3"]
+|=======
+|Release Date|Version|Git Tag |Notes
+|1999-10-19  |1.95   |v1.95.0 |From users.erols.com in 2000. Built OS/2 binaries from it
+|2000-09-10  |1.96   |v1.96.0 |Truncated file; builds but dictionary incomplete.  From
+Wayback Machine in 2022
+|2001-08-30  |1.97   |v1.97.0 |First 1.97 release.  From Wayback Machine in 2022
+|2002-01-01  |1.97   |v1.97.1 |Basis of released OS/2 version.  From users.erols.com in 2002
+|2005-08-14  |1.97Ed |v1.97.7 |Has English-to-Latin mode.  From Wayback Machine in 2022
+|2006-10-22  |1.97F  |v1.97.10|From Wayback Machine in 2022
+|2007-01-09  |1.97FC |v1.97.12|From users.erols.com in 2013; also on Wayback Machine
+|=======
+
+=== Notes about the available versions
+
+All seven available versions of WORDS compile and run successfully when
+built with the build scripts provided in this repo.
+
+The build scripts apply patches to the original files so that the programs
+work properly in all target environments.  The code which reads the
+ADDONS.LAT and UNIQUES.LAT files at program-start time fails when the line
+endings in the files is not of the expected type for the host OS.  The
+build scripts therefore remove the carriage returns from these files when
+the host OS uses bare linefeeds for line endings.  All the data files,
+regardless of target OS, have ^Z characters stripped from them.  Other
+patches are version-specific, as detailed below.
+
+Earlier versions of the program have an important limitation:  they create
+temporary files in the directory in which they run.  This makes the program
+run incorrectly for users who have no write permissions in that directory.
+Users wishing to test those versions are advised to install these versions
+under their home directories.
+
+==== Version 1.95.0 (reports as 1.95)
+These sources were not on the Wayback Machine; I downloaded them in 2000 and
+retained the files.  Unfortunately I did not keep the original ZIP file.
+
+The sources of the earliest versions of words include three data files whose
+names end in a dot: 'INFLECTS.', 'ADDONS.', and 'UNIQUES.'.  Starting with
+version 1.96 these files are named 'INFLECTS.LAT', 'ADDONS.LAT', and
+'UNIQUES.LAT'.  I suspect the change came about because of reports that NTFS
+(the native filesystem of Windows NT) found such names to be problematic.
+
+Even the current versions of Windows are affected by this NTFS problem
+(other filesystems, such as EXT4 in Linux and HPFS in OS/2 are not).
+For that reason, the build scripts for version 1.95.0 rename the files to have
+the .LAT extension and patch `latin_file_names.ads` to use the new names.
+
+*This version creates temporary files at run time in the library directory.
+Avoid installing it in a system directory.*
+
+Startup message:
+
+----
+INFLECTION_ARRAY being loaded   --    1649 entries    --  Loaded correctly
+GENERAL Dictionary loading      --   40149 stems      --  Loaded correctly
+UNIQUES file loading            --      49 entries    --  Loaded correctly
+ADDONS loading 11+18 TACKONS 6+112 PREFIXES 173 SUFFIXES   --  Loaded correctly
+Copyright (c) 1993-1999 - Free for your use - Version 1.95
+Updates every few months at http://www.erols.com/whitaker/words.htm
+Comments? William Whitaker, Box 3036, McLean VA 22103 USA - whitaker@erols.com
+----
+
+==== Version 1.96.0 (reports as 1.96)
+These sources came from the Wayback Machine but the ZIP file is incomplete.
+Archive.org reports a file size of 1308056 bytes but closes the connection
+after only 1048323 bytes are transferred.  (This transfer size is 253 bytes
+shy of one megabyte, which suggests the file exceeded a size limit).
+Fortunately, the truncation seems to have affected only one member of the
+ZIP file, STEMLIST.GEN.  The directory entry for the file indicates a length
+of 2176128 bytes, but only 356366 bytes were recoverable.
+Since none of the Ada sources were lost, the program builds correctly.  The
+shortened STEMLIST file results in an incomplete dictionary.
+
+*This version creates temporary files at run time in the library directory.
+Avoid installing it in a system directory.*
+
+Startup message:
+
+----
+INFLECTION_ARRAY being loaded   --    1671 entries    --  Loaded correctly
+GENERAL Dictionary loading      --    7424 stems      --  Loaded correctly
+UNIQUES file loading            --      59 entries    --  Loaded correctly
+ADDONS loading 11+18 TACKONS 6+113 PREFIXES 173 SUFFIXES   --  Loaded correctly
+Copyright (c) 1993-2000 - Free for your use - Version 1.96
+Updates every few months at http://www.erols.com/whitaker/words.htm
+Comments? William Whitaker, Box 3036, McLean VA 22103 USA - whitaker@erols.com
+----
+
+==== Version 1.97.0 (reports as 1.97)
+*This version creates temporary files at run time in the library directory.
+Avoid installing it in a system directory.*
+
+Startup message:
+
+----
+INFLECTION_ARRAY being loaded   --    1721 entries    --  Loaded correctly
+GENERAL Dictionary loading      --   48698 stems      --  Loaded correctly
+UNIQUES file loading            --      72 entries    --  Loaded correctly
+ADDONS loading 13+18 TACKONS 6+117 PREFIXES 177 SUFFIXES   --  Loaded correctly
+Copyright (c) 1993-2001 - Free for your use - Version 1.97
+Updates every few months at http://www.erols.com/whitaker/words.htm
+Comments? William Whitaker, Box 3036, McLean VA 22103 USA - whitaker@erols.com
+----
+
+==== Version 1.97.1 (reports as 1.97)
+This version extends the number of TACKONS (the term WW uses for enclitics:
+morphemes such as 'que' and 'ne' that appear as suffixes) from 13 to 16.
+He declared only 15 entries in the TACKONS array.  An attempt to allocate
+a 16th element should raise an exception at run time, but some builds of
+GNAT generate a WORDS executable that silently forgives the problem by
+extending the array.  WW's compiler must have been doing this.
+Other GNAT builds, such as the one in Debian, play by the book.  For their
+sake, the Makefile patches `addons_package.ads` to fix the array
+declaration.
+
+*This version creates temporary files at run time in the library directory.
+Avoid installing it in a system directory.*
+
+Startup message:
+
+----
+INFLECTION_ARRAY being loaded   --    1727 entries    --  Loaded correctly
+GENERAL Dictionary loading      --   49222 stems      --  Loaded correctly
+UNIQUES file loading            --      72 entries    --  Loaded correctly
+ADDONS loading 16+18 TACKONS 6+117 PREFIXES 177 SUFFIXES   --  Loaded correctly
+Copyright (c) 1993-2001 - Free for your use - Version 1.97
+Updates every few months at http://www.erols.com/whitaker/words.htm
+Comments? William Whitaker, Box 3036, McLean VA 22103 USA - whitaker@erols.com
+----
+==== Versions 1.97.7 (1.97Ed), 1.97.10 (1.97F), and 1.97.12 (1.97FC)
+These versions play nicely with their dictionary-file directories and are
+suitable for installation in system directories.
+
+Only version 1.97.12 (the latest version) is recommended for general use.
+
+Startup message for 1.97.7:
+
+----
+INFLECTION_ARRAY being loaded   --    1733 entries    --  Loaded correctly
+GENERAL Dictionary loading      --   60057 stems      --  Loaded correctly
+UNIQUES file loading            --      73 entries    --  Loaded correctly
+ADDONS loading 17+11 TACKONS 6+124 PREFIXES 177 SUFFIXES   --  Loaded correctly
+Copyright (c) 1993-2005 - Free for your use - Version 1.97Ed
+For updates and latest version check http://www.erols.com/whitaker/words.htm
+Comments? William Whitaker, Box 3036, McLean VA 22103 USA - whitaker@erols.com
+----
+
+Startup message for 1.97.10:
+
+----
+INFLECTION_ARRAY being loaded   --    1771 entries    --  Loaded correctly
+GENERAL Dictionary loading      --   61921 stems      --  Loaded correctly
+UNIQUES file loading            --      73 entries    --  Loaded correctly
+ADDONS loading 18+11 TACKONS 6+125 PREFIXES 179 SUFFIXES   --  Loaded correctly
+Copyright (c) 1993-2006 - Free for any use - Version 1.97F
+For updates and latest version check http://www.erols.com/whitaker/words.htm
+Comments? William Whitaker, Box 51225  Midland  TX  79710  USA - whitaker@erols.com
+----
+
+Startup message for 1.97.12:
+
+----
+INFLECTION_ARRAY being loaded   --    1785 entries    --  Loaded correctly
+GENERAL Dictionary loading      --   62085 stems      --  Loaded correctly
+UNIQUES file loading            --      74 entries    --  Loaded correctly
+ADDONS loading 18+11 TACKONS 6+129 PREFIXES 179 SUFFIXES   --  Loaded correctly
+Copyright (c) 1993-2006 - Free for any use - Version 1.97FC
+For updates and latest version check http://www.erols.com/whitaker/words.htm
+Comments? William Whitaker, Box 51225  Midland  TX  79710  USA - whitaker@erols.com
+----
+
+== _Ad tempus futurum_
+
+Further development of the WORDS system would be a very welcome thing, but
+is unlikely in the current repo.  It stands mostly a witness to Col.
+Whitaker's work as he left it.
+
+It is gratifying that several people have undertaken to keep the work alive
+by preserving the sources of the final version Col. Whitaker released.
+Some have even gone on to further development of the program and data.
+This aligns with Col. Whitaker's own intentions.  He stated that he thought
+he would never finish the program.  He leaves it to future maintainers.
+
+Martin Keegan has done
+https://github.com/mk270/whitakers-words[considerable refactoring of the
+Ada source].
+It forms the basis of the
+https://salsa.debian.org/CalumMcConnel-guest/whitakers-words[Debian
+_whitakers-words_ package].
+The https://en.wikipedia.org/wiki/William_Whitaker%27s_Words[Wikipedia
+article on the _WORDS_ program] lists Keegan's work as a preservation
+effort, but it might better be described as a resumption of development
+since he
+
+. Cleaned up the arrangement of source files and refactored some of them
+(though I do have a quibble with reduplication of directory names in the
+file names).
+
+. Made the program know where to find its dictionary files, thus eliminating
+the requirement that those files be in the current directory when running the
+program.
+
+. Corrected several program errors
+
+. Corrected and augmented the dictionary files
+
+. Added a test suite
+
+. Stated a roadmap for improvements to the program, data, and interface
+
+It is still a work in progress, though.  The Makefile has no _install_
+target and the program still has a startup message that contains Col.
+Whitaker's original contact information.  It also, misleadingly,
+identifies itself as version 1.97FC.
+
+The version 1.97FC in my repo is from Col. Whitaker's unmodified sources.
+In that sense it would be good to think of "FC" as meaning "Final Cut".
+Even for the purpose of building development versions, Keegan and his team
+would do well to bump up the version number and adjust the startup message
+to update the contact information and note their own contributions.
+
+If I were to decide to take up the project myself, I would be inclined to
+change its algorithm and tooling--but having hit too many pain points with
+Ada, I would do it in Go.
+
+In any event, it is good to recall the words of Cicero on this 104th
+anniversary of the 1918 Armistice:  _cedant arma togae._

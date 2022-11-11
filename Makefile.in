@@ -1,0 +1,214 @@
+# Copyright 2022, Michael Thompson
+# SPDX-License-Identifier: FSFAP
+
+# Copying and distribution of this file, with or without modification, are
+# permitted in any medium without royalty, provided they copyright notice
+# and this notice are preserved.  This file is offered as-is, without any
+# warranty.
+
+PACKAGE = @PACKAGE_NAME@
+VERSION = @PACKAGE_VERSION@
+TARBASE = @PACKAGE_TARNAME@
+TARDIR = $(TARBASE)-$(VERSION)
+TARNAME = $(TARDIR).tar.gz
+
+TAR = @TAR@
+TAROPTS = -czf
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+
+MAINDIR = @libdir@/$(PACKAGE)
+WORDS_CMD_NAME = @WORDS_CMD_NAME@
+MEANINGS_CMD_NAME = @MEANINGS_CMD_NAME@
+
+GNATMAKE = gnatmake
+GMFLAGS = -gnat95
+MAINPROG_GMFLAGS= -O3 $(GMFLAGS)
+WORDS_SRC = wordsall
+WEBDIR = web
+TOOLS_SRC = tools
+WORK = work
+WORK_SCRIPTS = $(WORK)/scripts
+SCRIPTS = scripts
+ASSETS = assets
+DOCS = docs
+DISTRIB_DIR = distrib
+root_distfiles = configure configure.ac INSTALLATION.adoc LICENSE Makefile.in newline.adb \
+		 PACKAGE_VERSION README.adoc websiteHistory.txt
+root_docfiles = LICENSE README.adoc websiteHistory.txt
+root_distdirs = assets LICENSES scripts tools wordsall
+
+DICTFILES = @dictfiles@
+INFLECTS_SRC = @inflects_src@
+ADDONS_SRC = @addons_src@
+UNIQUES_SRC = @uniques_src@
+
+HELPERS = @helpers@
+MAINPROGS = @mainprogs@
+TOOLS = @tools@
+PROGS_TO_INSTALL = @progs_to_install@
+DOCFILES = @docfiles@
+words_htm_src = @words_htm_src@
+wordsdoc_src = @wordsdoc_src@
+howto_src = @howto_src@
+
+EBUILD_OPTS = @ebuild_opts@
+
+MAINPROG_EXECUTABLES = $(addprefix $(WORK)/, $(MAINPROGS))
+MAIN_SCRIPTS = $(addprefix $(WORK_SCRIPTS)/, $(MAINPROGS))
+HELPER_EXECUTABLES = $(addprefix $(WORK)/, $(HELPERS))
+TOOLS_EXECUTABLES = $(addprefix $(WORK)/, $(TOOLS))
+OUTPUT_DATA=$(addprefix $(WORK)/, $(DICTFILES))
+
+
+
+.phony: all
+all: $(MAIN_SCRIPTS) $(TOOLS_EXECUTABLES) $(OUTPUT_DATA) docdir
+
+
+$(MAIN_SCRIPTS): $(WORK)
+	mkdir -p $(WORK_SCRIPTS)
+	sed -e "s!@DIR@!$(MAINDIR)!" -e "s!@PROG@!$(@F)!" <$(SCRIPTS)/prog_script.sh >$@
+
+$(WORK)/words: $(WORK)
+	cd $(WORK); $(GNATMAKE) $(MAINPROG_GMFLAGS) words
+
+$(WORK)/meanings: $(WORK)/words
+	cd $(WORK); $(GNATMAKE) $(MAINPROG_GMFLAGS) meanings
+
+$(HELPER_EXECUTABLES): $(MAINPROG_EXECUTABLES)
+	cd $(WORK); $(GNATMAKE) $(GMFLAGS) $(@F)
+
+$(TOOLS_EXECUTABLES): prep_tools_work $(OUTPUT_DATA)
+	cd $(WORK); $(GNATMAKE) $(GMFLAGS) $(@F)
+
+$(WORK):
+	mkdir -p $(WORK)
+	cp -p $(WORDS_SRC)/* $(WORK)
+	$(SCRIPTS)/version_patch.sh $(VERSION) $(WORDS_SRC) $(WORK)
+
+.phony: prep_tools_work
+prep_tools_work: $(WORK)
+	cp $(addprefix $(TOOLS_SRC)/, $(addsuffix .adb, $(TOOLS))) $(WORK)
+
+
+newline: newline.adb
+	$(GNATMAKE) $(GMFLAGS) newline
+
+
+$(WORK)/DICTFILE.GEN: $(WORK)/makedict
+	LANG=C tr -d '\032' < $(WORDS_SRC)/DICTLINE.GEN >$(WORK)/DICTLINE.GEN
+	cd $(WORK); echo G | ./makedict DICTLINE.GEN
+
+$(WORK)/STEMFILE.GEN: $(WORK)/makestem
+	LANG=C tr -d '\032' < $(WORDS_SRC)/STEMLIST.GEN >$(WORK)/STEMLIST.GEN
+	cd $(WORK); echo G | ./makestem STEMLIST.GEN
+
+$(WORK)/INDXFILE.GEN: $(WORDS_SRC)/STEMLIST.GEN
+
+$(WORK)/EWDSFILE.GEN: $(WORK)/makeefil
+	LANG=C tr -d '\032' < $(WORDS_SRC)/EWDSLIST.GEN >$(WORK)/EWDSLIST.GEN
+	cd $(WORK); echo G | ./makeefil EWDSLIST.GEN
+
+$(WORK)/INFLECTS.SEC: $(WORK)/makeinfl
+	LANG=C tr -d '\032' < $(WORDS_SRC)/$(INFLECTS_SRC) >$(WORK)/INFLECTS.LAT
+	cd $(WORK); echo G | ./makeinfl INFLECTS.LAT
+
+$(WORK)/ADDONS.LAT: newline
+	$(SCRIPTS)/cpfix.sh $(WORDS_SRC)/$(ADDONS_SRC) $@
+
+$(WORK)/UNIQUES.LAT: newline
+	$(SCRIPTS)/cpfix.sh $(WORDS_SRC)/$(UNIQUES_SRC) $@
+
+
+.phony: docdir
+docdir: $(addprefix $(DOCS)/, $(DOCFILES)) $(addprefix $(DOCS)/, $(root_docfiles))
+
+$(DOCS):
+	mkdir $(DOCS)
+
+$(DOCS)/words.html: $(DOCS)
+	cp $(words_htm_src) $@
+
+$(DOCS)/wordsdoc.html: $(DOCS)
+	cp $(wordsdoc_src) $@
+
+$(DOCS)/TOOLS_HOWTO.txt: $(DOCS)
+	cp $(howto_src) $@
+
+$(addprefix $(DOCS)/, $(root_docfiles)): $(DOCS)
+	cp $(@F) $@
+
+
+.phony: clean
+clean:
+	-rm *.ali *.o Makefile config.status config.log newline
+	-rm -rf $(WORK) $(DISTRIB_DIR) $(DOCS)
+
+
+.phony: install
+install: install-main install-exec
+
+.phony: install-main
+install-main: $(DESTDIR)$(MAINDIR)
+	install -m 755 $(addprefix $(WORK)/, $(PROGS_TO_INSTALL)) $(DESTDIR)$(MAINDIR)
+	install -m 644 $(OUTPUT_DATA) $(DESTDIR)$(MAINDIR)
+
+$(DESTDIR)$(MAINDIR):
+	install -m 755 -d $(DESTDIR)$(MAINDIR)
+
+.phony: install-exec
+install-exec: $(addsuffix _script, $(MAINPROGS))
+
+$(DESTDIR)$(bindir):
+	install -m 755 -d $(DESTDIR)$(bindir)
+
+.phony: words_script
+words_script: $(DESTDIR)$(bindir)
+	install -m 755 $(WORK_SCRIPTS)/words $(DESTDIR)$(bindir)/$(WORDS_CMD_NAME)
+
+.phony: meanings_script
+meanings_script: $(DESTDIR)$(bindir)
+	install -m 755 $(WORK_SCRIPTS)/meanings $(DESTDIR)$(bindir)/$(MEANINGS_CMD_NAME)
+
+
+.phony: uninstall
+uninstall: $(addprefix rm_script_, $(MAINPROGS))
+	-rm $(addprefix $(DESTDIR)$(MAINDIR)/, $(PROGS_TO_INSTALL) $(DICTFILES))
+	-rmdir $(DESTDIR)$(MAINDIR)
+
+.phony: rm_script_words
+rm_script_words:
+	-rm $(DESTDIR)$(bindir)/$(WORDS_CMD_NAME)
+
+.phony: rm_script_meanings
+rm_script_meanings:
+	-rm $(DESTDIR)$(bindir)/$(MEANINGS_CMD_NAME)
+
+
+.phony: dist
+dist: $(TARDIR) $(DISTRIB_DIR) $(addprefix $(TARDIR)/, $(root_distdirs)) $(TARDIR)/$(WEBDIR)
+	cp -p $(root_distfiles) $(TARDIR)
+	$(TAR) $(TAROPTS) $(DISTRIB_DIR)/$(TARNAME) $(TARDIR)
+	rm -rf $(TARDIR)
+
+$(TARDIR):
+	mkdir $(TARDIR)
+
+$(DISTRIB_DIR):
+	mkdir $(DISTRIB_DIR)
+
+$(addprefix $(TARDIR)/, $(root_distdirs)):
+	cp -R $(@F) $(TARDIR)
+
+$(TARDIR)/$(WEBDIR):
+	mkdir $(TARDIR)/$(WEBDIR)
+	cp $(WEBDIR)/words*.htm $@
+
+
+.phony: ebuild
+ebuild: $(DISTRIB_DIR)
+	$(SCRIPTS)/make_ebuild.sh "$(PACKAGE)" "$(VERSION)" "$(DISTRIB_DIR)" $(EBUILD_OPTS)
+
